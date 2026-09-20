@@ -6,6 +6,31 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-20 · Implementación D1
+
+### D-023 · Convenciones del núcleo y herramientas fijadas
+Foundry 1.8.3, Solidity 0.8.24, OpenZeppelin Contracts v5.0.2 y forge-std
+v1.9.7 quedan fijados para reproducir el build. Se usa `Math.mulDiv` de
+OpenZeppelin para calcular la parte sin desbordar la multiplicación
+intermedia. **Descartado:** dependencias flotantes y multiplicación directa
+que puede revertir aunque el resultado final quepa en uint256.
+
+`address(0)` identifica el activo nativo en los mismos mappings por token.
+`withdraw(token)` paga únicamente a `msg.sender` y retorna cero sin llamada
+externa cuando no hay saldo debido. **Descartado:** acumuladores separados
+para nativo y destinatarios arbitrarios, que añaden superficies innecesarias.
+
+La implementación bloquea su propia inicialización en el constructor; los
+clones conservan estado inicial cero. Las validaciones del acuerdo y la
+creación e inicialización atómicas corresponden al factory de D2, como fija
+la arquitectura. **Descartado:** dejar inicializable la implementación o
+duplicar hoy las validaciones del factory dentro del pool.
+
+MockUSDT expone `transfer` y `transferFrom` sin valor de retorno en su ABI y
+en ejecución. Tiene un ledger mínimo propio porque heredar ERC20 de
+OpenZeppelin impone retorno booleano en esas firmas. **Descartado:** devolver
+`true`, que no ejercitaría la compatibilidad USDT de SafeERC20.
+
 ## 2026-09-21
 
 ### D-022 · El índice raíz de ETHSKILLS se lee antes de escribir Solidity. **Amplía D-018**
