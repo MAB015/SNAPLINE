@@ -12,8 +12,8 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 | Área | Estado | Siguiente |
 |---|---|---|
 | `docs` | ✅ Listo | Solo mantenimiento del tracking |
-| `infra` | 🟡 Parcial | CI (D2) y andamiaje de Next.js (D4) |
-| `contracts` | 🟡 Núcleo listo | D2 · factory, firmas y despliegue |
+| `infra` | 🟡 CI preparado | Configurar remoto GitHub y ejecutar CI; Next.js en D4 |
+| `contracts` | 🟡 D2 local validado | Desplegar y verificar en Base Sepolia |
 | `design` | 🟡 Dirección fijada | D3 · sistema en código |
 | `web` | ⬜ Sin empezar | D4 · Privy y creación de acuerdo |
 | `demo` | 🟡 Guion escrito | D8 · datos y ensayos |
@@ -37,42 +37,69 @@ licencia MIT, `.env.example` con las variables previstas. Foundry 1.8.3
 instalado con autorización, compilador 0.8.24 y dependencias fijadas; primer
 `forge test` en verde dentro de la caja de 30 minutos en Windows/Git Bash.
 
-**Falta:** andamiaje de Next.js (D4), CI con
-tests en cada push (D2).
+**Hecho en D2:** workflow de GitHub Actions con Foundry 1.8.3, acciones
+fijadas por SHA, submódulos recursivos, formato y tests en cada push y PR.
+Sus comandos pasan localmente. No se ha ejecutado en GitHub.
+
+**Falta:** configurar URL del remoto GitHub y ejecutar el workflow; andamiaje
+de Next.js (D4).
 
 **Nota:** el CI no se añade hasta que haya algo que construir. Un `main` con
 CI en rojo incumple la regla de "siempre desplegable".
 
-**Bloqueado por:** nada.
+**Bloqueado por:** el remoto origin carece de URL.
 
-## `contracts` — 🟡 Núcleo listo
+## `contracts` — 🟡 D2 local validado
 
 **Hecho:** D1 completo en `feat/contracts-split-pool`: MockUSDT de seis
 decimales, faucet público y transferencias sin retorno; SplitPool para clones
 con inicialización única, contabilidad por token, receive vacío y retiro pull
 con estado antes de transferir mediante SafeERC20. Sin roles ni pausas.
 
-**Validación:** 16 tests pasan, cero fallos y cero omitidos; `forge fmt
+**Hecho en D2:** factory con dominio EIP-712, firmas ordenadas, acuerdo con
+salt y consumo por structHash, validación de participantes/bps, implementación
+inmutable y clon inicializado atómicamente. Sin cambios a contratos D1.
+
+**Validación:** 40 tests pasan, cero fallos y cero omitidos; `forge fmt
 --check` pasa. Incluye reparto ERC-20/nativo, pagos sucesivos, doble retiro,
 tres activos independientes, rollback de receptor fallido, reentrada,
 reinicialización y ETH forzado. Caso límite uint256 máximo para mulDiv.
 Cada una de las dos invariantes ejecuta 1000 casos fuzz con 1–10 participantes:
 dust tras liquidar todos (hasta ocho rondas) y conservación tras cada operación
 (hasta 32 pagos/retiros intercalados). Oracle de entradas y salidas independiente
-del ledger del pool. No constituye prueba formal de todas las secuencias.
+del ledger del pool. Otros 1000 casos fuzz validan acuerdos firmados con bps,
+términos y salt variables. Los 24 tests nuevos calculan el digest de forma
+independiente y cubren dominio de otra cadena/factory, cambio de chainId,
+firmas faltantes/sobrantes/malformadas/desordenadas, replay, alteración de
+campos, evento, runtime EIP-1167, inicialización y ciclo pago/retiro.
+Toda la lista de THREAT-MODEL §6 está cubierta. No constituye prueba formal
+de todas las secuencias. `forge lint src --severity high med` sin hallazgos.
 
 **Nota de compilación:** advertencia de selfdestruct solo en el helper de test
 que fuerza ETH; no aparece en los contratos de producción.
 
-**Falta:** D2 completo: factory, EIP-712, validaciones del acuerdo, tests de
-firmas, despliegue y verificación en Base Sepolia. El factory debe validar
-arreglos y bps y clonar e inicializar atómicamente: son precondiciones del pool.
-No hay direcciones desplegadas ni se ha modificado main.
+**Falta:** desplegar y verificar factory, implementación y MockUSDT en Base
+Sepolia; registrar direcciones reales; reservar ETH para las cuatro cuentas;
+cerrar revisión previa al despliegue. D2 no está cerrado ni congelado.
 
-**Bloqueado por:** nada.
+**Bloqueado por:** no hay configuración local de despliegue ni variables de
+credenciales disponibles. Faltan la cuenta desplegadora de testnet con fondos,
+clave de verificación y las cuatro direcciones públicas del demo. El RPC público
+respondió chainId 84532. No se inventaron direcciones ni se enviaron transacciones.
 
-**Decisiones:** D-023 documenta convenciones de implementación y alternativas
-descartadas. Guías ETHSKILLS leídas por URL sin instalar skills. La versión
+**Revisión de seguridad provisional:** se leyeron testing, security y addresses
+de ETHSKILLS. Revisados CEI, SafeERC20, contabilidad por activo, redondeo,
+validación de arrays, consentimiento, dominio, replay y destino inmutable del
+clon. No hay oráculos, swaps, mantenimiento, roles ni upgrade authority: esos
+puntos no aplican. Se conserva CEI sin añadir nonReentrant y salt/consumo sin
+añadir expiración, como fija la arquitectura. Tokens maliciosos/rebasing fuera
+del supuesto de confianza. Slither/Mythril no están instalados ni se ejecutaron;
+el lint de Forge no los sustituye. Verificación en explorador pendiente. Por
+ello la tarea de revisión previa al despliegue sigue abierta; no se presenta
+esta revisión como auditoría ni como checklist completo aprobado.
+
+**Decisiones:** D-023, D-024 y D-025 documentan núcleo, interfaz firmada y CI,
+con alternativas descartadas. Guías ETHSKILLS leídas por URL sin instalar skills. La versión
 actual de standards se centra en estándares de agentes y no desarrolla ERC-20
 ni EIP-712 como esperaba D-022; prevaleció la arquitectura del repositorio.
 Tests delegados con autorización explícita del usuario, en archivos separados.
@@ -94,16 +121,21 @@ cambios automáticamente.
 | Infraestructura | `feat/infra-validation` | CI y configuración de herramientas |
 
 Worktrees locales bajo `F:/Projects/SNAPLINE-AI-agents/`: `implementation`,
-`tests` e `infra`. El checkout principal conserva `feat/contracts-split-pool`.
+`tests`, `infra` e `integration`. Otro proceso consolidó D1 en main y guardó
+los tests en 60e021e. Tras autorización del usuario, el coordinador conservó
+esos commits y creó `integration` con `feat/contracts-split-pool` desde 4e6163d.
+El checkout principal permanece en main; no se fusionó D2 allí.
 Cada agente trabaja únicamente en su directorio; ninguno cambia ramas en el
 checkout de otro. Las interfaces compartidas se acuerdan antes de escribir.
 
 Los agentes entregan cambios y evidencia de validación; el coordinador integra
 una tarea por commit junto con su tracking. Solo el coordinador modifica
 STATUS, TASKS y DECISIONS, para evitar conflictos. Se mantienen cuatro puestos
-simultáneos: coordinador y tres agentes. D2 autorizado expresamente por el
-usuario; factory, tests y CI en curso en paralelo. Despliegue pendiente de
-credenciales locales y direcciones públicas de las cuatro cuentas del demo.
+simultáneos: coordinador y tres agentes. Factory, tests y CI entregados; los
+agentes alcanzaron su límite de uso durante la revisión adicional y el
+coordinador terminó la integración. En los tests recuperados se corrigieron
+aritmética uint16 y una expectativa de revert que interceptaba un getter.
+Despliegue pendiente de configuración externa.
 
 ## `design` — 🟡 Dirección fijada
 
