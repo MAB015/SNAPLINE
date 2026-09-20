@@ -51,12 +51,21 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 
 ## D3 · Diseño — martes 23
 
-- [ ] `design` — tokens en código: tipografías, escala, paleta, filetes
+- [ ] `design` — tokens en código: tipografías, escala, paleta por superficie,
+      filetes; temas claro y oscuro con interruptor (D-029)
+- [ ] `design` — texturas en SVG en línea: grano, rejilla, cuatro tramas,
+      tinta de sello, franjas de precaución. Revisarlas en un fotograma
+      exportado, no solo en el navegador
+- [ ] `design` — identicon 5×5 desde la dirección, en el color del
+      participante
+- [ ] `design` — componente de hash vivo: hover, copiar, enlace al explorador;
+      código de barras del hash de términos
 - [ ] `design` — componente de tabla de reparto
-- [ ] `design` — componente de barra segmentada
-- [ ] `design` — componente de estado de firma
-- [ ] `design` — componente de sello de simulado
-- [ ] `design` — maqueta estática de `/acuerdo/[id]` con datos falsos
+- [ ] `design` — componente de barra segmentada con tramas de participante
+- [ ] `design` — componente de estado de firma: pendiente, firmado, desplegado
+- [ ] `design` — componente de sello de simulado con franjas
+- [ ] `design` — maqueta estática de `/acuerdo/[id]` con datos falsos, en los
+      dos temas y en los dos estados (papel y sellado en cadena)
 
 ## D4 · Web, identidad y borrador — miércoles 24
 
@@ -77,6 +86,9 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [ ] `web` — estado de firmas por participante
 - [ ] `web` — despliegue del pool en una sola transacción con la última firma
 - [ ] `web` — evitar retiro o despliegue doble al recargar durante la firma
+- [ ] `design` — snap 2D con GSAP: la línea se tensa, caen las marcas y el
+      bloque cruza de papel a cadena. Obligatorio; el anillo no lo reemplaza
+- [ ] `design` — scramble de hashes y contador de montos con GSAP
 
 ## D6 · Web, cobro y retiro — viernes 26
 
@@ -90,8 +102,13 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [ ] `web` — interfaz `OffRampProvider` y `MockOffRamp`
 - [ ] `web` — `/retiro-cop/[dir]`: cotización, comisión, neto, comprobante
 - [ ] `design` — sello de simulado en todas las superficies del mock
-- [ ] `design` — pulido de `/acuerdo/[id]`
-- [ ] `design` — animación del snap *(se corta si falta tiempo)*
+- [ ] `design` — anillo 3D del pool con `@react-three/fiber`: segmentos por
+      bps, material toon, clic con panel de participante, snap en
+      `/acuerdo/[id]` y llenado en `/pool/[dir]` *(caja de un día; si no
+      está a las 18:00, pasa al hueco del stretch de D8 y, si tampoco cabe
+      ahí, se corta y queda la barra 2D)*
+- [ ] `design` — recibo de transacción e indicador de red en vivo
+- [ ] `design` — revisar el tema oscuro en las seis pantallas
 
 ## D8 · Congelar y ensayar — domingo 28
 
@@ -103,7 +120,8 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [ ] `demo` — borrar el acuerdo de prueba para grabar limpio
 - [ ] `web` — arreglar solo lo que se rompa en los ensayos
 - [ ] **Stretch** `web` — pago de entrada en pesos simulado *(solo si D1–D7
-      cerraron a tiempo; corte a las 6 horas)*
+      cerraron a tiempo; corte a las 6 horas. Si el anillo 3D se desbordó de
+      D7, ese hueco es del anillo y este stretch se cae)*
 
 ## D9 · Video y README — lunes 29
 

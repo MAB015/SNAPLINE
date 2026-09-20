@@ -62,7 +62,10 @@ dirección sin haber visto una frase semilla.**
 > Sofía nunca ha usado una wallet. Entra con su correo y ya tiene una
 > dirección. No vio una frase semilla, no instaló nada.
 
-Firman los cuatro. Al entrar la última firma, la línea se tensa y se marca.
+Firman los cuatro. Cada firma acerca el segmento de su color en el anillo. Al
+entrar la última, la línea se tensa y se marca, el acuerdo cruza de papel a
+cadena y el anillo se cierra. Si el anillo 3D se cortó, el snap se ve solo en
+la barra (ver `docs/BRAND.md` §13).
 
 > Esto es el snap. Cuatro firmas se agrupan en una sola transacción y se
 > despliega el pool de cobro del proyecto. Con saldo cero. Si faltara una
