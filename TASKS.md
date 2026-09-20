@@ -43,7 +43,8 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [ ] `contracts` — verificar contratos en BaseScan
 - [ ] `docs` — llenar `deployments/base-sepolia.json` y la sección de
       direcciones del README
-- [ ] `infra` — CI: tests de contratos en cada push
+- [x] `infra` — CI: tests de contratos en cada push (workflow listo;
+      ejecución remota pendiente de configurar el repositorio GitHub)
 - [ ] `infra` — reservar ETH de testnet en las cuatro cuentas del demo
 - [ ] `contracts` — leer `ethskills.com/security/SKILL.md` y pasar su lista
       antes de desplegar

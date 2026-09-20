@@ -8,6 +8,13 @@ nueva que la revierte.
 
 ## 2026-09-20 · Implementación D2
 
+### D-025 · CI de contratos con versiones fijadas y sin secretos
+GitHub Actions ejecuta formato y tests en cada push y pull request, con
+Foundry 1.8.3 y submódulos fijados. Las acciones checkout y foundry-toolchain
+se fijan por SHA comprobado en sus repositorios oficiales. Se descartan tags
+flotantes para evitar cambios silenciosos. El workflow tiene permisos de
+solo lectura y no necesita claves de despliegue ni RPC.
+
 ### D-024 · Interfaz compartida del factory y codificación del acuerdo
 El constructor del factory crea una implementación de SplitPool y conserva su
 dirección inmutable. Se descarta recibir una implementación arbitraria: no hay
