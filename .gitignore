@@ -2,17 +2,15 @@
 node_modules/
 .pnp.*
 .yarn/
+contracts/lib/
 
 # builds
 .next/
-out/
 dist/
 build/
-artifacts/
-cache/
 out/
+cache/
 broadcast/
-contracts/lib/
 
 # entorno
 .env

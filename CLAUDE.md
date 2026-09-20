@@ -69,6 +69,39 @@ obvio en el título, va en el cuerpo. Prohibido `wip`, `cambios varios`,
 `TASKS.md` o `DECISIONS.md` que corresponda.** El estado del proyecto vive en
 archivos versionados, nunca solo en la cabeza de quien trabaja.
 
+## Skills y herramientas externas
+
+**Nada se instala solo.** Un agente que trabaje en este repo no instala
+plugins, no añade dependencias de herramienta ni conecta servicios por su
+cuenta. Hay dos caminos y ninguno es automático:
+
+1. **Guías públicas por URL.** Se leen en el momento en que hacen falta, sin
+   instalar nada. Es el caso de ETHSKILLS (`ethskills.com/<tema>/SKILL.md`).
+   No requiere acción de nadie: el agente la busca cuando le toca.
+2. **Skills empaquetadas.** Las sube la persona que lleva el proyecto. El
+   agente las **pide por nombre, dice para qué las quiere y en qué día del
+   plan se usan**, y espera. No las instala ni sugiere instalarlas por su
+   cuenta desde un terminal.
+
+Antes de pedir una skill, el criterio es el mismo que el de la regla de
+simplicidad: tiene que tocar una tarea real de `TASKS.md`. Una skill que
+suena útil pero no aparece en el plan no se pide.
+
+### Inventario
+
+| Skill | Estado | Para qué | Cuándo |
+|---|---|---|---|
+| Foundry (`getfoundry.sh/introduction/agents`) | Pedida | Contratos y tests | D1–D2 |
+| Vercel (`vercel.com/docs/agent-resources/skills`) | Pedida | Despliegue en vivo, requisito del envío | D9–D10 |
+| ETHSKILLS `security` | Por URL | Lista previa al despliegue | D2 |
+| ETHSKILLS `testing` | Por URL | Tests en Foundry | D2 |
+| ETHSKILLS `qa` | Por URL | Auditoría de la app antes de grabar | D8 |
+| ETHSKILLS `crops` | Por URL | Revisión de arquitectura | Sin día |
+
+Descartadas y por qué, en `DECISIONS.md`: Blockscout (usamos BaseScan),
+Tempo y x402 (otro track), y las guías de interfaz de ETHSKILLS (son de
+Scaffold-ETH 2 y contradicen `docs/BRAND.md`).
+
 ## Reglas de bloque
 
 - Al cerrar un bloque: commit, tracking actualizado, repo desplegable.
