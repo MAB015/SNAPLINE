@@ -2,10 +2,13 @@
 pragma solidity 0.8.24;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
 /// @notice Immutable revenue shares, initialized atomically by the factory on a minimal clone.
 contract SplitPool {
+    using SafeERC20 for IERC20;
+
     address[] public participants;
     mapping(address => uint16) public bps;
     bytes32 public termsHash;
@@ -14,6 +17,9 @@ contract SplitPool {
     bool private initialized;
 
     error AlreadyInitialized();
+    error NativeTransferFailed();
+
+    event Withdrawn(address indexed token, address indexed account, uint256 amount);
 
     constructor() {
         initialized = true;
@@ -29,6 +35,22 @@ contract SplitPool {
 
     function releasable(address token, address account) public view returns (uint256) {
         return Math.mulDiv(totalReceived(token), bps[account], 10_000) - withdrawn[token][account];
+    }
+
+    function withdraw(address token) external returns (uint256 amount) {
+        amount = releasable(token, msg.sender);
+        if (amount == 0) return 0;
+
+        withdrawn[token][msg.sender] += amount;
+        totalWithdrawn[token] += amount;
+        emit Withdrawn(token, msg.sender, amount);
+
+        if (token == address(0)) {
+            (bool ok,) = payable(msg.sender).call{value: amount}("");
+            if (!ok) revert NativeTransferFailed();
+        } else {
+            IERC20(token).safeTransfer(msg.sender, amount);
+        }
     }
 
     /// @dev The factory must validate nonzero unique participants, matching lengths and sum 10000.
