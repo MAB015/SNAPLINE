@@ -19,6 +19,42 @@ contract SplitPoolFactoryTest is Test {
         factory = new SplitPoolFactory();
     }
 
+    function test_CreateInitializesMinimalCloneAndEmitsAgreementHash() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        bytes[] memory signatures = _sign(agreement, block.chainid, address(factory));
+        vm.recordLogs();
+        // The submitter need not be a participant; signatures authorize the exact agreement.
+        vm.prank(address(0xBEEF));
+        address created = factory.createPool(agreement, signatures);
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+        assertEq(logs.length, 1);
+        assertEq(logs[0].emitter, address(factory));
+        assertEq(logs[0].topics.length, 3);
+        assertEq(logs[0].topics[0], keccak256("PoolCreated(address,bytes32)"));
+        assertEq(logs[0].topics[1], bytes32(uint256(uint160(created))));
+        assertEq(logs[0].topics[2], _structHash(agreement));
+        assertEq(logs[0].data.length, 0);
+        assertTrue(factory.consumed(_structHash(agreement)));
+        bytes memory expectedRuntime =
+            abi.encodePacked(hex"363d3d373d3d3d363d73", factory.implementation(), hex"5af43d82803e903d91602b57fd5bf3");
+        assertEq(created.code, expectedRuntime);
+        SplitPool pool = SplitPool(payable(created));
+        assertEq(pool.termsHash(), agreement.termsHash);
+        for (uint256 i; i < agreement.participants.length; ++i) {
+            assertEq(pool.participants(i), agreement.participants[i]);
+            assertEq(pool.bps(agreement.participants[i]), agreement.bps[i]);
+        }
+        vm.expectRevert(SplitPool.AlreadyInitialized.selector);
+        pool.initialize(agreement.participants, agreement.bps, bytes32(0));
+    }
+
+    function test_FactoryImplementationCannotBeInitialized() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        SplitPool implementation = SplitPool(payable(factory.implementation()));
+        vm.expectRevert(SplitPool.AlreadyInitialized.selector);
+        implementation.initialize(agreement.participants, agreement.bps, agreement.termsHash);
+    }
+
     function test_RejectsBpsBelow10000() public {
         SplitPoolFactory.Agreement memory agreement = _agreement();
         agreement.bps[0] = 4_999;

@@ -35,7 +35,7 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [x] `contracts` — `structHash` consumido, con `salt` por acuerdo
 - [x] `contracts` — validaciones: suma 10000, sin duplicados, sin dirección
       cero
-- [ ] `contracts` — clonado EIP-1167 y evento `PoolCreated`
+- [x] `contracts` — clonado EIP-1167 y evento `PoolCreated`
 - [ ] `contracts` — tests de la lista completa de `docs/THREAT-MODEL.md` §6
 - [x] `contracts` — leer `ethskills.com/testing/SKILL.md` (es de Foundry)
 - [ ] `contracts` — desplegar a Base Sepolia con `forge create` y verificar
