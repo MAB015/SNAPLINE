@@ -51,6 +51,18 @@ Un acuerdo con cientos de firmantes podría no caber en un bloque.
 **Por qué no está en el MVP:** el producto apunta a equipos de 2 a 10 y nadie
 va a probar el límite en el demo.
 
+### Paleta de ocho participantes
+Hoy hay cuatro colores; del quinto en adelante se repite el color y cambia la
+trama. Pasar a ocho colores que pasen AA en las dos superficies.
+**Por qué no está en el MVP:** el demo tiene cuatro participantes y medir ocho
+colores en dos temas es trabajo que no se ve.
+
+### 3D más allá del anillo
+Un objeto en la portada, el anillo en `/pagar/[dir]` para que el cliente vea a
+dónde va su pago, y sonido corto en el snap.
+**Por qué no está en el MVP:** el anillo ya protagoniza los dos planos que
+importan, y cada pantalla nueva con 3D suma medio día (D-029).
+
 ---
 
 ## Horizonte 2 — Para un piloto real con una agencia

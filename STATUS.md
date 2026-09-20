@@ -14,7 +14,7 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 | `docs` | ✅ Listo | Solo mantenimiento del tracking |
 | `infra` | 🟡 CI validado | Fondeo de testnet; Next.js en D4 |
 | `contracts` | ✅ D2 desplegado | D5 · despliegue del pool desde la web |
-| `design` | 🟡 Dirección fijada | D3 · sistema en código |
+| `design` | 🟡 Dirección revisada (Acta Viva) | D3 · sistema en código, dos temas |
 | `web` | ⬜ Sin empezar | D4 · Privy y creación de acuerdo |
 | `demo` | 🟡 Guion escrito | D8 · datos y ensayos |
 
@@ -177,12 +177,20 @@ Despliegue pendiente de configuración externa.
 
 ## `design` — 🟡 Dirección fijada
 
-**Hecho:** dirección visual elegida (Acta) y documentada en `docs/BRAND.md`
-con tipografías, paleta, escala y reglas duras.
+**Hecho:** dirección visual revisada de Acta a **Acta Viva** (D-029) y
+documentada en `docs/BRAND.md`: narrativa papel → cadena, temas claro y
+oscuro, cuatro colores de participante con trama (contraste AA medido),
+texturas, hash vivo, inventario de movimiento con GSAP y el anillo 3D del
+pool en caja de un día (D-030).
 
-**Falta:** tokens en código, componentes base (tabla de reparto, barra
-segmentada, estado de firma, sello de simulado) y maqueta estática de
-`/acuerdo/[id]`.
+**Falta:** tokens en código para los dos temas, texturas, identicon, hash
+vivo, componentes base (tabla de reparto, barra segmentada, estado de firma,
+sello de simulado) y maqueta estática de `/acuerdo/[id]` en D3; snap 2D en
+D5; anillo 3D en D7.
+
+**Riesgo:** D3 creció con las texturas, el identicon y el segundo tema, y D7
+suma el anillo. El orden de corte está en `TASKS.md`: primero cae el stretch
+de D8, luego el anillo. El snap 2D no se corta.
 
 **Bloqueado por:** nada, pero se hace en D3 después de congelar contratos.
 

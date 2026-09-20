@@ -6,6 +6,41 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-20 · Diseño
+
+### D-030 · GSAP para el movimiento 2D y `@react-three/fiber` para el anillo
+GSAP resuelve en una línea el scramble de hashes, los contadores y el timeline
+del snap, que a mano son un día de trabajo con casos borde. El anillo 3D va en
+`@react-three/fiber` + `drei` porque encajan con React, traen controles,
+eventos de clic por malla y material *toon* listos, y se cargan con
+`next/dynamic` sin SSR para que solo pesen en las dos pantallas que los usan.
+La licencia de GSAP, que incluye ScrambleText, se confirma al instalarla en D4
+y se anota aquí si cambia algo.
+**Descartado:** Three.js a mano, que obliga a escribir el ciclo de render, los
+eventos de puntero y la limpieza de memoria; y Framer Motion, que no trae
+scramble de texto ni un timeline tan fino para encadenar el snap.
+
+### D-029 · Dirección visual: "Acta Viva", que revisa "Acta"
+Acta (D-012) se leía como documento, pero en video era blanca y plana, y no
+distinguía a cada participante. Acta Viva conserva la tipografía, las cifras en
+mono, los filetes y el radio 0, y añade cinco cosas: la narrativa papel →
+cadena (lo verificable en el explorador vive en superficie oscura y el snap es
+el cruce), un color y una trama por participante, texturas como identidad, hashes
+interactivos y un solo objeto 3D (el anillo del pool) en caja de un día. Hay
+tema claro y oscuro completos, y el video se graba en claro porque ahí el cruce
+de capas se lee sin explicarlo.
+
+El anillo cabe en la regla de simplicidad porque protagoniza el plano 0:45–1:20
+y vuelve en el del pool. No bloquea nada: si no está listo, el snap se hace con
+la barra 2D, que es obligatoria desde D5.
+
+La paleta de participantes se midió contra WCAG AA: el naranja propuesto al
+principio daba 3,9:1 sobre papel y se oscureció a `#AD5414` (4,88:1).
+**Descartado:** interfaz toda oscura, más cripto clásico pero sin el tono de
+documento ni la historia del cruce; quedarse en Acta con solo color, que era
+lo más seguro pero seguía sin moverse en video; y 3D en más pantallas, incluida
+la portada, que suma medio día sin cambiar el argumento. Queda en el roadmap.
+
 ## 2026-09-20 · Plataforma
 
 ### D-028 · Los nombres de las skills de Vercel estaban mal en `CLAUDE.md`
