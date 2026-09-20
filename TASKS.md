@@ -21,7 +21,7 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [x] `contracts` — tests: reparto ERC-20, reparto nativo, segundo pago,
       doble retiro, dos tokens en el mismo pool
 - [x] `contracts` — test: un receptor que revierte no bloquea a los demás
-- [ ] `contracts` — invariante con fuzzing: el residuo por redondeo nunca
+- [x] `contracts` — invariante con fuzzing: el residuo por redondeo nunca
       supera N−1 unidades mínimas por token
 - [ ] `contracts` — invariante con fuzzing: la suma de lo retirado nunca
       supera lo recibido, con cualquier orden de pagos y retiros
