@@ -62,7 +62,9 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 
 - [x] `infra` — andamiaje de Next.js App Router con Tailwind *(adelantado a D3,
       ver D-029)*
-- [ ] `infra` — añadir viem/wagmi al andamiaje
+- [ ] `infra` — añadir viem/wagmi al andamiaje. Sobrescribir `blockExplorers`
+      de la cadena 133: el que trae viem (`testnet-explorer.hsk.xyz`) no
+      resuelve; el bueno es el de `deployments/hashkey-testnet.json`
 - [ ] `web` — Privy: entrada por correo con wallet embebida y conexión de
       wallet externa
 - [ ] `web` — goteo de gas: la cuenta de despliegue envía un mínimo de HSK a
