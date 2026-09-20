@@ -79,6 +79,31 @@ Tests delegados con autorización explícita del usuario, en archivos separados.
 
 **Candidatos nuevos a roadmap:** ninguno. No fue necesario recortar alcance.
 
+### Organización de agentes
+
+Por solicitud del usuario, el trabajo siguiente usa un coordinador principal
+y tres agentes con ramas y worktrees separados, creados desde el cierre de D1.
+El coordinador fija interfaces, asigna archivos, resuelve dependencias, revisa
+entregas y ejecuta los tests integrados antes de cerrar tareas. `main` no recibe
+cambios automáticamente.
+
+| Responsable | Rama | Archivos asignables |
+|---|---|---|
+| Implementación | `feat/contracts-implementation` | `contracts/src/` |
+| Pruebas | `feat/contracts-tests` | `contracts/test/` |
+| Infraestructura | `feat/infra-validation` | CI y configuración de herramientas |
+
+Worktrees locales bajo `F:/Projects/SNAPLINE-AI-agents/`: `implementation`,
+`tests` e `infra`. El checkout principal conserva `feat/contracts-split-pool`.
+Cada agente trabaja únicamente en su directorio; ninguno cambia ramas en el
+checkout de otro. Las interfaces compartidas se acuerdan antes de escribir.
+
+Los agentes entregan cambios y evidencia de validación; el coordinador integra
+una tarea por commit junto con su tracking. Solo el coordinador modifica
+STATUS, TASKS y DECISIONS, para evitar conflictos. Se mantienen cuatro puestos
+simultáneos: coordinador y tres agentes. D2 requiere confirmar la ampliación
+del alcance: la instrucción inicial lo excluía expresamente.
+
 ## `design` — 🟡 Dirección fijada
 
 **Hecho:** dirección visual elegida (Acta) y documentada en `docs/BRAND.md`
