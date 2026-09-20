@@ -1,6 +1,6 @@
 # Estado del proyecto — SNAPLINE
 
-**Última actualización:** 2026-09-20 · **Bloque cerrado:** D0 · Documentación y repositorio
+**Última actualización:** 2026-09-21 · **Bloque cerrado:** D0 · Documentación y repositorio
 **Cierre del hackathon:** 1 de octubre de 2026 · **Días restantes de trabajo:** 10
 
 Este archivo se actualiza en el mismo commit que el trabajo que describe.
@@ -94,6 +94,21 @@ edición.
 | El despliegue multi-firma (D5) se atrasa | Es el día crítico. Si se cae, se sacrifica D7 completo (pulido y animación) |
 | El faucet de Base Sepolia falla el día de grabar | MockUSDT tiene faucet propio. Para el gas: reservar ETH de testnet con anticipación en D2 |
 | El stretch de pago en pesos se come tiempo del ensayo | Solo se toca si D1–D7 cerraron a tiempo. Corte a las 6 horas en D8 |
+| Las wallets embebidas se crean sin gas y no pueden retirar | Goteo de ETH desde la cuenta de despliegue al crearse (tarea de D4). Es la razón principal para quedarse en Base Sepolia |
+| La guía de submission de Cali aparece tarde y exige algo no previsto | Conseguirla cuanto antes. Está en `TASKS.md` como bloqueada por información externa |
+
+## Contexto del evento
+
+Verificado en `eag-global-buildathon.devfolio.co` el 2026-09-21:
+
+- Premio único de **$12.500 bajo "EAG Scholarship"**, sin bounties por
+  patrocinador ni por cadena. El jurado financia continuación, no la demo:
+  `docs/ROADMAP.md` y el cierre de `docs/PITCH.md` son material juzgado, no
+  cortesía.
+- Seis tracks públicos; el nuestro es **Real-World Ethereum Applications**.
+  El track Colombia no figura en la página pública.
+- Equipos de 1 a 4. Ir solo no penaliza.
+- El envío se hace en Devfolio y pide un enlace en vivo.
 
 ## Decisiones pendientes
 

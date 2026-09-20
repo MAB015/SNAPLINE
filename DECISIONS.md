@@ -6,6 +6,43 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-21
+
+### D-019 · x402 y pagos de agentes van al roadmap, no al MVP
+El evento tiene un track de "AI x Ethereum & Agent Economy" donde x402 y el
+Machine Payment Protocol encajarían. Un pool de SNAPLINE como destino de una
+API que cobra por llamada es una idea buena y legítima.
+**Descartado:** meterlo al MVP. No es nuestro track, y agregar un protocolo de
+pagos nuevo el día 4 de 10 revienta el alcance. Queda en el horizonte 3 del
+roadmap, que además sirve de respuesta si un juez pregunta por agentes.
+
+### D-018 · ETHSKILLS se consulta por URL, sin instalar nada
+Las guías de `austintgriffith/ethskills` son archivos públicos en
+`ethskills.com/<tema>/SKILL.md`. Se leen el día que hacen falta: `security`
+antes de desplegar (D2), `qa` antes de grabar (D8), y `crops` una vez contra
+la arquitectura.
+**Descartado:** instalar el plugin — requiere un terminal interactivo y no
+aporta nada frente a leer tres URLs. Se descartan también `frontend-ux` y
+`frontend-playbook` en su parte de interfaz: son específicos de Scaffold-ETH 2
+y sus reglas de UI empujan hacia una estética genérica que contradice
+`docs/BRAND.md`. De `frontend-playbook` solo interesa la parte de despliegue.
+
+### D-017 · No se despliega en HSKChain ni en Tempo
+Verificado en la página de premios del buildathon: hay un único pool de
+$12.500 bajo "EAG Scholarship", sin bounties por cadena. Desplegar en una
+segunda cadena no compra nada medible.
+**Descartado:** un despliegue secundario en HSKChain testnet (chain 133) el
+D10 para optar a un premio de patrocinador que no existe.
+
+### D-016 · Se mantiene Base Sepolia, revisada la evidencia
+Los organizadores reparten ETH de Ethereum Sepolia en su canal, lo que fue
+motivo para reconsiderar D-005. Se mantiene Base Sepolia porque el gas es
+órdenes de magnitud más barato, y el problema operativo real del demo es
+fondear wallets embebidas que se crean en el momento: con gas barato, un goteo
+mínimo alcanza. Ethereum Sepolia queda documentada como alternativa.
+**Nota:** los contratos son agnósticos de cadena. Cambiar es un flag de red y
+un redespliegue, unos 20 minutos, hasta el D8. No es una decisión cara.
+
 ## 2026-09-20
 
 ### D-015 · La documentación de D0 se hace en secuencia, sin delegar

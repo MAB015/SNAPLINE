@@ -140,6 +140,17 @@ reparto reaccione a hechos y no solo a porcentajes fijos.
 **Por qué no está en el MVP:** es un lenguaje de dominio entero, y el 90% de
 los casos reales se resuelve con porcentajes fijos.
 
+### Ingresos de agentes: un pool que cobra por llamada
+Un pool de SNAPLINE como destino de una API que cobra por uso con x402 (pagos
+sobre HTTP 402) o con el Machine Payment Protocol. Una agencia que construye
+un servicio y lo monetiza por petición vería el reparto ejecutarse solo, sin
+factura y sin cierre de mes. El contrato ya no necesita cambios: el pool es
+una dirección que recibe.
+**Por qué no está en el MVP:** pertenece a otro track del propio evento
+("AI x Ethereum & Agent Economy") y agregar un protocolo de pagos nuevo a
+mitad de un plan de diez días revienta el alcance. El valor está en que el
+diseño actual ya lo admite sin tocarlo.
+
 ### Reputación por acuerdos cumplidos
 Historial verificable de proyectos entregados y repartidos sin conflicto.
 **Por qué no está en el MVP:** necesita volumen real. Sin usuarios no hay

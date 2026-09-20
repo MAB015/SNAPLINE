@@ -38,6 +38,8 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
       direcciones del README
 - [ ] `infra` — CI: tests de contratos en cada push
 - [ ] `infra` — reservar ETH de testnet en las cuatro cuentas del demo
+- [ ] `contracts` — leer `ethskills.com/security/SKILL.md` y pasar su lista
+      antes de desplegar
 
 ## D3 · Diseño — martes 23
 
@@ -53,6 +55,8 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [ ] `infra` — andamiaje de Next.js App Router con Tailwind y viem/wagmi
 - [ ] `web` — Privy: entrada por correo con wallet embebida y conexión de
       wallet externa
+- [ ] `web` — goteo de gas: la cuenta de despliegue envía un mínimo de ETH a
+      cada wallet embebida recién creada, o no puede retirar nunca
 - [ ] `web` — `/nuevo`: participantes, bps con validación de 10000, términos
 - [ ] `infra` — Supabase: tablas `drafts` y `signatures`
 - [ ] `web` — guardar el borrador y generar el link para compartir
@@ -84,6 +88,9 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 ## D8 · Congelar y ensayar — domingo 28
 
 - [ ] `demo` — cargar los datos de `docs/DEMO-SCRIPT.md`
+- [ ] `demo` — pre-crear y fondear las cuentas del demo, incluidas las dos
+      wallets embebidas, para que sus direcciones existan antes de grabar
+- [ ] `web` — pasar `ethskills.com/qa/SKILL.md` contra la app antes de grabar
 - [ ] `demo` — tres ensayos de punta a punta
 - [ ] `demo` — borrar el acuerdo de prueba para grabar limpio
 - [ ] `web` — arreglar solo lo que se rompa en los ensayos
@@ -100,14 +107,27 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 
 ## D10 · Registro y envío — martes 30
 
-- [ ] `docs` — registro en el buildathon *(último día posible)*
+- [ ] `docs` — registro en el buildathon en `eag-global-buildathon.devfolio.co`
+      *(último día posible)*
 - [ ] `docs` — envío al track Real-World Ethereum Applications
 - [ ] `docs` — envío al track Colombia Hackathon
 - [ ] `infra` — repositorio público y contratos verificados
 
 ---
 
+## Bloqueadas por información externa
+
+- [ ] `docs` — **conseguir el documento de guía de submission de Cali**
+      (Google Docs, requiere acceso). Define campos obligatorios, duración
+      máxima del video y si el track Colombia necesita un formulario o
+      etiqueta aparte. Puede forzar rehacer trabajo si aparece tarde
+- [ ] `infra` — desplegar la web en Vercel con dominio estable; el envío pide
+      un enlace en vivo
+
 ## Sin día asignado
 
 - [ ] `docs` — completar la sección "Cómo correrlo" del README cuando exista
       código ejecutable
+- [ ] `docs` — pasar `ethskills.com/crops/SKILL.md` contra
+      `docs/ARCHITECTURE.md` una vez; es la rúbrica que más se parece a lo que
+      valora un jurado de EAG
