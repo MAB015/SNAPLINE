@@ -14,7 +14,7 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
       de la primera línea de Solidity
 - [x] `contracts` — `MockUSDT.sol`: ERC-20 de 6 decimales, `transfer` sin
       retorno booleano, `mint()` público
-- [ ] `contracts` — `SplitPool.sol`: inicialización única, participantes y bps
+- [x] `contracts` — `SplitPool.sol`: inicialización única, participantes y bps
 - [ ] `contracts` — contabilidad acumulada por token y `receive()` vacío
 - [ ] `contracts` — retiro con patrón pull, estado antes de transferir,
       `SafeERC20`
