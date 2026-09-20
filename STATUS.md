@@ -151,7 +151,7 @@ edición.
 
 ## Contexto del evento
 
-Verificado en `eag-global-buildathon.devfolio.co` el 2026-09-21:
+Verificado en `eag-global-buildathon.devfolio.co` el 2026-09-20:
 
 - Premio único de **$12.500 bajo "EAG Scholarship"**, sin bounties por
   patrocinador ni por cadena. El jurado financia continuación, no la demo:
