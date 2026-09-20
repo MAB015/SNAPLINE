@@ -10,6 +10,8 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 ## D1 · Contratos, núcleo — domingo 21
 
 - [ ] `infra` — andamiaje de Foundry (caja de tiempo: 30 min en Windows)
+- [ ] `contracts` — leer `ethskills.com/SKILL.md` y de ahí `standards/`, antes
+      de la primera línea de Solidity
 - [ ] `contracts` — `MockUSDT.sol`: ERC-20 de 6 decimales, `transfer` sin
       retorno booleano, `mint()` público
 - [ ] `contracts` — `SplitPool.sol`: inicialización única, participantes y bps

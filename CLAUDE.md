@@ -98,6 +98,11 @@ Lista cerrada. No se pide nada más salvo que aparezca una tarea nueva en
 |---|---|---|
 | Foundry — `getfoundry.sh/introduction/agents` | Contratos, tests, fuzzing | D1–D2 |
 
+El servidor MCP de documentación de Foundry queda declarado en `.mcp.json`
+(`https://getfoundry.sh/api/mcp`). Hoy devuelve 404: mientras no responda, la
+documentación se lee por URL — `getfoundry.sh/llms.txt` para el índice y
+`getfoundry.sh/<ruta>.md` para la página. Ver D-021.
+
 **Se instalan con `npx skills add`** (comando, no subida):
 
 | Skill | Comando | Para qué | Cuándo |
@@ -111,10 +116,22 @@ Lista cerrada. No se pide nada más salvo que aparezca una tarea nueva en
 
 | Guía | Para qué | Cuándo |
 |---|---|---|
+| `ethskills.com/SKILL.md` | Índice raíz. Se lee antes de escribir Solidity o de tocar la cadena; enruta al resto | D1, antes de la primera línea de Solidity |
+| `ethskills.com/standards/SKILL.md` | ERC-20 y EIP-712 al escribir los contratos | D1–D2 |
+| `ethskills.com/addresses/SKILL.md` | Direcciones verificadas. Una dirección inventada son fondos perdidos | D2, al desplegar |
 | `ethskills.com/security/SKILL.md` | Lista previa al despliegue | D2 |
 | `ethskills.com/testing/SKILL.md` | Tests en Foundry | D2 |
 | `ethskills.com/qa/SKILL.md` | Auditoría de la app antes de grabar | D8 |
 | `ethskills.com/crops/SKILL.md` | Revisión de arquitectura | Sin día |
+
+El índice raíz enruta hacia guías que este proyecto ya descartó o que chocan
+con sus límites duros. No se siguen sin pasar por aquí: `ship/` recomienda
+desplegar en mainnet y el proyecto está fijado en Base Sepolia (D-005);
+`frontend-ux/` y `frontend-playbook/` están descartadas en su parte de
+interfaz (D-018); `tools/` empuja Blockscout y Scaffold-ETH 2, ninguno en uso;
+`audit/` lanza subagentes en paralelo y abre issues en GitHub por su cuenta, y
+aquí nada se ejecuta solo; `feedback/` hace POST a un servicio externo y eso
+se pregunta antes. Ver D-022.
 
 **Sin verificar:** no se confirmó que exista una skill de Privy. Privy es el
 riesgo de tiempo más alto del plan (caja de 3 horas en D4), así que si

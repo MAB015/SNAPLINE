@@ -8,6 +8,36 @@ nueva que la revierte.
 
 ## 2026-09-21
 
+### D-022 · El índice raíz de ETHSKILLS se lee antes de escribir Solidity. **Amplía D-018**
+D-018 fijó leer tres guías sueltas en su día. Faltaba el índice raíz
+(`ethskills.com/SKILL.md`), que es un enrutador: dice qué guía corresponde a
+cada tarea y corrige de entrada cosas que un modelo recuerda mal —el gas real,
+que USDC tiene 6 decimales, que `SafeERC20` no es opcional porque USDT no
+devuelve booleano—. Eso toca `MockUSDT.sol` y el retiro de D1 directamente.
+Se añaden al inventario `standards` (ERC-20 y EIP-712, D1–D2) y `addresses`
+(D2, al desplegar).
+
+**Descartado:** seguir el índice completo. Enruta hacia piezas que chocan con
+los límites del proyecto y quedan explícitamente fuera: `ship/` recomienda
+mainnet frente a Base Sepolia (D-005), `frontend-ux/` y `frontend-playbook/`
+ya estaban descartadas (D-018), `tools/` empuja Blockscout y Scaffold-ETH 2,
+`audit/` lanza subagentes y abre issues por su cuenta —contra la regla de que
+aquí nada se ejecuta solo— y `feedback/` hace POST a un servicio externo, que
+se pregunta antes. La lista de conflictos queda en `CLAUDE.md` para que no
+haya que releer el índice para recordarla.
+
+### D-021 · El MCP de documentación de Foundry queda declarado aunque hoy no responda
+`getfoundry.sh/introduction/agents` anuncia un servidor MCP en
+`https://getfoundry.sh/api/mcp` con `search_docs`. Se declaró en `.mcp.json`.
+Comprobado el 20 de septiembre: la URL redirige a `www` y devuelve 404 en GET
+y en POST, igual que `/api/mcp/mcp`, `/api/mcp/sse` y `/mcp`. Se deja escrito
+apostando a que se active: cuesta cuatro líneas y evita volver a investigarlo.
+
+**Descartado:** borrarlo. Coste aceptado: hasta que responda, cada sesión lo
+lista como servidor fallido. Mientras tanto la documentación se lee por URL
+—`llms.txt` para el índice y `<ruta>.md` para la página—, que es lo que la
+propia documentación de Foundry recomienda y no depende del servidor.
+
 ### D-020 · Foundry, no Hardhat. **Revierte D-004**
 Dos razones que no se pesaron bien al tomar D-004:
 
