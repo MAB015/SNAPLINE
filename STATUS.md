@@ -242,8 +242,14 @@ organizador ("The problem it solves" y "Challenges we ran into"). Aplicado al
 track **Real-World Ethereum Applications**, que confirma lo verificado arriba.
 
 La ficha está escrita en inglés y declara sin maquillar lo que falta: que no
-hay frontend, que nada está desplegado en cadena, que el pago en pesos es
-simulado y que el fuzzing es empírico y no prueba formal.
+hay frontend, que el pago en pesos es simulado y que el fuzzing es empírico y
+no prueba formal.
+
+**Desactualizada desde el despliegue de D2.** La ficha todavía dice que nada
+está desplegado en cadena. Ya no es cierto: hay tres contratos verificados en
+HSKChain Testnet. Hay que corregir ese párrafo y añadir las direcciones antes
+de publicar. No se toca ahora porque la ficha se cierra de una vez en D9–D10,
+junto con las capturas.
 
 **Falta para publicar: capturas.** Devfolio exige de 1 a 6 y que sean reales
 del proyecto corriendo, no generadas. Sin interfaz no hay nada que capturar,

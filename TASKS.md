@@ -115,6 +115,8 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 
 ## D10 · Registro y envío — martes 30
 
+- [ ] `docs` — corregir en la ficha de Devfolio que los contratos ya están
+      desplegados y verificados, con sus direcciones. Hoy dice lo contrario
 - [ ] `docs` — registro en el buildathon en `eag-global-buildathon.devfolio.co`
       *(último día posible)*
 - [ ] `docs` — envío al track Real-World Ethereum Applications
