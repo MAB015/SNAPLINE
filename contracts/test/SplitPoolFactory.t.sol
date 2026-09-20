@@ -19,6 +19,52 @@ contract SplitPoolFactoryTest is Test {
         factory = new SplitPoolFactory();
     }
 
+    function test_RejectsMissingSignature() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        bytes[] memory full = _sign(agreement, block.chainid, address(factory));
+        bytes[] memory signatures = new bytes[](2);
+        signatures[0] = full[0];
+        signatures[1] = full[1];
+        _reject(agreement, signatures, SplitPoolFactory.InvalidSignatures.selector);
+    }
+
+    function test_RejectsExtraSignature() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        bytes[] memory full = _sign(agreement, block.chainid, address(factory));
+        bytes[] memory signatures = new bytes[](4);
+        for (uint256 i; i < full.length; ++i) {
+            signatures[i] = full[i];
+        }
+        signatures[3] = full[0];
+        _reject(agreement, signatures, SplitPoolFactory.InvalidSignatures.selector);
+    }
+
+    function test_RejectsSignatureFromNonparticipant() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        bytes[] memory signatures = _sign(agreement, block.chainid, address(factory));
+        signatures[1] = _signature(0xBAD, _digest(agreement, block.chainid, address(factory)));
+        _reject(agreement, signatures, SplitPoolFactory.InvalidSignatures.selector);
+    }
+
+    function test_RejectsSignaturesInWrongOrder() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        bytes[] memory signatures = _sign(agreement, block.chainid, address(factory));
+        (signatures[0], signatures[2]) = (signatures[2], signatures[0]);
+        _reject(agreement, signatures, SplitPoolFactory.InvalidSignatures.selector);
+    }
+
+    function test_RejectsMalformedSignatureWithoutConsumingAgreement() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        bytes[] memory signatures = _sign(agreement, block.chainid, address(factory));
+        signatures[2] = hex"1234";
+        vm.expectRevert();
+        factory.createPool(agreement, signatures);
+        assertFalse(factory.consumed(_structHash(agreement)));
+        // A failed attempt must not burn the valid authorization.
+        factory.createPool(agreement, _sign(agreement, block.chainid, address(factory)));
+        assertTrue(factory.consumed(_structHash(agreement)));
+    }
+
     function test_RejectsOtherChainDomain() public {
         SplitPoolFactory.Agreement memory agreement = _agreement();
         _reject(

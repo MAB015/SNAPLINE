@@ -30,7 +30,7 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 
 - [x] `contracts` — `SplitPoolFactory.sol`: dominio EIP-712 con `chainId` y
       `verifyingContract`
-- [ ] `contracts` — verificación de firmas en orden contra el arreglo de
+- [x] `contracts` — verificación de firmas en orden contra el arreglo de
       participantes
 - [ ] `contracts` — `structHash` consumido, con `salt` por acuerdo
 - [ ] `contracts` — validaciones: suma 10000, sin duplicados, sin dirección
