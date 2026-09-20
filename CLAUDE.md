@@ -107,10 +107,9 @@ documentación se lee por URL — `getfoundry.sh/llms.txt` para el índice y
 
 | Skill | Comando | Para qué | Cuándo |
 |---|---|---|---|
-| `next-best-practices` | `npx skills add vercel/agent-skills --skill next-best-practices` | Convenciones de App Router y fronteras RSC. Es donde se pierden horas trabajando solo | D4–D7 |
-| `vercel-deploy` | `npx skills add vercel/agent-skills --skill vercel-deploy` | Desplegar la web. El envío exige un enlace en vivo | D9–D10 |
+| `deploy-to-vercel` | `npx skills add vercel-labs/agent-skills --skill deploy-to-vercel` | Desplegar la web. El envío exige un enlace en vivo. Despliega en preview salvo que se pida producción | D9–D10 |
 | Supabase | `npx skills add supabase/agent-skills` | RLS del relay: las tablas son públicas con la clave anónima | D4 |
-| `web-design-guidelines` *(opcional)* | `npx skills add vercel/agent-skills --skill web-design-guidelines` | Repaso de foco, navegación por teclado y áreas de toque. Es correctitud, no estética: no pelea con `docs/BRAND.md` | D8, solo si D7 no se comió el colchón |
+| `web-design-guidelines` *(opcional)* | `npx skills add vercel-labs/agent-skills --skill web-design-guidelines` | Repaso de foco, navegación por teclado y áreas de toque. Es correctitud, no estética: no pelea con `docs/BRAND.md` | D8, solo si D7 no se comió el colchón |
 
 **Se leen por URL**, sin instalar ni subir nada:
 
@@ -149,6 +148,7 @@ para no dejar las políticas de acceso abiertas.
 | Tempo, x402, Machine Payment Protocol | Pertenecen a otro track del evento. Ver D-019 |
 | ETHSKILLS `frontend-ux`, `frontend-playbook` | Son de Scaffold-ETH 2 y sus reglas de UI contradicen `docs/BRAND.md`. Ver D-018 |
 | `vercel-react-best-practices` | Optimización de rendimiento para apps grandes. La nuestra tiene seis pantallas |
+| `next-best-practices` | No existe con ese nombre, ni en `vercel-labs/agent-skills` ni en el registro. Lo más cercano son guías de una función concreta de Next o de composición de React, ninguna de convenciones de App Router. Revisar en D4 solo si las fronteras RSC dan guerra |
 | `building-components` | Se solapa con `docs/BRAND.md`, que ya es la especificación de componentes |
 | Hardhat | Se cambió a Foundry. Ver D-020 |
 
