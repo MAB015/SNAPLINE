@@ -15,7 +15,7 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [x] `contracts` — `MockUSDT.sol`: ERC-20 de 6 decimales, `transfer` sin
       retorno booleano, `mint()` público
 - [x] `contracts` — `SplitPool.sol`: inicialización única, participantes y bps
-- [ ] `contracts` — contabilidad acumulada por token y `receive()` vacío
+- [x] `contracts` — contabilidad acumulada por token y `receive()` vacío
 - [ ] `contracts` — retiro con patrón pull, estado antes de transferir,
       `SafeERC20`
 - [ ] `contracts` — tests: reparto ERC-20, reparto nativo, segundo pago,
