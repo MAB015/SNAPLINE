@@ -180,6 +180,35 @@ contract SplitPoolFactoryTest is Test {
         _reject(agreement, _sign(agreement, block.chainid, address(other)), SplitPoolFactory.InvalidSignatures.selector);
     }
 
+    function test_ModifyingParticipantInvalidatesSignatures() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        bytes[] memory signatures = _sign(agreement, block.chainid, address(factory));
+        agreement.participants[0] = vm.addr(0xBAD);
+        _reject(agreement, signatures, SplitPoolFactory.InvalidSignatures.selector);
+    }
+
+    function test_ModifyingBpsWithSameSumInvalidatesSignatures() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        bytes[] memory signatures = _sign(agreement, block.chainid, address(factory));
+        agreement.bps[0] = 4_000;
+        agreement.bps[1] = 4_000;
+        _reject(agreement, signatures, SplitPoolFactory.InvalidSignatures.selector);
+    }
+
+    function test_ModifyingTermsInvalidatesSignatures() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        bytes[] memory signatures = _sign(agreement, block.chainid, address(factory));
+        agreement.termsHash = keccak256("different terms");
+        _reject(agreement, signatures, SplitPoolFactory.InvalidSignatures.selector);
+    }
+
+    function test_ModifyingSaltInvalidatesSignatures() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        bytes[] memory signatures = _sign(agreement, block.chainid, address(factory));
+        agreement.salt = bytes32(uint256(2));
+        _reject(agreement, signatures, SplitPoolFactory.InvalidSignatures.selector);
+    }
+
     function test_NewSaltWithNewSignaturesCreatesIndependentPool() public {
         SplitPoolFactory.Agreement memory agreement = _agreement();
         bytes32 firstHash = _structHash(agreement);
@@ -189,6 +218,49 @@ contract SplitPoolFactoryTest is Test {
         assertNotEq(first, second);
         assertTrue(factory.consumed(firstHash));
         assertTrue(factory.consumed(_structHash(agreement)));
+    }
+
+    function test_CreatedPoolAcceptsAndSplitsTokenAndNativePayments() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        SplitPool pool =
+            SplitPool(payable(factory.createPool(agreement, _sign(agreement, block.chainid, address(factory)))));
+        MockUSDT token = new MockUSDT();
+        token.mint(address(this), 1_000e6);
+        token.transfer(address(pool), 1_000e6);
+        vm.deal(address(this), 10 ether);
+        (bool success,) = address(pool).call{value: 10 ether}("");
+        assertTrue(success);
+        for (uint256 i; i < agreement.participants.length; ++i) {
+            address account = agreement.participants[i];
+            uint256 share = agreement.bps[i];
+            vm.prank(account);
+            assertEq(pool.withdraw(address(token)), 1_000e6 * share / 10_000);
+            vm.prank(account);
+            assertEq(pool.withdraw(address(0)), 10 ether * share / 10_000);
+            assertEq(token.balanceOf(account), 1_000e6 * share / 10_000);
+            assertEq(account.balance, 10 ether * share / 10_000);
+        }
+        assertEq(token.balanceOf(address(pool)), 0);
+        assertEq(address(pool).balance, 0);
+    }
+
+    function testFuzz_ValidAgreementBindsArbitrarySharesTermsAndSalt(uint16 shareSeed, bytes32 terms, bytes32 salt)
+        public
+    {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        uint16 firstShare = uint16(bound(shareSeed, 0, 10_000));
+        agreement.bps[0] = firstShare;
+        agreement.bps[1] = uint16((10_000 - firstShare) / 2);
+        agreement.bps[2] = 10_000 - firstShare - agreement.bps[1];
+        agreement.termsHash = terms;
+        agreement.salt = salt;
+        SplitPool pool =
+            SplitPool(payable(factory.createPool(agreement, _sign(agreement, block.chainid, address(factory)))));
+        assertTrue(factory.consumed(_structHash(agreement)));
+        assertEq(pool.termsHash(), terms);
+        for (uint256 i; i < agreement.participants.length; ++i) {
+            assertEq(pool.bps(agreement.participants[i]), agreement.bps[i]);
+        }
     }
 
     function _agreement() internal view returns (SplitPoolFactory.Agreement memory agreement) {
