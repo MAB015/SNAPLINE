@@ -10,8 +10,9 @@ dist/
 build/
 artifacts/
 cache/
-typechain-types/
-contracts/ignition/deployments/
+out/
+broadcast/
+contracts/lib/
 
 # entorno
 .env

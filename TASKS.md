@@ -1,6 +1,6 @@
 # Tareas — SNAPLINE
 
-**Última actualización:** 2026-09-20
+**Última actualización:** 2026-09-21
 
 Cada tarea lleva su área. Una tarea terminada es un commit. El plan por día
 que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
@@ -9,7 +9,7 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 
 ## D1 · Contratos, núcleo — domingo 21
 
-- [ ] `infra` — andamiaje de Hardhat 3 con viem y TypeScript
+- [ ] `infra` — andamiaje de Foundry (caja de tiempo: 30 min en Windows)
 - [ ] `contracts` — `MockUSDT.sol`: ERC-20 de 6 decimales, `transfer` sin
       retorno booleano, `mint()` público
 - [ ] `contracts` — `SplitPool.sol`: inicialización única, participantes y bps
@@ -19,7 +19,10 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [ ] `contracts` — tests: reparto ERC-20, reparto nativo, segundo pago,
       doble retiro, dos tokens en el mismo pool
 - [ ] `contracts` — test: un receptor que revierte no bloquea a los demás
-- [ ] `contracts` — test: el residuo por redondeo nunca supera N−1 unidades
+- [ ] `contracts` — invariante con fuzzing: el residuo por redondeo nunca
+      supera N−1 unidades mínimas por token
+- [ ] `contracts` — invariante con fuzzing: la suma de lo retirado nunca
+      supera lo recibido, con cualquier orden de pagos y retiros
 
 ## D2 · Contratos, firmas y despliegue — lunes 22
 
@@ -32,7 +35,9 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
       cero
 - [ ] `contracts` — clonado EIP-1167 y evento `PoolCreated`
 - [ ] `contracts` — tests de la lista completa de `docs/THREAT-MODEL.md` §6
-- [ ] `contracts` — script de despliegue a Base Sepolia
+- [ ] `contracts` — leer `ethskills.com/testing/SKILL.md` (es de Foundry)
+- [ ] `contracts` — desplegar a Base Sepolia con `forge create` y verificar
+      con `forge verify-contract`, sin scripts en Solidity
 - [ ] `contracts` — verificar contratos en BaseScan
 - [ ] `docs` — llenar `deployments/base-sepolia.json` y la sección de
       direcciones del README

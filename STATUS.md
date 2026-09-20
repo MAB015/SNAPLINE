@@ -12,7 +12,7 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 | Área | Estado | Siguiente |
 |---|---|---|
 | `docs` | ✅ Listo | Solo mantenimiento del tracking |
-| `infra` | 🟡 Parcial | Andamiaje de Hardhat y Next.js (D1, D4) |
+| `infra` | 🟡 Parcial | Andamiaje de Foundry y Next.js (D1, D4) |
 | `contracts` | ⬜ Sin empezar | D1 · núcleo de `SplitPool` |
 | `design` | 🟡 Dirección fijada | D3 · sistema en código |
 | `web` | ⬜ Sin empezar | D4 · Privy y creación de acuerdo |
@@ -35,7 +35,7 @@ y no se reescriben; a partir de aquí solo se actualiza el tracking.
 **Hecho:** repositorio inicializado, estructura de carpetas, `.gitignore`,
 licencia MIT, `.env.example` con las variables previstas.
 
-**Falta:** andamiaje de Hardhat 3 (D1), andamiaje de Next.js (D4), CI con
+**Falta:** andamiaje de Foundry (D1), andamiaje de Next.js (D4), CI con
 tests en cada push (D2).
 
 **Nota:** el CI no se añade hasta que haya algo que construir. Un `main` con

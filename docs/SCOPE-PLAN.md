@@ -30,7 +30,8 @@ actualizan `STATUS.md`, `TASKS.md` y `DECISIONS.md`.
 
 ## D1 · Domingo 21 — Contratos, núcleo
 
-- Andamiaje de Hardhat 3 + viem + TypeScript.
+- Andamiaje de Foundry. Caja de tiempo de 30 minutos para el setup en
+  Windows: si `forge test` no corre, se revierte a Hardhat sin discutirlo más.
 - `SplitPool.sol`: inicialización, contabilidad acumulada por token, retiro
   con estado antes de transferir, `receive()` vacío.
 - `MockUSDT.sol` con `mint()` público.

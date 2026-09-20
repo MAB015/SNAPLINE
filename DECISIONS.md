@@ -8,6 +8,36 @@ nueva que la revierte.
 
 ## 2026-09-21
 
+### D-020 · Foundry, no Hardhat. **Revierte D-004**
+Dos razones que no se pesaron bien al tomar D-004:
+
+1. **Existe una skill oficial de Foundry orientada a agentes**
+   (`getfoundry.sh/introduction/agents`). Buena parte de este código lo
+   escriben agentes, y una skill oficial significa guía correcta y actualizada
+   en lugar de lo que el modelo recuerde. Hardhat 3 no tiene equivalente.
+2. **Fuzzing e invariantes casi gratis.** Dos criterios de terminado del
+   proyecto no son casos de prueba sino invariantes: que el residuo por
+   redondeo nunca supere N−1 unidades mínimas, y que nadie retire más de lo
+   debido sin importar el orden de pagos y retiros. En Foundry son un
+   `testFuzz_` — una función y un parámetro. En Hardhat son casos escogidos a
+   mano que prueban menos.
+
+D-004 se apoyaba en tres argumentos y el principal era débil: se dio por
+costoso instalar Foundry en Windows porque `forge --version` falló, cuando
+`foundryup` corre en git bash en un par de minutos. El riesgo residual se
+acota con una caja de tiempo de 30 minutos en D1: si `forge test` no corre, se
+revierte a Hardhat y no se vuelve a discutir.
+
+**Descartado:** Hardhat 3 + viem + TypeScript. Sigue siendo más cómodo de
+depurar a mano para alguien con Solidity intermedio, y eso era el argumento
+que sí aguantaba de D-004. Se acepta el coste.
+
+**Efecto secundario:** `ethskills.com/testing/SKILL.md` es específica de
+Foundry, así que pasa de valor parcial a directamente aplicable.
+
+**Momento:** se cambia en D0, sin una línea de código escrita, cuando el coste
+es cero. Después de D1 habría costado un día y no se habría hecho.
+
 ### D-019 · x402 y pagos de agentes van al roadmap, no al MVP
 El evento tiene un track de "AI x Ethereum & Agent Economy" donde x402 y el
 Machine Payment Protocol encajarían. Un pool de SNAPLINE como destino de una

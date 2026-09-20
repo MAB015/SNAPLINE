@@ -63,7 +63,7 @@ Ver [`STATUS.md`](STATUS.md) para el estado por área,
 ## Estructura
 
 ```
-contracts/    Solidity + Hardhat 3 + viem. SplitPool, SplitPoolFactory, MockUSDT
+contracts/    Solidity + Foundry. SplitPool, SplitPoolFactory, MockUSDT
 web/          Next.js (App Router), TypeScript, Tailwind, viem/wagmi, Privy
 deployments/  Direcciones desplegadas por cadena, para verificar en el explorador
 docs/         Documentación del proyecto

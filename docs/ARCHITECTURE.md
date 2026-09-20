@@ -205,7 +205,7 @@ una vez haya una entidad vigilada de por medio.
 
 | Decisión | Por qué | Alternativa descartada |
 |---|---|---|
-| **Hardhat 3 + viem + TS** | Instala con npm, tests en TypeScript, mismo cliente que el front | Foundry: mejor para fuzzing, pero eso no está en el alcance y en Windows el setup cuesta |
+| **Foundry** | Fuzzing e invariantes casi gratis, y hay una skill oficial orientada a agentes | Hardhat 3 + viem: tests en TypeScript, más cómodo de depurar a mano, pero sin fuzzing y sin skill. Ver D-020 |
 | **Base Sepolia** | Faucets confiables, explorador decente, lee bien en un track de aplicaciones reales | Ethereum Sepolia: más canónico para EAG, faucets más frágiles a 10 días del cierre |
 | **EIP-1167** | Un pool por proyecto sin pagar un despliegue completo cada vez | Un contrato registro con varios acuerdos: más barato aún, pero pierde el "tu pool es tu dirección" |
 | **Privy** | Wallet embebida y conexión externa en una sola librería | Para / Web3Auth: equivalentes; Privy tiene mejor DX y plan gratuito suficiente |
