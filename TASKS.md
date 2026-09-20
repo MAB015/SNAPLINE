@@ -28,7 +28,7 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 
 ## D2 · Contratos, firmas y despliegue — lunes 22
 
-- [ ] `contracts` — `SplitPoolFactory.sol`: dominio EIP-712 con `chainId` y
+- [x] `contracts` — `SplitPoolFactory.sol`: dominio EIP-712 con `chainId` y
       `verifyingContract`
 - [ ] `contracts` — verificación de firmas en orden contra el arreglo de
       participantes
