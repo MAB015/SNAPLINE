@@ -65,6 +65,16 @@ contract SplitPoolFactoryTest is Test {
         assertTrue(factory.consumed(_structHash(agreement)));
     }
 
+    function test_RejectsReusedSignaturePackage() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        bytes[] memory signatures = _sign(agreement, block.chainid, address(factory));
+        address created = factory.createPool(agreement, signatures);
+        vm.expectRevert(SplitPoolFactory.AgreementAlreadyConsumed.selector);
+        factory.createPool(agreement, signatures);
+        assertTrue(factory.consumed(_structHash(agreement)));
+        assertEq(SplitPool(payable(created)).termsHash(), agreement.termsHash);
+    }
+
     function test_RejectsOtherChainDomain() public {
         SplitPoolFactory.Agreement memory agreement = _agreement();
         _reject(
@@ -86,6 +96,17 @@ contract SplitPoolFactoryTest is Test {
         SplitPoolFactory other = new SplitPoolFactory();
         SplitPoolFactory.Agreement memory agreement = _agreement();
         _reject(agreement, _sign(agreement, block.chainid, address(other)), SplitPoolFactory.InvalidSignatures.selector);
+    }
+
+    function test_NewSaltWithNewSignaturesCreatesIndependentPool() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        bytes32 firstHash = _structHash(agreement);
+        address first = factory.createPool(agreement, _sign(agreement, block.chainid, address(factory)));
+        agreement.salt = bytes32(uint256(2));
+        address second = factory.createPool(agreement, _sign(agreement, block.chainid, address(factory)));
+        assertNotEq(first, second);
+        assertTrue(factory.consumed(firstHash));
+        assertTrue(factory.consumed(_structHash(agreement)));
     }
 
     function _agreement() internal view returns (SplitPoolFactory.Agreement memory agreement) {

@@ -32,7 +32,7 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
       `verifyingContract`
 - [x] `contracts` — verificación de firmas en orden contra el arreglo de
       participantes
-- [ ] `contracts` — `structHash` consumido, con `salt` por acuerdo
+- [x] `contracts` — `structHash` consumido, con `salt` por acuerdo
 - [ ] `contracts` — validaciones: suma 10000, sin duplicados, sin dirección
       cero
 - [ ] `contracts` — clonado EIP-1167 y evento `PoolCreated`
