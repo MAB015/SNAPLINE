@@ -1,0 +1,13 @@
+# Fin de línea normalizado a LF en todo el repositorio, sin depender de la
+# configuración de cada máquina. `forge fmt --check` trata un archivo en CRLF
+# como si cada línea hubiera cambiado, y el CI lo ejecuta en cada push: sin
+# esto, un checkout en Windows con core.autocrlf=true rompe la comprobación de
+# formato aunque el contenido sea idéntico.
+* text=auto eol=lf
+
+# Binarios: nunca tocar.
+*.png binary
+*.jpg binary
+*.webp binary
+*.mp4 binary
+*.woff2 binary
