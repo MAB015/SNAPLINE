@@ -6,6 +6,23 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-20 · Plataforma
+
+### D-025 · Los nombres de las skills de Vercel estaban mal en `CLAUDE.md`
+La organización es `vercel-labs`, no `vercel`, y `vercel-deploy` se llama en
+realidad `deploy-to-vercel`. El CLI reporta el 404 de un repositorio inexistente
+como fallo de autenticación, que es lo que despistó. Verificado contra la API de
+GitHub: `vercel-labs/agent-skills` es público y trae catorce skills.
+
+`next-best-practices` no existe con ese nombre en ninguna organización ni en el
+registro. Lo más cercano son guías de una función concreta de Next —el bucle de
+desarrollo, la adopción de cache components— o de composición de React, ninguna
+de convenciones de App Router y fronteras RSC, que era lo que el plan quería.
+**Descartado:** meter `vercel-composition-patterns` o `react-best-practices` en
+su lugar. La segunda ya estaba descartada por ser optimización para apps grandes,
+y sustituir una guía por otra que no resuelve el mismo problema es alcance que no
+se ganó el puesto. Se revisa en D4 solo si las fronteras RSC dan guerra de verdad.
+
 ## 2026-09-20 · Implementación D2
 
 ### D-024 · Interfaz compartida del factory y codificación del acuerdo
