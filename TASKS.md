@@ -18,7 +18,7 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [x] `contracts` — contabilidad acumulada por token y `receive()` vacío
 - [x] `contracts` — retiro con patrón pull, estado antes de transferir,
       `SafeERC20`
-- [ ] `contracts` — tests: reparto ERC-20, reparto nativo, segundo pago,
+- [x] `contracts` — tests: reparto ERC-20, reparto nativo, segundo pago,
       doble retiro, dos tokens en el mismo pool
 - [ ] `contracts` — test: un receptor que revierte no bloquea a los demás
 - [ ] `contracts` — invariante con fuzzing: el residuo por redondeo nunca
