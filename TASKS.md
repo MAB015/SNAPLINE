@@ -37,7 +37,7 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
       cero
 - [ ] `contracts` — clonado EIP-1167 y evento `PoolCreated`
 - [ ] `contracts` — tests de la lista completa de `docs/THREAT-MODEL.md` §6
-- [ ] `contracts` — leer `ethskills.com/testing/SKILL.md` (es de Foundry)
+- [x] `contracts` — leer `ethskills.com/testing/SKILL.md` (es de Foundry)
 - [ ] `contracts` — desplegar a Base Sepolia con `forge create` y verificar
       con `forge verify-contract`, sin scripts en Solidity
 - [ ] `contracts` — verificar contratos en BaseScan

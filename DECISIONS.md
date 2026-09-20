@@ -6,6 +6,24 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-20 · Implementación D2
+
+### D-024 · Interfaz compartida del factory y codificación del acuerdo
+El constructor del factory crea una implementación de SplitPool y conserva su
+dirección inmutable. Se descarta recibir una implementación arbitraria: no hay
+necesidad de configuración y así el factory solo clona el código previsto.
+
+La API es `createPool(Agreement, bytes[]) returns (address)`, con tipo firmado
+exacto `Agreement(address[] participants,uint16[] bps,bytes32 termsHash,bytes32 salt)`.
+Cada elemento de los arrays se codifica en 32 bytes antes de hashear, según
+EIP-712. Se descarta empaquetar direcciones en 20 bytes o bps en dos: produciría
+firmas incompatibles con clientes que implementan el estándar.
+
+`PoolCreated(address indexed pool, bytes32 indexed structHash)` permite enlazar
+el acuerdo consumido con su pool. Los tests construyen el digest sin usar un
+helper del factory, para no reproducir el mismo error en ambos lados.
+Sin nuevas restricciones de participantes ni cambios a las decisiones D1.
+
 ## 2026-09-20 · Implementación D1
 
 ### D-023 · Convenciones del núcleo y herramientas fijadas

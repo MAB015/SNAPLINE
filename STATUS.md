@@ -101,8 +101,9 @@ checkout de otro. Las interfaces compartidas se acuerdan antes de escribir.
 Los agentes entregan cambios y evidencia de validación; el coordinador integra
 una tarea por commit junto con su tracking. Solo el coordinador modifica
 STATUS, TASKS y DECISIONS, para evitar conflictos. Se mantienen cuatro puestos
-simultáneos: coordinador y tres agentes. D2 requiere confirmar la ampliación
-del alcance: la instrucción inicial lo excluía expresamente.
+simultáneos: coordinador y tres agentes. D2 autorizado expresamente por el
+usuario; factory, tests y CI en curso en paralelo. Despliegue pendiente de
+credenciales locales y direcciones públicas de las cuatro cuentas del demo.
 
 ## `design` — 🟡 Dirección fijada
 
