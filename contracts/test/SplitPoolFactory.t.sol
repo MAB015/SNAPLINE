@@ -19,6 +19,52 @@ contract SplitPoolFactoryTest is Test {
         factory = new SplitPoolFactory();
     }
 
+    function test_RejectsBpsBelow10000() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        agreement.bps[0] = 4_999;
+        _reject(agreement, _sign(agreement, block.chainid, address(factory)), SplitPoolFactory.InvalidBps.selector);
+    }
+
+    function test_RejectsBpsAbove10000() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        agreement.bps[0] = 5_001;
+        _reject(agreement, _sign(agreement, block.chainid, address(factory)), SplitPoolFactory.InvalidBps.selector);
+    }
+
+    function test_RejectsDuplicateParticipant() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        agreement.participants[2] = agreement.participants[0];
+        _reject(
+            agreement, _sign(agreement, block.chainid, address(factory)), SplitPoolFactory.InvalidParticipants.selector
+        );
+    }
+
+    function test_RejectsZeroParticipant() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        agreement.participants[1] = address(0);
+        _reject(
+            agreement, _sign(agreement, block.chainid, address(factory)), SplitPoolFactory.InvalidParticipants.selector
+        );
+    }
+
+    function test_RejectsEmptyParticipants() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        agreement.participants = new address[](0);
+        agreement.bps = new uint16[](0);
+        _reject(agreement, new bytes[](0), SplitPoolFactory.InvalidParticipants.selector);
+    }
+
+    function test_RejectsMismatchedArrayLengths() public {
+        SplitPoolFactory.Agreement memory agreement = _agreement();
+        agreement.bps = new uint16[](2);
+        agreement.bps[0] = 5_000;
+        agreement.bps[1] = 5_000;
+        bytes[] memory signatures = _sign(agreement, block.chainid, address(factory));
+        vm.expectRevert();
+        factory.createPool(agreement, signatures);
+        assertFalse(factory.consumed(_structHash(agreement)));
+    }
+
     function test_RejectsMissingSignature() public {
         SplitPoolFactory.Agreement memory agreement = _agreement();
         bytes[] memory full = _sign(agreement, block.chainid, address(factory));
