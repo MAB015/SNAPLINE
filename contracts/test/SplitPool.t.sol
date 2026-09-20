@@ -17,6 +17,9 @@ contract SplitPoolTest is Test {
     bytes32 internal constant TERMS = keccak256("project terms");
 
     function setUp() public {
+        vm.deal(alice, 0);
+        vm.deal(bob, 0);
+        vm.deal(carol, 0);
         implementation = new SplitPool();
         pool = _newPool(alice, bob, carol);
         token = new MockUSDT();

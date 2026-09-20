@@ -16,7 +16,7 @@ ahí el reparto queda marcado y ya no se discute.
 > ### ⚠ Estado: prototipo de hackathon
 >
 > Código escrito en diez días por una persona para el **EAG Global
-> Buildathon** (cierre: 1 de octubre de 2026). Desplegado en **Base Sepolia**,
+> Buildathon** (cierre: 1 de octubre de 2026). Despliegue previsto en **HSKChain Testnet** (pendiente),
 > sin auditar. **No debe usarse con dinero real.**
 >
 > **La salida a pesos colombianos está simulada.** No mueve dinero y no habla
@@ -79,8 +79,8 @@ proyecto de [Supabase](https://supabase.com) (gratuitos). Copiar
 
 ## Direcciones desplegadas
 
-> Pendiente. Aparecerán en [`deployments/base-sepolia.json`](deployments/) y
-> verificadas en BaseScan.
+> Pendiente. Aparecerán en [`deployments/hashkey-testnet.json`](deployments/) y
+> verificadas en el explorador de HSKChain.
 
 ## Lo que NO hace, a propósito
 

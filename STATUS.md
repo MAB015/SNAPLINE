@@ -13,7 +13,7 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 |---|---|---|
 | `docs` | ✅ Listo | Solo mantenimiento del tracking |
 | `infra` | 🟡 CI validado | Fondeo de testnet; Next.js en D4 |
-| `contracts` | 🟡 D2 local validado | Desplegar y verificar en Base Sepolia |
+| `contracts` | 🟡 D2 local validado | Desplegar y verificar en HSKChain Testnet |
 | `design` | 🟡 Dirección fijada | D3 · sistema en código |
 | `web` | ⬜ Sin empezar | D4 · Privy y creación de acuerdo |
 | `demo` | 🟡 Guion escrito | D8 · datos y ensayos |
@@ -80,14 +80,19 @@ de todas las secuencias. `forge lint src --severity high med` sin hallazgos.
 **Nota de compilación:** advertencia de selfdestruct solo en el helper de test
 que fuerza ETH; no aparece en los contratos de producción.
 
-**Falta:** desplegar y verificar factory, implementación y MockUSDT en Base
-Sepolia; registrar direcciones reales; reservar ETH para las cuatro cuentas;
+**Falta:** desplegar y verificar factory, implementación y MockUSDT en HSKChain Testnet; registrar direcciones reales; reservar HSK para las cuatro cuentas;
 cerrar revisión previa al despliegue. D2 no está cerrado ni congelado.
 
-**Bloqueado por:** no hay configuración local de despliegue ni variables de
-credenciales disponibles. Faltan la cuenta desplegadora de testnet con fondos,
-clave de verificación y las cuatro direcciones públicas del demo. El RPC público
-respondió chainId 84532. No se inventaron direcciones ni se enviaron transacciones.
+**Cambio de red autorizado:** HSKChain Testnet, chainId 133, HSK de prueba para gas y MockUSDT para pagos (D-026). Configuración pública y referencias de red actualizadas; contracts/.env local e ignorado preparado. RPC y API del explorador responden. Verificación de fuentes pendiente.
+
+**Validación del cambio:** formato y 40 tests pasan tanto localmente como en
+fork de HSKChain Testnet (bloque 33376448), con 1000 casos por test fuzz.
+Tres tests fallaron inicialmente porque una dirección de prueba ya tenía
+saldo nativo en la red; se fijó saldo inicial cero en los fixtures de dos
+suites. No se modificó Solidity de producción. El fork no sustituye el
+despliegue ni demuestra por sí solo la compatibilidad del nodo remoto.
+
+**Bloqueado por:** falta configurar y fondear la cuenta desplegadora. Las cuatro direcciones del demo se necesitan para su fondeo posterior, no para desplegar el factory. No se inventaron direcciones ni se enviaron transacciones.
 
 **Revisión de seguridad provisional:** se leyeron testing, security y addresses
 de ETHSKILLS. Revisados CEI, SafeERC20, contabilidad por activo, redondeo,
@@ -178,9 +183,9 @@ edición.
 |---|---|
 | Privy consume más tiempo del previsto | Corte a las 3 horas en D4: se cae a wallet externa y la embebida pasa a stretch de D8 |
 | El despliegue multi-firma (D5) se atrasa | Es el día crítico. Si se cae, se sacrifica D7 completo (pulido y animación) |
-| El faucet de Base Sepolia falla el día de grabar | MockUSDT tiene faucet propio. Para el gas: reservar ETH de testnet con anticipación en D2 |
+| El faucet de HSKChain Testnet falla el día de grabar | MockUSDT tiene faucet propio. Para el gas: reservar HSK de testnet con anticipación en D2 |
 | El stretch de pago en pesos se come tiempo del ensayo | Solo se toca si D1–D7 cerraron a tiempo. Corte a las 6 horas en D8 |
-| Las wallets embebidas se crean sin gas y no pueden retirar | Goteo de ETH desde la cuenta de despliegue al crearse (tarea de D4). Es la razón principal para quedarse en Base Sepolia |
+| Las wallets embebidas se crean sin gas y no pueden retirar | Goteo de HSK desde la cuenta de despliegue al crearse (tarea de D4). Confirmar soporte de esta red en Privy durante D4 |
 | La guía de submission de Cali aparece tarde y exige algo no previsto | Conseguirla cuanto antes. Está en `TASKS.md` como bloqueada por información externa |
 
 ## Contexto del evento

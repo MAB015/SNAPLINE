@@ -108,7 +108,7 @@ Sin pantalla de "gracias". Se queda la tabla de reparto de fondo.
 > puede cambiar es un acuerdo que hay que volver a discutir, y todo el valor
 > está en que el reparto deje de ser discutible.
 >
-> Los contratos están desplegados y verificados en Base Sepolia. No están
+> Los contratos están desplegados y verificados en HSKChain Testnet. No están
 > auditados y no deben tocar dinero real todavía.
 >
 > Lo siguiente es la salida a pesos de verdad, con Bre-B como riel y una
@@ -120,7 +120,7 @@ Sin pantalla de "gracias". Se queda la tabla de reparto de fondo.
 
 - [ ] Cuatro sesiones abiertas y listas, dos con wallet externa y dos con
       correo
-- [ ] Las wallets externas con ETH de testnet suficiente
+- [ ] Las wallets externas con HSK de testnet suficiente
 - [ ] MockUSDT acuñado en la cuenta del "cliente"
 - [ ] El acuerdo del demo creado, probado y **borrado**, para grabarlo limpio
 - [ ] Explorador abierto en una pestaña, apuntando al factory

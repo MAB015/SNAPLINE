@@ -46,8 +46,8 @@ del MVP y queda solo ERC-20.
 - `SplitPoolFactory.sol`: EIP-712, verificación en orden, `structHash`
   consumido, validación de bps y duplicados, clonado EIP-1167.
 - Tests de la lista de `docs/THREAT-MODEL.md` §6.
-- Despliegue a Base Sepolia, verificación en el explorador,
-  `deployments/base-sepolia.json`.
+- Despliegue a HSKChain Testnet, verificación en el explorador,
+  `deployments/hashkey-testnet.json`.
 - CI: tests en cada push.
 
 **Terminado:** contratos desplegados, verificados, y **congelados**.

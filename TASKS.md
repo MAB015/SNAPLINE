@@ -38,14 +38,14 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [x] `contracts` — clonado EIP-1167 y evento `PoolCreated`
 - [x] `contracts` — tests de la lista completa de `docs/THREAT-MODEL.md` §6
 - [x] `contracts` — leer `ethskills.com/testing/SKILL.md` (es de Foundry)
-- [ ] `contracts` — desplegar a Base Sepolia con `forge create` y verificar
+- [ ] `contracts` — desplegar a HSKChain Testnet con `forge create` y verificar
       con `forge verify-contract`, sin scripts en Solidity
-- [ ] `contracts` — verificar contratos en BaseScan
-- [ ] `docs` — llenar `deployments/base-sepolia.json` y la sección de
+- [ ] `contracts` — verificar contratos en el explorador de HSKChain
+- [ ] `docs` — llenar `deployments/hashkey-testnet.json` y la sección de
       direcciones del README
 - [x] `infra` — CI: tests de contratos en cada push (validado en GitHub,
       ejecución 35537664699)
-- [ ] `infra` — reservar ETH de testnet en las cuatro cuentas del demo
+- [ ] `infra` — reservar HSK de testnet en las cuatro cuentas del demo
 - [ ] `contracts` — leer `ethskills.com/security/SKILL.md` y pasar su lista
       antes de desplegar
 
@@ -63,7 +63,7 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [ ] `infra` — andamiaje de Next.js App Router con Tailwind y viem/wagmi
 - [ ] `web` — Privy: entrada por correo con wallet embebida y conexión de
       wallet externa
-- [ ] `web` — goteo de gas: la cuenta de despliegue envía un mínimo de ETH a
+- [ ] `web` — goteo de gas: la cuenta de despliegue envía un mínimo de HSK a
       cada wallet embebida recién creada, o no puede retirar nunca
 - [ ] `web` — `/nuevo`: participantes, bps con validación de 10000, términos
 - [ ] `infra` — Supabase: tablas `drafts` y `signatures`

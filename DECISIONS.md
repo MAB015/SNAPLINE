@@ -6,6 +6,30 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-20 · Cambio de testnet autorizado
+
+### D-026 · HSKChain Testnet con HSK de prueba
+El usuario solicita sustituir Base Sepolia por HSKChain Testnet y confirma
+testnet, no mainnet. Revierte la selección de cadena de D-005, D-016 y D-017;
+las entradas históricas se conservan. Una sola red: chainId 133, RPC
+https://testnet.hsk.xyz, gas en HSK y pagos del demo en MockUSDT.
+Foundry, contratos y dominio EIP-712 dinámico se conservan.
+**Descartado:** mantener Base en paralelo, usar HSK real o sustituir MockUSDT
+por el activo nativo: no son parte del cambio solicitado.
+
+El explorador facilitado por el usuario, https://testnet-explorer.hskchain.net,
+responde por HTTPS y su API pública de contratos responde. La documentación
+https://docs.hskchain.net/docs/Build-on-HashKey-Chain/network-info indica
+testnet-explorer.hsk.xyz, que no resolvió desde este equipo. Se usa el dominio
+operativo; verificación de fuentes aún pendiente. Foundry usará el verificador
+Blockscout y la ruta /api/. Esto actualiza la exclusión por cadena de D-018 y
+D-022, sin instalar el plugin Blockscout ni adoptar Scaffold-ETH 2.
+**Descartado:** conservar BaseScan o exigir su API key para otra cadena.
+
+La autorización incluye actualizar referencias de red en los documentos
+cerrados; no cambia el alcance funcional. Se comprobará Privy con esta red
+en D4 y se fondearán las cuentas con HSK de prueba antes del demo.
+
 ## 2026-09-20 · Implementación D2
 
 ### D-025 · CI de contratos con versiones fijadas y sin secretos

@@ -85,7 +85,7 @@ Todo esto vive con su justificación en `docs/ROADMAP.md`.
 
 ## 6. Criterios de aceptación
 
-El MVP está terminado cuando, contra Base Sepolia y sin intervención manual:
+El MVP está terminado cuando, contra HSKChain Testnet y sin intervención manual:
 
 - [ ] Un usuario nuevo entra con correo y obtiene una dirección sin ver una
       frase semilla.
@@ -104,7 +104,7 @@ El MVP está terminado cuando, contra Base Sepolia y sin intervención manual:
 - [ ] La pantalla de salida a pesos dice que es simulada, sin que haya que
       buscarlo.
 - [ ] Contratos verificados en el explorador y direcciones en
-      `deployments/base-sepolia.json`.
+      `deployments/hashkey-testnet.json`.
 
 ## 7. Cómo se mide el éxito
 
