@@ -47,7 +47,7 @@ del commit 9d96b48. Rama publicada en origin/feat/contracts-split-pool.
 depende del ABI ni del diseño: proyecto `snapline` en Supabase, tablas `drafts`
 y `signatures` con RLS, lectura por función para que la clave anónima no pueda
 listar borradores ajenos, y sin `update` ni `delete` para nadie. Migración
-versionada en `supabase/migrations/`. Ver D-029.
+versionada en `supabase/migrations/`. Ver D-031.
 
 **Falta:** fondeo de las cuatro cuentas de testnet, proyecto de Vercel y primer
 despliegue. El andamiaje de Next.js ya existe en `feat/design-sistema-visual`;

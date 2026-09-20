@@ -8,7 +8,7 @@ nueva que la revierte.
 
 ## 2026-09-20 · Plataforma
 
-### D-029 · El relay se lee por función, no por política de `select`
+### D-031 · El relay se lee por función, no por política de `select`
 Proyecto `snapline` creado en Supabase (`us-east-1`, coste mensual 0) con las
 dos tablas de `docs/ARCHITECTURE.md` §4. Tres desviaciones respecto al esquema
 de una línea que había ahí, cada una con su motivo:
