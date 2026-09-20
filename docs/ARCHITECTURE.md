@@ -1,6 +1,6 @@
 # Arquitectura — SNAPLINE
 
-**Fecha:** 2026-09-20 · **Cadena:** Base Sepolia (`84532`)
+**Fecha:** 2026-09-20 · **Cadena:** HSKChain Testnet (`133`)
 
 ---
 
@@ -17,7 +17,7 @@
            │ borrador + firmas     │ 1 sola tx                 │ transferencia
            ▼                       ▼                           ▼
   ┌──────────────────┐    ┌──────────────────────────────────────────┐
-  │ Supabase (relay) │    │            Base Sepolia                  │
+  │ Supabase (relay) │    │            HSKChain Testnet              │
   │  borradores      │    │  SplitPoolFactory ──clona──> SplitPool   │
   │  firmas EIP-712  │    │                              (por proy.) │
   │  NO custodia     │    │  MockUSDT (ERC-20 con faucet)            │
@@ -206,7 +206,7 @@ una vez haya una entidad vigilada de por medio.
 | Decisión | Por qué | Alternativa descartada |
 |---|---|---|
 | **Foundry** | Fuzzing e invariantes casi gratis, y hay una skill oficial orientada a agentes | Hardhat 3 + viem: tests en TypeScript, más cómodo de depurar a mano, pero sin fuzzing y sin skill. Ver D-020 |
-| **Base Sepolia** | Faucets confiables, explorador decente, lee bien en un track de aplicaciones reales | Ethereum Sepolia: más canónico para EAG, faucets más frágiles a 10 días del cierre |
+| **HSKChain Testnet** | Cambio solicitado por el usuario; HSK de prueba para gas. Ver D-026 | Base Sepolia: selección anterior, sustituida expresamente; no se mantienen dos redes |
 | **EIP-1167** | Un pool por proyecto sin pagar un despliegue completo cada vez | Un contrato registro con varios acuerdos: más barato aún, pero pierde el "tu pool es tu dirección" |
 | **Privy** | Wallet embebida y conexión externa en una sola librería | Para / Web3Auth: equivalentes; Privy tiene mejor DX y plan gratuito suficiente |
 | **Supabase** | Relay en minutos, sin servidor propio | KV tipo Upstash: igual de válido; Supabase ya estaba decidido |

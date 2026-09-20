@@ -12,6 +12,8 @@ contract SplitPoolReceiverTest is Test {
     address internal carol = address(0xCA401);
 
     function setUp() public {
+        vm.deal(bob, 0);
+        vm.deal(carol, 0);
         receiver = new RejectingReceiver();
         pool = SplitPool(payable(Clones.clone(address(new SplitPool()))));
         address[] memory accounts = new address[](3);

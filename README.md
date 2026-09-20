@@ -16,8 +16,8 @@ ahí el reparto queda marcado y ya no se discute.
 > ### ⚠ Estado: prototipo de hackathon
 >
 > Código escrito en diez días por una persona para el **EAG Global
-> Buildathon** (cierre: 1 de octubre de 2026). Desplegado en **Base Sepolia**,
-> sin auditar. **No debe usarse con dinero real.**
+> Buildathon** (cierre: 1 de octubre de 2026). Desplegado y verificado en
+> **HSKChain Testnet**, sin auditar. **No debe usarse con dinero real.**
 >
 > **La salida a pesos colombianos está simulada.** No mueve dinero y no habla
 > con ningún banco. Está marcada como simulada dentro de la propia interfaz.
@@ -79,8 +79,15 @@ proyecto de [Supabase](https://supabase.com) (gratuitos). Copiar
 
 ## Direcciones desplegadas
 
-> Pendiente. Aparecerán en [`deployments/base-sepolia.json`](deployments/) y
-> verificadas en BaseScan.
+HSKChain Testnet (chainId 133). Las tres verificadas en el explorador. Detalle
+completo, con hashes y bloques, en
+[`deployments/hashkey-testnet.json`](deployments/hashkey-testnet.json).
+
+| Contrato | Dirección |
+|---|---|
+| `SplitPoolFactory` | [`0x2da2f4E4577f8c8090b08dff8A2A288fd2dfa559`](https://testnet-explorer.hskchain.net/address/0x2da2f4E4577f8c8090b08dff8A2A288fd2dfa559) |
+| `SplitPool` (implementación de los clones) | [`0x88ceD9e81cF88DfD6f2f4435DF9047Cb89A5FE7F`](https://testnet-explorer.hskchain.net/address/0x88ceD9e81cF88DfD6f2f4435DF9047Cb89A5FE7F) |
+| `MockUSDT` (mUSDT, 6 decimales) | [`0xc84d2E59be565EDd8e6394127390E7fdD295b2D6`](https://testnet-explorer.hskchain.net/address/0xc84d2E59be565EDd8e6394127390E7fdD295b2D6) |
 
 ## Lo que NO hace, a propósito
 

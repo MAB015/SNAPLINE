@@ -1,6 +1,6 @@
 # Estado del proyecto — SNAPLINE
 
-**Última actualización:** 2026-09-20 · **Bloque cerrado:** D1 · Contratos, núcleo
+**Última actualización:** 2026-09-20 · **Bloque cerrado:** D2 · Contratos, firmas y despliegue
 **Cierre del hackathon:** 1 de octubre de 2026 · **Días restantes de trabajo:** 10
 
 Este archivo se actualiza en el mismo commit que el trabajo que describe.
@@ -12,8 +12,8 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 | Área | Estado | Siguiente |
 |---|---|---|
 | `docs` | ✅ Listo | Solo mantenimiento del tracking |
-| `infra` | 🟡 Parcial | CI (D2) y andamiaje de Next.js (D4) |
-| `contracts` | 🟡 Núcleo listo | D2 · factory, firmas y despliegue |
+| `infra` | 🟡 CI validado | Fondeo de testnet; Next.js en D4 |
+| `contracts` | ✅ D2 desplegado | D5 · despliegue del pool desde la web |
 | `design` | 🟡 Dirección fijada | D3 · sistema en código |
 | `web` | ⬜ Sin empezar | D4 · Privy y creación de acuerdo |
 | `demo` | 🟡 Guion escrito | D8 · datos y ensayos |
@@ -37,49 +37,115 @@ licencia MIT, `.env.example` con las variables previstas. Foundry 1.8.3
 instalado con autorización, compilador 0.8.24 y dependencias fijadas; primer
 `forge test` en verde dentro de la caja de 30 minutos en Windows/Git Bash.
 
-Relay de firmas montado en `feat/infra-plataforma`, adelantado desde D4 porque
-no depende del ABI ni del diseño: proyecto `snapline` en Supabase, tablas
-`drafts` y `signatures` con RLS, lectura por función para que la clave anónima
-no pueda listar borradores ajenos, y sin `update` ni `delete` para nadie. La
-migración queda versionada en `supabase/migrations/`. Ver D-026.
+**Hecho en D2:** workflow de GitHub Actions con Foundry 1.8.3, acciones
+fijadas por SHA, submódulos recursivos, formato y tests en cada push y PR.
+Validado localmente y en GitHub: formato y tests pasan en Linux en la
+[ejecución 35537664699](https://github.com/MAB015/SNAPLINE/actions/runs/35537664699)
+del commit 9d96b48. Rama publicada en origin/feat/contracts-split-pool.
 
-**Falta:** andamiaje de Next.js (D4, en curso en la misma rama), CI con
-tests en cada push (D2), proyecto de Vercel y primer despliegue.
+**Relay de firmas**, adelantado desde D4 en `feat/infra-plataforma` porque no
+depende del ABI ni del diseño: proyecto `snapline` en Supabase, tablas `drafts`
+y `signatures` con RLS, lectura por función para que la clave anónima no pueda
+listar borradores ajenos, y sin `update` ni `delete` para nadie. Migración
+versionada en `supabase/migrations/`. Ver D-029.
+
+**Falta:** fondeo de las cuatro cuentas de testnet, proyecto de Vercel y primer
+despliegue. El andamiaje de Next.js ya existe en `feat/design-sistema-visual`;
+`feat/infra-plataforma` no toca `web/` para no chocar con esa rama.
 
 **Nota:** el CI no se añade hasta que haya algo que construir. Un `main` con
-CI en rojo incumple la regla de "siempre desplegable". `feat/infra-plataforma`
-no toca `.github/workflows/`: eso es de `feat/infra-validation` y chocarían.
+CI en rojo incumple la regla de "siempre desplegable".
 
-**Bloqueado por:** el despliegue en Vercel necesita la cuenta del usuario.
+**Bloqueado por:** faltan las cuatro direcciones públicas y fondos de testnet.
+Remoto configurado: https://github.com/MAB015/SNAPLINE.git.
 
-## `contracts` — 🟡 Núcleo listo
+## `contracts` — 🟡 D2 local validado
 
 **Hecho:** D1 completo en `feat/contracts-split-pool`: MockUSDT de seis
 decimales, faucet público y transferencias sin retorno; SplitPool para clones
 con inicialización única, contabilidad por token, receive vacío y retiro pull
 con estado antes de transferir mediante SafeERC20. Sin roles ni pausas.
 
-**Validación:** 16 tests pasan, cero fallos y cero omitidos; `forge fmt
+**Hecho en D2:** factory con dominio EIP-712, firmas ordenadas, acuerdo con
+salt y consumo por structHash, validación de participantes/bps, implementación
+inmutable y clon inicializado atómicamente. Sin cambios a contratos D1.
+
+**Validación:** 40 tests pasan, cero fallos y cero omitidos; `forge fmt
 --check` pasa. Incluye reparto ERC-20/nativo, pagos sucesivos, doble retiro,
 tres activos independientes, rollback de receptor fallido, reentrada,
 reinicialización y ETH forzado. Caso límite uint256 máximo para mulDiv.
 Cada una de las dos invariantes ejecuta 1000 casos fuzz con 1–10 participantes:
 dust tras liquidar todos (hasta ocho rondas) y conservación tras cada operación
 (hasta 32 pagos/retiros intercalados). Oracle de entradas y salidas independiente
-del ledger del pool. No constituye prueba formal de todas las secuencias.
+del ledger del pool. Otros 1000 casos fuzz validan acuerdos firmados con bps,
+términos y salt variables. Los 24 tests nuevos calculan el digest de forma
+independiente y cubren dominio de otra cadena/factory, cambio de chainId,
+firmas faltantes/sobrantes/malformadas/desordenadas, replay, alteración de
+campos, evento, runtime EIP-1167, inicialización y ciclo pago/retiro.
+Toda la lista de THREAT-MODEL §6 está cubierta. No constituye prueba formal
+de todas las secuencias. `forge lint src --severity high med` sin hallazgos.
 
 **Nota de compilación:** advertencia de selfdestruct solo en el helper de test
 que fuerza ETH; no aparece en los contratos de producción.
 
-**Falta:** D2 completo: factory, EIP-712, validaciones del acuerdo, tests de
-firmas, despliegue y verificación en Base Sepolia. El factory debe validar
-arreglos y bps y clonar e inicializar atómicamente: son precondiciones del pool.
-No hay direcciones desplegadas ni se ha modificado main.
+**Desplegado:** HSKChain Testnet, chainId 133, desde
+`0x7153D224638aA1670Ce4698F96E19d3D9d90b038` con `forge create`, sin scripts en
+Solidity. Las tres direcciones están en
+[`deployments/hashkey-testnet.json`](deployments/hashkey-testnet.json) y en el
+README: factory `0x2da2f4E4…a559` (bloque 33379462), implementación de los
+clones `0x88ceD9e8…FE7F` y MockUSDT `0xc84d2E59…b2D6` (bloque 33379454). Las
+tres verificadas en el explorador con solc 0.8.24, optimizador a 200 runs;
+`is_verified` confirmado por la API, no solo el envío aceptado.
 
-**Bloqueado por:** nada.
+**Comprobado en cadena, no solo en el recibo:** el factory responde
+`implementation()` con la dirección desplegada; MockUSDT responde `mUSDT` y 6
+decimales; llamar a `initialize` sobre la implementación revierte con
+`AlreadyInitialized` (`0x0dc149f0`), así que el clon de referencia está quemado
+y nadie puede secuestrarlo. Coste real del despliegue: 0,00195 HSK a 1,001
+gwei. Quedan 0,098 HSK para el goteo de gas de D4.
 
-**Decisiones:** D-023 documenta convenciones de implementación y alternativas
-descartadas. Guías ETHSKILLS leídas por URL sin instalar skills. La versión
+**Falta:** reservar HSK para las cuatro cuentas del demo. Esa tarea sigue
+bloqueada porque las cuatro direcciones todavía no existen: dos son wallets
+embebidas que Privy crea en D4.
+
+**Cambio de red autorizado:** HSKChain Testnet, chainId 133, HSK de prueba para gas y MockUSDT para pagos (D-026). Configuración pública y referencias de red actualizadas; contracts/.env local e ignorado preparado. RPC y API del explorador responden. Fuentes ya verificadas.
+
+**Validación del cambio:** formato y 40 tests pasan tanto localmente como en
+fork de HSKChain Testnet (bloque 33376448), con 1000 casos por test fuzz.
+Tres tests fallaron inicialmente porque una dirección de prueba ya tenía
+saldo nativo en la red; se fijó saldo inicial cero en los fixtures de dos
+suites. No se modificó Solidity de producción. El fork no sustituye el
+despliegue ni demuestra por sí solo la compatibilidad del nodo remoto.
+
+
+**Revisión previa al despliegue:** cerrada. Se leyeron testing, security y
+addresses de ETHSKILLS. Revisados CEI, SafeERC20, contabilidad por activo,
+redondeo, validación de arrays, consentimiento, dominio, replay y destino
+inmutable del clon. No hay oráculos, swaps, mantenimiento, roles ni upgrade
+authority: esos puntos no aplican. Se conserva CEI sin añadir nonReentrant y
+salt/consumo sin añadir expiración, como fija la arquitectura. Tokens
+maliciosos/rebasing quedan fuera del supuesto de confianza.
+
+**Análisis automático:** Slither 0.11.5 en contenedor, sin instalar nada en la
+máquina (D-027). Seis hallazgos sobre `src/`, ninguno alto, ninguno accionable;
+salida cruda en [`contracts/audit/slither-2026-09-20.txt`](contracts/audit/slither-2026-09-20.txt).
+`erc20-interface` sobre MockUSDT es el diseño pedido en D1: imitar a USDT sin
+retorno booleano, absorbido por SafeERC20. `incorrect-equality` compara el
+pendiente ya calculado, no un balance. `reentrancy-events` señala el orden del
+evento `PoolCreated`, pero `initialize` no hace llamadas externas y el destino
+es un clon de una implementación `immutable` creada por el propio factory.
+`low-level-calls` es la transferencia nativa, con estado escrito antes y
+retorno comprobado. `cyclomatic-complexity` es estilo. Las cuatro casillas
+críticas de la guía quedan cubiertas: reentrada resuelta, retornos comprobados,
+cero `delegatecall`/`selfdestruct` en producción y ninguna función de estado sin
+protección. Mythril queda descartado con su porqué en D-027.
+
+**Cerrado:** la verificación de fuentes en el explorador quedó hecha con el
+despliegue. No queda nada abierto en la revisión previa.
+
+**Decisiones:** D-023, D-024 y D-025 documentan núcleo, interfaz firmada y CI;
+D-026 el cambio de testnet y D-027 el análisis estático en contenedor,
+con alternativas descartadas. Guías ETHSKILLS leídas por URL sin instalar skills. La versión
 actual de standards se centra en estándares de agentes y no desarrolla ERC-20
 ni EIP-712 como esperaba D-022; prevaleció la arquitectura del repositorio.
 Tests delegados con autorización explícita del usuario, en archivos separados.
@@ -99,19 +165,24 @@ cambios automáticamente.
 | Implementación | `feat/contracts-implementation` | `contracts/src/` |
 | Pruebas | `feat/contracts-tests` | `contracts/test/` |
 | Infraestructura | `feat/infra-validation` | CI y configuración de herramientas |
-| Plataforma | `feat/infra-plataforma` | `web/`, `supabase/` |
+| Plataforma | `feat/infra-plataforma` | `supabase/` y despliegue |
 
 Worktrees locales bajo `F:/Projects/SNAPLINE-AI-agents/`: `implementation`,
-`tests` e `infra`. El checkout principal conserva `feat/contracts-split-pool`.
+`tests`, `infra` e `integration`. Otro proceso consolidó D1 en main y guardó
+los tests en 60e021e. Tras autorización del usuario, el coordinador conservó
+esos commits y creó `integration` con `feat/contracts-split-pool` desde 4e6163d.
+El checkout principal permanece en main; no se fusionó D2 allí.
 Cada agente trabaja únicamente en su directorio; ninguno cambia ramas en el
 checkout de otro. Las interfaces compartidas se acuerdan antes de escribir.
 
 Los agentes entregan cambios y evidencia de validación; el coordinador integra
 una tarea por commit junto con su tracking. Solo el coordinador modifica
 STATUS, TASKS y DECISIONS, para evitar conflictos. Se mantienen cuatro puestos
-simultáneos: coordinador y tres agentes. D2 autorizado expresamente por el
-usuario; factory, tests y CI en curso en paralelo. Despliegue pendiente de
-credenciales locales y direcciones públicas de las cuatro cuentas del demo.
+simultáneos: coordinador y tres agentes. Factory, tests y CI entregados; los
+agentes alcanzaron su límite de uso durante la revisión adicional y el
+coordinador terminó la integración. En los tests recuperados se corrigieron
+aritmética uint16 y una expectativa de revert que interceptaba un getter.
+Despliegue pendiente de configuración externa.
 
 ## `design` — 🟡 Dirección fijada
 
@@ -152,9 +223,9 @@ edición.
 |---|---|
 | Privy consume más tiempo del previsto | Corte a las 3 horas en D4: se cae a wallet externa y la embebida pasa a stretch de D8 |
 | El despliegue multi-firma (D5) se atrasa | Es el día crítico. Si se cae, se sacrifica D7 completo (pulido y animación) |
-| El faucet de Base Sepolia falla el día de grabar | MockUSDT tiene faucet propio. Para el gas: reservar ETH de testnet con anticipación en D2 |
+| El faucet de HSKChain Testnet falla el día de grabar | MockUSDT tiene faucet propio. Para el gas: reservar HSK de testnet con anticipación en D2 |
 | El stretch de pago en pesos se come tiempo del ensayo | Solo se toca si D1–D7 cerraron a tiempo. Corte a las 6 horas en D8 |
-| Las wallets embebidas se crean sin gas y no pueden retirar | Goteo de ETH desde la cuenta de despliegue al crearse (tarea de D4). Es la razón principal para quedarse en Base Sepolia |
+| Las wallets embebidas se crean sin gas y no pueden retirar | Goteo de HSK desde la cuenta de despliegue al crearse (tarea de D4). Confirmar soporte de esta red en Privy durante D4 |
 | La guía de submission de Cali aparece tarde y exige algo no previsto | Conseguirla cuanto antes. Está en `TASKS.md` como bloqueada por información externa |
 
 ## Contexto del evento
@@ -180,8 +251,14 @@ organizador ("The problem it solves" y "Challenges we ran into"). Aplicado al
 track **Real-World Ethereum Applications**, que confirma lo verificado arriba.
 
 La ficha está escrita en inglés y declara sin maquillar lo que falta: que no
-hay frontend, que nada está desplegado en cadena, que el pago en pesos es
-simulado y que el fuzzing es empírico y no prueba formal.
+hay frontend, que el pago en pesos es simulado y que el fuzzing es empírico y
+no prueba formal.
+
+**Desactualizada desde el despliegue de D2.** La ficha todavía dice que nada
+está desplegado en cadena. Ya no es cierto: hay tres contratos verificados en
+HSKChain Testnet. Hay que corregir ese párrafo y añadir las direcciones antes
+de publicar. No se toca ahora porque la ficha se cierra de una vez en D9–D10,
+junto con las capturas.
 
 **Falta para publicar: capturas.** Devfolio exige de 1 a 6 y que sean reales
 del proyecto corriendo, no generadas. Sin interfaz no hay nada que capturar,

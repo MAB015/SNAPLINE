@@ -8,7 +8,7 @@ nueva que la revierte.
 
 ## 2026-09-20 · Plataforma
 
-### D-026 · El relay se lee por función, no por política de `select`
+### D-029 · El relay se lee por función, no por política de `select`
 Proyecto `snapline` creado en Supabase (`us-east-1`, coste mensual 0) con las
 dos tablas de `docs/ARCHITECTURE.md` §4. Tres desviaciones respecto al esquema
 de una línea que había ahí, cada una con su motivo:
@@ -41,7 +41,9 @@ devuelve cero filas en ambas tablas, `get_draft` y `get_signatures` devuelven
 la suya, y `update`, `delete` y una dirección mal formada fallan. Filas de
 prueba borradas.
 
-### D-025 · Los nombres de las skills de Vercel estaban mal en `CLAUDE.md`
+### D-028 · Los nombres de las skills de Vercel estaban mal en `CLAUDE.md`
+*(Registrada como D-025 antes de integrar la rama de D2, que ya usaba ese
+número para el CI. Se renumera aquí; el contenido no cambia.)*
 La organización es `vercel-labs`, no `vercel`, y `vercel-deploy` se llama en
 realidad `deploy-to-vercel`. El CLI reporta el 404 de un repositorio inexistente
 como fallo de autenticación, que es lo que despistó. Verificado contra la API de
@@ -56,7 +58,58 @@ su lugar. La segunda ya estaba descartada por ser optimización para apps grande
 y sustituir una guía por otra que no resuelve el mismo problema es alcance que no
 se ganó el puesto. Se revisa en D4 solo si las fronteras RSC dan guerra de verdad.
 
+## 2026-09-20 · Revisión previa al despliegue
+
+### D-027 · Slither en contenedor, Mythril descartado
+La guía `ethskills.com/security/SKILL.md` exige "automated analysis run" antes
+de desplegar. No nombra herramientas obligatorias: pide que el análisis exista
+y que los hallazgos críticos queden resueltos. Se ejecuta Slither 0.11.5 desde
+la imagen `trailofbits/eth-security-toolbox`, sin instalar Python ni ninguna
+herramienta en la máquina: los contratos se copian dentro del contenedor y el
+build de Windows queda intacto. Seis hallazgos, ninguno alto, todos triados
+contra el código y ninguno accionable.
+**Descartado:** instalar Python y `slither-analyzer` nativos en Windows. Deja
+la máquina modificada para una ejecución que se repite dos veces en diez días.
+
+**Descartado:** Mythril. Su ejecución simbólica sobre el bucle de verificación
+de firmas de `createPool` cuesta entre una y dos horas y devuelve ruido que hay
+que triar a mano. A diez días del cierre no se gana el puesto que pide la regla
+de simplicidad, y la casilla de la guía ya queda cubierta por Slither más las
+dos invariantes con fuzzing a 1000 casos. Si aparece un hallazgo que dependa de
+caminos de ejecución, se reconsidera.
+
+## 2026-09-20 · Cambio de testnet autorizado
+
+### D-026 · HSKChain Testnet con HSK de prueba
+El usuario solicita sustituir Base Sepolia por HSKChain Testnet y confirma
+testnet, no mainnet. Revierte la selección de cadena de D-005, D-016 y D-017;
+las entradas históricas se conservan. Una sola red: chainId 133, RPC
+https://testnet.hsk.xyz, gas en HSK y pagos del demo en MockUSDT.
+Foundry, contratos y dominio EIP-712 dinámico se conservan.
+**Descartado:** mantener Base en paralelo, usar HSK real o sustituir MockUSDT
+por el activo nativo: no son parte del cambio solicitado.
+
+El explorador facilitado por el usuario, https://testnet-explorer.hskchain.net,
+responde por HTTPS y su API pública de contratos responde. La documentación
+https://docs.hskchain.net/docs/Build-on-HashKey-Chain/network-info indica
+testnet-explorer.hsk.xyz, que no resolvió desde este equipo. Se usa el dominio
+operativo; verificación de fuentes aún pendiente. Foundry usará el verificador
+Blockscout y la ruta /api/. Esto actualiza la exclusión por cadena de D-018 y
+D-022, sin instalar el plugin Blockscout ni adoptar Scaffold-ETH 2.
+**Descartado:** conservar BaseScan o exigir su API key para otra cadena.
+
+La autorización incluye actualizar referencias de red en los documentos
+cerrados; no cambia el alcance funcional. Se comprobará Privy con esta red
+en D4 y se fondearán las cuentas con HSK de prueba antes del demo.
+
 ## 2026-09-20 · Implementación D2
+
+### D-025 · CI de contratos con versiones fijadas y sin secretos
+GitHub Actions ejecuta formato y tests en cada push y pull request, con
+Foundry 1.8.3 y submódulos fijados. Las acciones checkout y foundry-toolchain
+se fijan por SHA comprobado en sus repositorios oficiales. Se descartan tags
+flotantes para evitar cambios silenciosos. El workflow tiene permisos de
+solo lectura y no necesita claves de despliegue ni RPC.
 
 ### D-024 · Interfaz compartida del factory y codificación del acuerdo
 El constructor del factory crea una implementación de SplitPool y conserva su
