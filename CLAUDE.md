@@ -89,18 +89,51 @@ suena útil pero no aparece en el plan no se pide.
 
 ### Inventario
 
-| Skill | Estado | Para qué | Cuándo |
-|---|---|---|---|
-| Foundry (`getfoundry.sh/introduction/agents`) | Pedida | Contratos y tests | D1–D2 |
-| Vercel (`vercel.com/docs/agent-resources/skills`) | Pedida | Despliegue en vivo, requisito del envío | D9–D10 |
-| ETHSKILLS `security` | Por URL | Lista previa al despliegue | D2 |
-| ETHSKILLS `testing` | Por URL | Tests en Foundry | D2 |
-| ETHSKILLS `qa` | Por URL | Auditoría de la app antes de grabar | D8 |
-| ETHSKILLS `crops` | Por URL | Revisión de arquitectura | Sin día |
+Lista cerrada. No se pide nada más salvo que aparezca una tarea nueva en
+`TASKS.md` que lo justifique.
 
-Descartadas y por qué, en `DECISIONS.md`: Blockscout (usamos BaseScan),
-Tempo y x402 (otro track), y las guías de interfaz de ETHSKILLS (son de
-Scaffold-ETH 2 y contradicen `docs/BRAND.md`).
+**Se suben a mano** (no están en un registro público):
+
+| Skill | Para qué | Cuándo |
+|---|---|---|
+| Foundry — `getfoundry.sh/introduction/agents` | Contratos, tests, fuzzing | D1–D2 |
+
+**Se instalan con `npx skills add`** (comando, no subida):
+
+| Skill | Comando | Para qué | Cuándo |
+|---|---|---|---|
+| `next-best-practices` | `npx skills add vercel/agent-skills --skill next-best-practices` | Convenciones de App Router y fronteras RSC. Es donde se pierden horas trabajando solo | D4–D7 |
+| `vercel-deploy` | `npx skills add vercel/agent-skills --skill vercel-deploy` | Desplegar la web. El envío exige un enlace en vivo | D9–D10 |
+| Supabase | `npx skills add supabase/agent-skills` | RLS del relay: las tablas son públicas con la clave anónima | D4 |
+| `web-design-guidelines` *(opcional)* | `npx skills add vercel/agent-skills --skill web-design-guidelines` | Repaso de foco, navegación por teclado y áreas de toque. Es correctitud, no estética: no pelea con `docs/BRAND.md` | D8, solo si D7 no se comió el colchón |
+
+**Se leen por URL**, sin instalar ni subir nada:
+
+| Guía | Para qué | Cuándo |
+|---|---|---|
+| `ethskills.com/security/SKILL.md` | Lista previa al despliegue | D2 |
+| `ethskills.com/testing/SKILL.md` | Tests en Foundry | D2 |
+| `ethskills.com/qa/SKILL.md` | Auditoría de la app antes de grabar | D8 |
+| `ethskills.com/crops/SKILL.md` | Revisión de arquitectura | Sin día |
+
+**Sin verificar:** no se confirmó que exista una skill de Privy. Privy es el
+riesgo de tiempo más alto del plan (caja de 3 horas en D4), así que si
+aparece una, entra sin discusión.
+
+**Nota:** Supabase ya está conectado como servidor MCP en el entorno de
+trabajo, así que crear las dos tablas no depende de la skill. La skill es solo
+para no dejar las políticas de acceso abiertas.
+
+### Descartadas
+
+| Skill | Por qué no |
+|---|---|
+| Blockscout | Base Sepolia usa BaseScan. Solo servía para HSKChain, y no vamos |
+| Tempo, x402, Machine Payment Protocol | Pertenecen a otro track del evento. Ver D-019 |
+| ETHSKILLS `frontend-ux`, `frontend-playbook` | Son de Scaffold-ETH 2 y sus reglas de UI contradicen `docs/BRAND.md`. Ver D-018 |
+| `vercel-react-best-practices` | Optimización de rendimiento para apps grandes. La nuestra tiene seis pantallas |
+| `building-components` | Se solapa con `docs/BRAND.md`, que ya es la especificación de componentes |
+| Hardhat | Se cambió a Foundry. Ver D-020 |
 
 ## Reglas de bloque
 
