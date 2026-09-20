@@ -12,7 +12,7 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 | Área | Estado | Siguiente |
 |---|---|---|
 | `docs` | ✅ Listo | Solo mantenimiento del tracking |
-| `infra` | 🟡 CI preparado | Configurar remoto GitHub y ejecutar CI; Next.js en D4 |
+| `infra` | 🟡 CI validado | Fondeo de testnet; Next.js en D4 |
 | `contracts` | 🟡 D2 local validado | Desplegar y verificar en Base Sepolia |
 | `design` | 🟡 Dirección fijada | D3 · sistema en código |
 | `web` | ⬜ Sin empezar | D4 · Privy y creación de acuerdo |
@@ -39,15 +39,17 @@ instalado con autorización, compilador 0.8.24 y dependencias fijadas; primer
 
 **Hecho en D2:** workflow de GitHub Actions con Foundry 1.8.3, acciones
 fijadas por SHA, submódulos recursivos, formato y tests en cada push y PR.
-Sus comandos pasan localmente. No se ha ejecutado en GitHub.
+Validado localmente y en GitHub: formato y tests pasan en Linux en la
+[ejecución 35537664699](https://github.com/MAB015/SNAPLINE/actions/runs/35537664699)
+del commit 9d96b48. Rama publicada en origin/feat/contracts-split-pool.
 
-**Falta:** configurar URL del remoto GitHub y ejecutar el workflow; andamiaje
-de Next.js (D4).
+**Falta:** fondeo de las cuatro cuentas de testnet y andamiaje de Next.js (D4).
 
 **Nota:** el CI no se añade hasta que haya algo que construir. Un `main` con
 CI en rojo incumple la regla de "siempre desplegable".
 
-**Bloqueado por:** el remoto origin carece de URL.
+**Bloqueado por:** faltan las cuatro direcciones públicas y fondos de testnet.
+Remoto configurado: https://github.com/MAB015/SNAPLINE.git.
 
 ## `contracts` — 🟡 D2 local validado
 
