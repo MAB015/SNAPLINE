@@ -37,13 +37,20 @@ licencia MIT, `.env.example` con las variables previstas. Foundry 1.8.3
 instalado con autorización, compilador 0.8.24 y dependencias fijadas; primer
 `forge test` en verde dentro de la caja de 30 minutos en Windows/Git Bash.
 
-**Falta:** andamiaje de Next.js (D4), CI con
-tests en cada push (D2).
+Relay de firmas montado en `feat/infra-plataforma`, adelantado desde D4 porque
+no depende del ABI ni del diseño: proyecto `snapline` en Supabase, tablas
+`drafts` y `signatures` con RLS, lectura por función para que la clave anónima
+no pueda listar borradores ajenos, y sin `update` ni `delete` para nadie. La
+migración queda versionada en `supabase/migrations/`. Ver D-026.
+
+**Falta:** andamiaje de Next.js (D4, en curso en la misma rama), CI con
+tests en cada push (D2), proyecto de Vercel y primer despliegue.
 
 **Nota:** el CI no se añade hasta que haya algo que construir. Un `main` con
-CI en rojo incumple la regla de "siempre desplegable".
+CI en rojo incumple la regla de "siempre desplegable". `feat/infra-plataforma`
+no toca `.github/workflows/`: eso es de `feat/infra-validation` y chocarían.
 
-**Bloqueado por:** nada.
+**Bloqueado por:** el despliegue en Vercel necesita la cuenta del usuario.
 
 ## `contracts` — 🟡 Núcleo listo
 
@@ -92,6 +99,7 @@ cambios automáticamente.
 | Implementación | `feat/contracts-implementation` | `contracts/src/` |
 | Pruebas | `feat/contracts-tests` | `contracts/test/` |
 | Infraestructura | `feat/infra-validation` | CI y configuración de herramientas |
+| Plataforma | `feat/infra-plataforma` | `web/`, `supabase/` |
 
 Worktrees locales bajo `F:/Projects/SNAPLINE-AI-agents/`: `implementation`,
 `tests` e `infra`. El checkout principal conserva `feat/contracts-split-pool`.
