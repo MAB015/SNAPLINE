@@ -1,6 +1,6 @@
 # Estado del proyecto — SNAPLINE
 
-**Última actualización:** 2026-09-21 · **Bloque cerrado:** D0 · Documentación y repositorio
+**Última actualización:** 2026-09-20 · **Bloque cerrado:** D1 · Contratos, núcleo
 **Cierre del hackathon:** 1 de octubre de 2026 · **Días restantes de trabajo:** 10
 
 Este archivo se actualiza en el mismo commit que el trabajo que describe.
@@ -12,8 +12,8 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 | Área | Estado | Siguiente |
 |---|---|---|
 | `docs` | ✅ Listo | Solo mantenimiento del tracking |
-| `infra` | 🟡 Parcial | Andamiaje de Foundry y Next.js (D1, D4) |
-| `contracts` | ⬜ Sin empezar | D1 · núcleo de `SplitPool` |
+| `infra` | 🟡 Parcial | CI (D2) y andamiaje de Next.js (D4) |
+| `contracts` | 🟡 Núcleo listo | D2 · factory, firmas y despliegue |
 | `design` | 🟡 Dirección fijada | D3 · sistema en código |
 | `web` | ⬜ Sin empezar | D4 · Privy y creación de acuerdo |
 | `demo` | 🟡 Guion escrito | D8 · datos y ensayos |
@@ -33,9 +33,11 @@ y no se reescriben; a partir de aquí solo se actualiza el tracking.
 ## `infra` — 🟡 Parcial
 
 **Hecho:** repositorio inicializado, estructura de carpetas, `.gitignore`,
-licencia MIT, `.env.example` con las variables previstas.
+licencia MIT, `.env.example` con las variables previstas. Foundry 1.8.3
+instalado con autorización, compilador 0.8.24 y dependencias fijadas; primer
+`forge test` en verde dentro de la caja de 30 minutos en Windows/Git Bash.
 
-**Falta:** andamiaje de Foundry (D1), andamiaje de Next.js (D4), CI con
+**Falta:** andamiaje de Next.js (D4), CI con
 tests en cada push (D2).
 
 **Nota:** el CI no se añade hasta que haya algo que construir. Un `main` con
@@ -43,15 +45,39 @@ CI en rojo incumple la regla de "siempre desplegable".
 
 **Bloqueado por:** nada.
 
-## `contracts` — ⬜ Sin empezar
+## `contracts` — 🟡 Núcleo listo
 
-**Hecho:** nada. Diseño cerrado en `docs/ARCHITECTURE.md` §2 y lista de tests
-en `docs/THREAT-MODEL.md` §6.
+**Hecho:** D1 completo en `feat/contracts-split-pool`: MockUSDT de seis
+decimales, faucet público y transferencias sin retorno; SplitPool para clones
+con inicialización única, contabilidad por token, receive vacío y retiro pull
+con estado antes de transferir mediante SafeERC20. Sin roles ni pausas.
 
-**Falta:** todo. `SplitPool.sol`, `SplitPoolFactory.sol`, `MockUSDT.sol`,
-tests, despliegue y verificación en Base Sepolia.
+**Validación:** 16 tests pasan, cero fallos y cero omitidos; `forge fmt
+--check` pasa. Incluye reparto ERC-20/nativo, pagos sucesivos, doble retiro,
+tres activos independientes, rollback de receptor fallido, reentrada,
+reinicialización y ETH forzado. Caso límite uint256 máximo para mulDiv.
+Cada una de las dos invariantes ejecuta 1000 casos fuzz con 1–10 participantes:
+dust tras liquidar todos (hasta ocho rondas) y conservación tras cada operación
+(hasta 32 pagos/retiros intercalados). Oracle de entradas y salidas independiente
+del ledger del pool. No constituye prueba formal de todas las secuencias.
 
-**Bloqueado por:** nada. Es el siguiente bloque.
+**Nota de compilación:** advertencia de selfdestruct solo en el helper de test
+que fuerza ETH; no aparece en los contratos de producción.
+
+**Falta:** D2 completo: factory, EIP-712, validaciones del acuerdo, tests de
+firmas, despliegue y verificación en Base Sepolia. El factory debe validar
+arreglos y bps y clonar e inicializar atómicamente: son precondiciones del pool.
+No hay direcciones desplegadas ni se ha modificado main.
+
+**Bloqueado por:** nada.
+
+**Decisiones:** D-023 documenta convenciones de implementación y alternativas
+descartadas. Guías ETHSKILLS leídas por URL sin instalar skills. La versión
+actual de standards se centra en estándares de agentes y no desarrolla ERC-20
+ni EIP-712 como esperaba D-022; prevaleció la arquitectura del repositorio.
+Tests delegados con autorización explícita del usuario, en archivos separados.
+
+**Candidatos nuevos a roadmap:** ninguno. No fue necesario recortar alcance.
 
 ## `design` — 🟡 Dirección fijada
 
