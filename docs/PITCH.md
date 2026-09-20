@@ -76,7 +76,7 @@ Bre-B, el sistema de pagos inmediatos del Banco de la República, es el riel
 natural para esto. El acceso pasa por una entidad financiera vigilada, y eso
 no se resuelve en diez días. Por eso está en el roadmap y no en el demo.
 
-**Todo lo demás es real** y corre contra Base Sepolia: los contratos, las
+**Todo lo demás es real** y corre contra HSKChain Testnet: los contratos, las
 firmas EIP-712, el despliegue del pool, los pagos y los retiros.
 
 ## Lo que no hace, a propósito
@@ -115,7 +115,7 @@ Tres horizontes, detallados en `docs/ROADMAP.md`:
    auditoría.
 2. **Meses, piloto con una agencia:** salida a pesos de verdad con un
    proveedor con licencia, mainnet con patrocinio de gas para que el
-   participante sin cripto no necesite tener ETH para retirar.
+   participante sin cripto no necesite tener HSK para retirar.
 3. **Apuestas:** Bre-B como riel de liquidación, renegociación con un
    mecanismo que no destruya la propiedad que hace útil al producto, y
    disputas.

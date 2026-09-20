@@ -28,24 +28,25 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 
 ## D2 · Contratos, firmas y despliegue — lunes 22
 
-- [ ] `contracts` — `SplitPoolFactory.sol`: dominio EIP-712 con `chainId` y
+- [x] `contracts` — `SplitPoolFactory.sol`: dominio EIP-712 con `chainId` y
       `verifyingContract`
-- [ ] `contracts` — verificación de firmas en orden contra el arreglo de
+- [x] `contracts` — verificación de firmas en orden contra el arreglo de
       participantes
-- [ ] `contracts` — `structHash` consumido, con `salt` por acuerdo
-- [ ] `contracts` — validaciones: suma 10000, sin duplicados, sin dirección
+- [x] `contracts` — `structHash` consumido, con `salt` por acuerdo
+- [x] `contracts` — validaciones: suma 10000, sin duplicados, sin dirección
       cero
-- [ ] `contracts` — clonado EIP-1167 y evento `PoolCreated`
-- [ ] `contracts` — tests de la lista completa de `docs/THREAT-MODEL.md` §6
+- [x] `contracts` — clonado EIP-1167 y evento `PoolCreated`
+- [x] `contracts` — tests de la lista completa de `docs/THREAT-MODEL.md` §6
 - [x] `contracts` — leer `ethskills.com/testing/SKILL.md` (es de Foundry)
-- [ ] `contracts` — desplegar a Base Sepolia con `forge create` y verificar
+- [x] `contracts` — desplegar a HSKChain Testnet con `forge create` y verificar
       con `forge verify-contract`, sin scripts en Solidity
-- [ ] `contracts` — verificar contratos en BaseScan
-- [ ] `docs` — llenar `deployments/base-sepolia.json` y la sección de
+- [x] `contracts` — verificar contratos en el explorador de HSKChain
+- [x] `docs` — llenar `deployments/hashkey-testnet.json` y la sección de
       direcciones del README
-- [ ] `infra` — CI: tests de contratos en cada push
-- [ ] `infra` — reservar ETH de testnet en las cuatro cuentas del demo
-- [ ] `contracts` — leer `ethskills.com/security/SKILL.md` y pasar su lista
+- [x] `infra` — CI: tests de contratos en cada push (validado en GitHub,
+      ejecución 35537664699)
+- [ ] `infra` — reservar HSK de testnet en las cuatro cuentas del demo
+- [x] `contracts` — leer `ethskills.com/security/SKILL.md` y pasar su lista
       antes de desplegar
 
 ## D3 · Diseño — martes 23
@@ -62,7 +63,7 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [ ] `infra` — andamiaje de Next.js App Router con Tailwind y viem/wagmi
 - [ ] `web` — Privy: entrada por correo con wallet embebida y conexión de
       wallet externa
-- [ ] `web` — goteo de gas: la cuenta de despliegue envía un mínimo de ETH a
+- [ ] `web` — goteo de gas: la cuenta de despliegue envía un mínimo de HSK a
       cada wallet embebida recién creada, o no puede retirar nunca
 - [ ] `web` — `/nuevo`: participantes, bps con validación de 10000, términos
 - [ ] `infra` — Supabase: tablas `drafts` y `signatures`

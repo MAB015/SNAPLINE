@@ -23,7 +23,7 @@ completa se anota en `docs/ROADMAP.md`. Nada se borra: lo que se descarta se
 manda al roadmap con una línea de por qué.
 
 Límites duros:
-- Una sola cadena de testnet (Base Sepolia). Nada de multi-chain.
+- Una sola cadena de testnet (HSKChain Testnet). Nada de multi-chain.
 - Un solo token ERC-20 en el demo, más nativo en los tests. Nada de listas.
 - Sin panel de administración, sin roles, sin notificaciones, sin correos.
 - Sin base de datos más allá del relay de firmas.
@@ -37,7 +37,7 @@ los alcances no se cruzan.
 
 | Área | Alcance | Terminado cuando |
 |---|---|---|
-| `contracts` | Solidity, tests, despliegue | Tests pasan y está desplegado y verificado en Base Sepolia |
+| `contracts` | Solidity, tests, despliegue | Tests pasan y está desplegado y verificado en HSKChain Testnet |
 | `web` | Next.js, wagmi/viem, Privy, Supabase | El flujo corre de punta a punta contra la testnet |
 | `design` | Sistema visual, componentes, maquetación | Cumple `docs/BRAND.md` y se ve bien en el plano del video |
 | `docs` | PRD, arquitectura, amenazas, roadmap | Un tercero lo entiende sin preguntar |
@@ -125,9 +125,9 @@ documentación se lee por URL — `getfoundry.sh/llms.txt` para el índice y
 
 El índice raíz enruta hacia guías que este proyecto ya descartó o que chocan
 con sus límites duros. No se siguen sin pasar por aquí: `ship/` recomienda
-desplegar en mainnet y el proyecto está fijado en Base Sepolia (D-005);
+desplegar en mainnet y el proyecto está fijado en HSKChain Testnet (D-026);
 `frontend-ux/` y `frontend-playbook/` están descartadas en su parte de
-interfaz (D-018); `tools/` empuja Blockscout y Scaffold-ETH 2, ninguno en uso;
+interfaz (D-018); `tools/` empuja plugins Blockscout y Scaffold-ETH 2, que no se instalan;
 `audit/` lanza subagentes en paralelo y abre issues en GitHub por su cuenta, y
 aquí nada se ejecuta solo; `feedback/` hace POST a un servicio externo y eso
 se pregunta antes. Ver D-022.
@@ -144,7 +144,7 @@ para no dejar las políticas de acceso abiertas.
 
 | Skill | Por qué no |
 |---|---|
-| Blockscout | Base Sepolia usa BaseScan. Solo servía para HSKChain, y no vamos |
+| Plugin Blockscout | Se usa la API pública del explorador con Foundry; no hace falta instalar el plugin. Ver D-026 |
 | Tempo, x402, Machine Payment Protocol | Pertenecen a otro track del evento. Ver D-019 |
 | ETHSKILLS `frontend-ux`, `frontend-playbook` | Son de Scaffold-ETH 2 y sus reglas de UI contradicen `docs/BRAND.md`. Ver D-018 |
 | `vercel-react-best-practices` | Optimización de rendimiento para apps grandes. La nuestra tiene seis pantallas |

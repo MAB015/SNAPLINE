@@ -1,0 +1,31 @@
+'forge clean' running (wd: /work)
+'forge config --json' running
+'forge build --build-info --skip ./test/** ./script/** --force' running (wd: /work)
+INFO:Detectors:
+Detector: erc20-interface
+MockUSDT (src/MockUSDT.sol#5-54) has incorrect ERC20 function interface:MockUSDT.transfer(address,uint256) (src/MockUSDT.sol#27-29)
+MockUSDT (src/MockUSDT.sol#5-54) has incorrect ERC20 function interface:MockUSDT.transferFrom(address,address,uint256) (src/MockUSDT.sol#38-45)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-erc20-interface
+INFO:Detectors:
+Detector: incorrect-equality
+SplitPool.withdraw(address) (src/SplitPool.sol#40-54) uses a dangerous strict equality:
+	- amount == 0 (src/SplitPool.sol#42)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+INFO:Detectors:
+Detector: reentrancy-events
+Reentrancy in SplitPoolFactory.createPool(SplitPoolFactory.Agreement,bytes[]) (src/SplitPoolFactory.sol#35-76):
+	External calls:
+	- SplitPool(address(pool)).initialize(agreement.participants,agreement.bps,agreement.termsHash) (src/SplitPoolFactory.sol#74)
+	Event emitted after the call(s):
+	- PoolCreated(pool,structHash) (src/SplitPoolFactory.sol#75)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4
+INFO:Detectors:
+Detector: cyclomatic-complexity
+SplitPoolFactory.createPool(SplitPoolFactory.Agreement,bytes[]) (src/SplitPoolFactory.sol#35-76) has a high cyclomatic complexity (12).
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#cyclomatic-complexity
+INFO:Detectors:
+Detector: low-level-calls
+Low level call in SplitPool.withdraw(address) (src/SplitPool.sol#40-54):
+	- (ok,None) = address(msg.sender).call{value: amount}() (src/SplitPool.sol#49)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+INFO:Slither:. analyzed (17 contracts with 101 detectors), 6 result(s) found
