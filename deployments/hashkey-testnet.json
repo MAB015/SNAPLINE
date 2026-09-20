@@ -1,0 +1,35 @@
+{
+  "network": "HSKChain Testnet",
+  "chainId": 133,
+  "rpcUrl": "https://testnet.hsk.xyz",
+  "explorer": "https://testnet-explorer.hskchain.net",
+  "deployer": "0x7153D224638aA1670Ce4698F96E19d3D9d90b038",
+  "compiler": {
+    "solc": "0.8.24",
+    "evmVersion": "cancun",
+    "optimizer": true,
+    "optimizerRuns": 200
+  },
+  "contracts": {
+    "SplitPoolFactory": {
+      "address": "0x2da2f4E4577f8c8090b08dff8A2A288fd2dfa559",
+      "txHash": "0xfc126b6cf3242653f04d96f0bcb20f91163c63a0011ecf027313a47815f30c83",
+      "block": 33379462,
+      "verified": true
+    },
+    "SplitPool": {
+      "address": "0x88ceD9e81cF88DfD6f2f4435DF9047Cb89A5FE7F",
+      "note": "Implementacion de referencia para los clones EIP-1167. La crea el constructor del factory, no una transaccion propia. initialize revierte con AlreadyInitialized.",
+      "block": 33379462,
+      "verified": true
+    },
+    "MockUSDT": {
+      "address": "0xc84d2E59be565EDd8e6394127390E7fdD295b2D6",
+      "txHash": "0x0477015e79e3f477c600c6115828b956d12bf55816513ba1683dbc977e07e2f4",
+      "block": 33379454,
+      "verified": true,
+      "symbol": "mUSDT",
+      "decimals": 6
+    }
+  }
+}

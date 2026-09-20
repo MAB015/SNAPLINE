@@ -38,10 +38,10 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [x] `contracts` — clonado EIP-1167 y evento `PoolCreated`
 - [x] `contracts` — tests de la lista completa de `docs/THREAT-MODEL.md` §6
 - [x] `contracts` — leer `ethskills.com/testing/SKILL.md` (es de Foundry)
-- [ ] `contracts` — desplegar a HSKChain Testnet con `forge create` y verificar
+- [x] `contracts` — desplegar a HSKChain Testnet con `forge create` y verificar
       con `forge verify-contract`, sin scripts en Solidity
-- [ ] `contracts` — verificar contratos en el explorador de HSKChain
-- [ ] `docs` — llenar `deployments/hashkey-testnet.json` y la sección de
+- [x] `contracts` — verificar contratos en el explorador de HSKChain
+- [x] `docs` — llenar `deployments/hashkey-testnet.json` y la sección de
       direcciones del README
 - [x] `infra` — CI: tests de contratos en cada push (validado en GitHub,
       ejecución 35537664699)

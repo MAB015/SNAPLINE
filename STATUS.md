@@ -1,6 +1,6 @@
 # Estado del proyecto — SNAPLINE
 
-**Última actualización:** 2026-09-20 · **Bloque cerrado:** D1 · Contratos, núcleo
+**Última actualización:** 2026-09-20 · **Bloque cerrado:** D2 · Contratos, firmas y despliegue
 **Cierre del hackathon:** 1 de octubre de 2026 · **Días restantes de trabajo:** 10
 
 Este archivo se actualiza en el mismo commit que el trabajo que describe.
@@ -13,7 +13,7 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 |---|---|---|
 | `docs` | ✅ Listo | Solo mantenimiento del tracking |
 | `infra` | 🟡 CI validado | Fondeo de testnet; Next.js en D4 |
-| `contracts` | 🟡 D2 local validado | Desplegar y verificar en HSKChain Testnet |
+| `contracts` | ✅ D2 desplegado | D5 · despliegue del pool desde la web |
 | `design` | 🟡 Dirección fijada | D3 · sistema en código |
 | `web` | ⬜ Sin empezar | D4 · Privy y creación de acuerdo |
 | `demo` | 🟡 Guion escrito | D8 · datos y ensayos |
@@ -80,10 +80,27 @@ de todas las secuencias. `forge lint src --severity high med` sin hallazgos.
 **Nota de compilación:** advertencia de selfdestruct solo en el helper de test
 que fuerza ETH; no aparece en los contratos de producción.
 
-**Falta:** desplegar y verificar factory, implementación y MockUSDT en HSKChain Testnet; registrar direcciones reales; reservar HSK para las cuatro cuentas.
-D2 no está cerrado ni congelado.
+**Desplegado:** HSKChain Testnet, chainId 133, desde
+`0x7153D224638aA1670Ce4698F96E19d3D9d90b038` con `forge create`, sin scripts en
+Solidity. Las tres direcciones están en
+[`deployments/hashkey-testnet.json`](deployments/hashkey-testnet.json) y en el
+README: factory `0x2da2f4E4…a559` (bloque 33379462), implementación de los
+clones `0x88ceD9e8…FE7F` y MockUSDT `0xc84d2E59…b2D6` (bloque 33379454). Las
+tres verificadas en el explorador con solc 0.8.24, optimizador a 200 runs;
+`is_verified` confirmado por la API, no solo el envío aceptado.
 
-**Cambio de red autorizado:** HSKChain Testnet, chainId 133, HSK de prueba para gas y MockUSDT para pagos (D-026). Configuración pública y referencias de red actualizadas; contracts/.env local e ignorado preparado. RPC y API del explorador responden. Verificación de fuentes pendiente.
+**Comprobado en cadena, no solo en el recibo:** el factory responde
+`implementation()` con la dirección desplegada; MockUSDT responde `mUSDT` y 6
+decimales; llamar a `initialize` sobre la implementación revierte con
+`AlreadyInitialized` (`0x0dc149f0`), así que el clon de referencia está quemado
+y nadie puede secuestrarlo. Coste real del despliegue: 0,00195 HSK a 1,001
+gwei. Quedan 0,098 HSK para el goteo de gas de D4.
+
+**Falta:** reservar HSK para las cuatro cuentas del demo. Esa tarea sigue
+bloqueada porque las cuatro direcciones todavía no existen: dos son wallets
+embebidas que Privy crea en D4.
+
+**Cambio de red autorizado:** HSKChain Testnet, chainId 133, HSK de prueba para gas y MockUSDT para pagos (D-026). Configuración pública y referencias de red actualizadas; contracts/.env local e ignorado preparado. RPC y API del explorador responden. Fuentes ya verificadas.
 
 **Validación del cambio:** formato y 40 tests pasan tanto localmente como en
 fork de HSKChain Testnet (bloque 33376448), con 1000 casos por test fuzz.
@@ -92,7 +109,6 @@ saldo nativo en la red; se fijó saldo inicial cero en los fixtures de dos
 suites. No se modificó Solidity de producción. El fork no sustituye el
 despliegue ni demuestra por sí solo la compatibilidad del nodo remoto.
 
-**Bloqueado por:** falta configurar y fondear la cuenta desplegadora. Las cuatro direcciones del demo se necesitan para su fondeo posterior, no para desplegar el factory. No se inventaron direcciones ni se enviaron transacciones.
 
 **Revisión previa al despliegue:** cerrada. Se leyeron testing, security y
 addresses de ETHSKILLS. Revisados CEI, SafeERC20, contabilidad por activo,
@@ -116,8 +132,8 @@ críticas de la guía quedan cubiertas: reentrada resuelta, retornos comprobados
 cero `delegatecall`/`selfdestruct` en producción y ninguna función de estado sin
 protección. Mythril queda descartado con su porqué en D-027.
 
-**Falta:** verificación de fuentes en el explorador, que solo puede cerrarse
-después de desplegar.
+**Cerrado:** la verificación de fuentes en el explorador quedó hecha con el
+despliegue. No queda nada abierto en la revisión previa.
 
 **Decisiones:** D-023, D-024 y D-025 documentan núcleo, interfaz firmada y CI;
 D-026 el cambio de testnet y D-027 el análisis estático en contenedor,
