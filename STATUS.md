@@ -162,6 +162,28 @@ Verificado en `eag-global-buildathon.devfolio.co` el 2026-09-21:
 - Equipos de 1 a 4. Ir solo no penaliza.
 - El envío se hace en Devfolio y pide un enlace en vivo.
 
+### Estado del envío
+
+Borrador creado en Devfolio el 2026-09-20: proyecto `snapline-1ece` en la
+cuenta `mab015`, estado `draft`, sin publicar. Rellenado por el MCP de
+Devfolio con datos del repositorio — tagline, ocho tecnologías, plataforma
+web, enlace al repositorio público y las dos respuestas obligatorias del
+organizador ("The problem it solves" y "Challenges we ran into"). Aplicado al
+track **Real-World Ethereum Applications**, que confirma lo verificado arriba.
+
+La ficha está escrita en inglés y declara sin maquillar lo que falta: que no
+hay frontend, que nada está desplegado en cadena, que el pago en pesos es
+simulado y que el fuzzing es empírico y no prueba formal.
+
+**Falta para publicar: capturas.** Devfolio exige de 1 a 6 y que sean reales
+del proyecto corriendo, no generadas. Sin interfaz no hay nada que capturar,
+así que el envío no se puede cerrar antes de D4. Es el único requisito
+pendiente; el resto del checklist de publicación ya está cubierto.
+
+No se aplicó ningún track de sede — Cali, Brasil, Bolivia, Ghana, Nigeria —
+porque depende de si se participa presencialmente. Sí aparecen en la lista de
+tracks del MCP, aunque el de Colombia no figure en la página pública.
+
 ## Decisiones pendientes
 
 Ninguna. Todas las decisiones de diseño abiertas se cerraron en D0 y están
