@@ -51,16 +51,18 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 
 ## D3 · Diseño — martes 23
 
-- [ ] `design` — tokens en código: tipografías, escala, paleta, filetes
-- [ ] `design` — componente de tabla de reparto
-- [ ] `design` — componente de barra segmentada
-- [ ] `design` — componente de estado de firma
-- [ ] `design` — componente de sello de simulado
-- [ ] `design` — maqueta estática de `/acuerdo/[id]` con datos falsos
+- [x] `design` — tokens en código: tipografías, escala, paleta, filetes
+- [x] `design` — componente de tabla de reparto
+- [x] `design` — componente de barra segmentada
+- [x] `design` — componente de estado de firma
+- [x] `design` — componente de sello de simulado
+- [x] `design` — maqueta estática de `/acuerdo/[id]` con datos falsos
 
 ## D4 · Web, identidad y borrador — miércoles 24
 
-- [ ] `infra` — andamiaje de Next.js App Router con Tailwind y viem/wagmi
+- [x] `infra` — andamiaje de Next.js App Router con Tailwind *(adelantado a D3,
+      ver D-029)*
+- [ ] `infra` — añadir viem/wagmi al andamiaje
 - [ ] `web` — Privy: entrada por correo con wallet embebida y conexión de
       wallet externa
 - [ ] `web` — goteo de gas: la cuenta de despliegue envía un mínimo de HSK a

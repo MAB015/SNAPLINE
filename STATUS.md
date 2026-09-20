@@ -1,6 +1,6 @@
 # Estado del proyecto — SNAPLINE
 
-**Última actualización:** 2026-09-20 · **Bloque cerrado:** D2 · Contratos, firmas y despliegue
+**Última actualización:** 2026-09-20 · **Bloque cerrado:** D3 · Diseño
 **Cierre del hackathon:** 1 de octubre de 2026 · **Días restantes de trabajo:** 10
 
 Este archivo se actualiza en el mismo commit que el trabajo que describe.
@@ -12,10 +12,10 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 | Área | Estado | Siguiente |
 |---|---|---|
 | `docs` | ✅ Listo | Solo mantenimiento del tracking |
-| `infra` | 🟡 CI validado | Fondeo de testnet; Next.js en D4 |
+| `infra` | 🟡 CI validado | Fondeo de testnet; viem/wagmi en D4 |
 | `contracts` | ✅ D2 desplegado | D5 · despliegue del pool desde la web |
-| `design` | 🟡 Dirección fijada | D3 · sistema en código |
-| `web` | ⬜ Sin empezar | D4 · Privy y creación de acuerdo |
+| `design` | ✅ D3 listo | D7 · pulido y sello en el resto |
+| `web` | 🟡 Andamiaje | D4 · Privy y creación de acuerdo |
 | `demo` | 🟡 Guion escrito | D8 · datos y ensayos |
 
 ---
@@ -43,7 +43,8 @@ Validado localmente y en GitHub: formato y tests pasan en Linux en la
 [ejecución 35537664699](https://github.com/MAB015/SNAPLINE/actions/runs/35537664699)
 del commit 9d96b48. Rama publicada en origin/feat/contracts-split-pool.
 
-**Falta:** fondeo de las cuatro cuentas de testnet y andamiaje de Next.js (D4).
+**Falta:** fondeo de las cuatro cuentas de testnet. El andamiaje de Next.js
+se adelantó a D3 y lo hizo `design`; falta añadirle viem/wagmi en D4.
 
 **Nota:** el CI no se añade hasta que haya algo que construir. Un `main` con
 CI en rojo incumple la regla de "siempre desplegable".
@@ -175,26 +176,44 @@ coordinador terminó la integración. En los tests recuperados se corrigieron
 aritmética uint16 y una expectativa de revert que interceptaba un getter.
 Despliegue pendiente de configuración externa.
 
-## `design` — 🟡 Dirección fijada
+## `design` — 🟡 Sistema en código
 
 **Hecho:** dirección visual elegida (Acta) y documentada en `docs/BRAND.md`
 con tipografías, paleta, escala y reglas duras.
 
-**Falta:** tokens en código, componentes base (tabla de reparto, barra
-segmentada, estado de firma, sello de simulado) y maqueta estática de
-`/acuerdo/[id]`.
+**Hecho en D3** (rama `feat/design-sistema-visual`): tokens de Tailwind en
+`web/src/app/globals.css` — seis colores, las tres familias de `docs/BRAND.md`
+y la escala cerrada de 12 a 56. Las escalas de radio y sombra se anulan para
+que las reglas duras no dependan de la revisión (D-030). Cuatro componentes en
+`web/src/components/`: tabla de reparto con filetes visibles y cifras en mono
+tabular, barra segmentada, estado de firma —por fila y del acuerdo completo— y
+sello de simulado. Maqueta de `/acuerdo/[id]` con los datos de
+`docs/DEMO-SCRIPT.md`, marcada en pantalla como maqueta.
 
-**Bloqueado por:** nada, pero se hace en D3 después de congelar contratos.
+**Validación:** `next build` y `eslint` pasan; las dos pantallas revisadas en
+el navegador a 800px y a 375px. El snap de la línea está implementado —380ms,
+una vez, sin rebote, y anulado con `prefers-reduced-motion`— y se ve con
+`?firmado=1`. No hay tests automáticos de interfaz: la comprobación es visual.
 
-## `web` — ⬜ Sin empezar
+**Falta:** nada del alcance de D3. El pulido y el sello en el resto de
+superficies siguen en D7.
 
-**Hecho:** nada. Rutas y responsabilidades definidas en
-`docs/ARCHITECTURE.md` §3.
+**Nota:** el rojo `stamp` aparece solo en las marcas de la línea y en el estado
+del acuerdo firmado. Las filas de la tabla no lo usan, o dejaría de pesar.
 
-**Falta:** todo.
+**Bloqueado por:** nada.
 
-**Bloqueado por:** necesita el ABI de los contratos (D2) y los componentes de
-diseño (D3). No empieza antes de D4.
+## `web` — 🟡 Solo el andamiaje
+
+**Hecho:** andamiaje de Next.js 16 con App Router, TypeScript y Tailwind 4,
+adelantado de D4 para poder escribir el sistema visual en su sitio definitivo
+(D-029). Dos rutas dibujadas y sin lógica: `/` y `/acuerdo/[id]`. Rutas y
+responsabilidades definidas en `docs/ARCHITECTURE.md` §3.
+
+**Falta:** todo lo que toca datos o cadena. viem/wagmi, Privy, Supabase y las
+cuatro pantallas restantes.
+
+**Bloqueado por:** nada. Empieza en D4 con Privy.
 
 ## `demo` — 🟡 Guion escrito
 
