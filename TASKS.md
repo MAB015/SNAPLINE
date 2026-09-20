@@ -46,7 +46,7 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [x] `infra` — CI: tests de contratos en cada push (validado en GitHub,
       ejecución 35537664699)
 - [ ] `infra` — reservar HSK de testnet en las cuatro cuentas del demo
-- [ ] `contracts` — leer `ethskills.com/security/SKILL.md` y pasar su lista
+- [x] `contracts` — leer `ethskills.com/security/SKILL.md` y pasar su lista
       antes de desplegar
 
 ## D3 · Diseño — martes 23

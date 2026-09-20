@@ -80,8 +80,8 @@ de todas las secuencias. `forge lint src --severity high med` sin hallazgos.
 **Nota de compilación:** advertencia de selfdestruct solo en el helper de test
 que fuerza ETH; no aparece en los contratos de producción.
 
-**Falta:** desplegar y verificar factory, implementación y MockUSDT en HSKChain Testnet; registrar direcciones reales; reservar HSK para las cuatro cuentas;
-cerrar revisión previa al despliegue. D2 no está cerrado ni congelado.
+**Falta:** desplegar y verificar factory, implementación y MockUSDT en HSKChain Testnet; registrar direcciones reales; reservar HSK para las cuatro cuentas.
+D2 no está cerrado ni congelado.
 
 **Cambio de red autorizado:** HSKChain Testnet, chainId 133, HSK de prueba para gas y MockUSDT para pagos (D-026). Configuración pública y referencias de red actualizadas; contracts/.env local e ignorado preparado. RPC y API del explorador responden. Verificación de fuentes pendiente.
 
@@ -94,18 +94,33 @@ despliegue ni demuestra por sí solo la compatibilidad del nodo remoto.
 
 **Bloqueado por:** falta configurar y fondear la cuenta desplegadora. Las cuatro direcciones del demo se necesitan para su fondeo posterior, no para desplegar el factory. No se inventaron direcciones ni se enviaron transacciones.
 
-**Revisión de seguridad provisional:** se leyeron testing, security y addresses
-de ETHSKILLS. Revisados CEI, SafeERC20, contabilidad por activo, redondeo,
-validación de arrays, consentimiento, dominio, replay y destino inmutable del
-clon. No hay oráculos, swaps, mantenimiento, roles ni upgrade authority: esos
-puntos no aplican. Se conserva CEI sin añadir nonReentrant y salt/consumo sin
-añadir expiración, como fija la arquitectura. Tokens maliciosos/rebasing fuera
-del supuesto de confianza. Slither/Mythril no están instalados ni se ejecutaron;
-el lint de Forge no los sustituye. Verificación en explorador pendiente. Por
-ello la tarea de revisión previa al despliegue sigue abierta; no se presenta
-esta revisión como auditoría ni como checklist completo aprobado.
+**Revisión previa al despliegue:** cerrada. Se leyeron testing, security y
+addresses de ETHSKILLS. Revisados CEI, SafeERC20, contabilidad por activo,
+redondeo, validación de arrays, consentimiento, dominio, replay y destino
+inmutable del clon. No hay oráculos, swaps, mantenimiento, roles ni upgrade
+authority: esos puntos no aplican. Se conserva CEI sin añadir nonReentrant y
+salt/consumo sin añadir expiración, como fija la arquitectura. Tokens
+maliciosos/rebasing quedan fuera del supuesto de confianza.
 
-**Decisiones:** D-023, D-024 y D-025 documentan núcleo, interfaz firmada y CI,
+**Análisis automático:** Slither 0.11.5 en contenedor, sin instalar nada en la
+máquina (D-027). Seis hallazgos sobre `src/`, ninguno alto, ninguno accionable;
+salida cruda en [`contracts/audit/slither-2026-09-20.txt`](contracts/audit/slither-2026-09-20.txt).
+`erc20-interface` sobre MockUSDT es el diseño pedido en D1: imitar a USDT sin
+retorno booleano, absorbido por SafeERC20. `incorrect-equality` compara el
+pendiente ya calculado, no un balance. `reentrancy-events` señala el orden del
+evento `PoolCreated`, pero `initialize` no hace llamadas externas y el destino
+es un clon de una implementación `immutable` creada por el propio factory.
+`low-level-calls` es la transferencia nativa, con estado escrito antes y
+retorno comprobado. `cyclomatic-complexity` es estilo. Las cuatro casillas
+críticas de la guía quedan cubiertas: reentrada resuelta, retornos comprobados,
+cero `delegatecall`/`selfdestruct` en producción y ninguna función de estado sin
+protección. Mythril queda descartado con su porqué en D-027.
+
+**Falta:** verificación de fuentes en el explorador, que solo puede cerrarse
+después de desplegar.
+
+**Decisiones:** D-023, D-024 y D-025 documentan núcleo, interfaz firmada y CI;
+D-026 el cambio de testnet y D-027 el análisis estático en contenedor,
 con alternativas descartadas. Guías ETHSKILLS leídas por URL sin instalar skills. La versión
 actual de standards se centra en estándares de agentes y no desarrolla ERC-20
 ni EIP-712 como esperaba D-022; prevaleció la arquitectura del repositorio.

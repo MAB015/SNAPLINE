@@ -6,6 +6,26 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-20 · Revisión previa al despliegue
+
+### D-027 · Slither en contenedor, Mythril descartado
+La guía `ethskills.com/security/SKILL.md` exige "automated analysis run" antes
+de desplegar. No nombra herramientas obligatorias: pide que el análisis exista
+y que los hallazgos críticos queden resueltos. Se ejecuta Slither 0.11.5 desde
+la imagen `trailofbits/eth-security-toolbox`, sin instalar Python ni ninguna
+herramienta en la máquina: los contratos se copian dentro del contenedor y el
+build de Windows queda intacto. Seis hallazgos, ninguno alto, todos triados
+contra el código y ninguno accionable.
+**Descartado:** instalar Python y `slither-analyzer` nativos en Windows. Deja
+la máquina modificada para una ejecución que se repite dos veces en diez días.
+
+**Descartado:** Mythril. Su ejecución simbólica sobre el bucle de verificación
+de firmas de `createPool` cuesta entre una y dos horas y devuelve ruido que hay
+que triar a mano. A diez días del cierre no se gana el puesto que pide la regla
+de simplicidad, y la casilla de la guía ya queda cubierta por Slither más las
+dos invariantes con fuzzing a 1000 casos. Si aparece un hallazgo que dependa de
+caminos de ejecución, se reconsidera.
+
 ## 2026-09-20 · Cambio de testnet autorizado
 
 ### D-026 · HSKChain Testnet con HSK de prueba
