@@ -14,7 +14,7 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 | `docs` | ✅ Listo | Solo mantenimiento del tracking |
 | `infra` | 🟡 D4 casi listo | Fondeo de testnet; Vercel en D9–D10 |
 | `contracts` | ✅ D2 desplegado | Consumido desde D5 web; sin tareas propias hasta D8 |
-| `design` | ✅ D5 listo, snap con GSAP | D7 · anillo 3D y pulido |
+| `design` | ✅ D5 listo, landing D-039 cerrada | D7 · anillo 3D y pulido |
 | `web` | ✅ D7 (parte web) código listo, corrida real en D8 | D7 · pulido de `design` (anillo 3D, sello, tema oscuro) |
 | `demo` | 🟡 Guion escrito | D8 · datos y ensayos |
 
@@ -381,6 +381,28 @@ de la fila. Verificado por Design Lead (`lint`/`build`) antes de pedir el
 merge; Product Manager repitió ambos sobre `main` ya combinado, en verde.
 Sin entrada nueva en `DECISIONS.md`: son correcciones puntuales de
 accesibilidad, no una decisión de arquitectura o alcance.
+
+**Fuera de plan, landing completa en "/" (D-039), mergeada en dos etapas:**
+`web/src/app/page.tsx` reemplaza la vitrina de componentes de D3 por hero,
+casos de uso en texto con filetes, bloque de confianza en superficie `chain`
+(tres direcciones con hash vivo y cifras exactas de auditoría) y un único
+CTA "Crear tu acuerdo" → `/nuevo`. Componentes nuevos: `ContadorTests.tsx`
+(envuelve `ContadorNumero` porque `page.tsx` es de servidor y no puede
+pasarle una función como prop a un componente de cliente) y
+`EjemploBarraHero.tsx`. Construida por Design Lead/creative-director (rama
+`feat/design-landing-acta-viva`): primer commit `1c55134` con el hero sin
+autoplay (`tensada` fijo en `false`), segundo commit `12432ac` cableando el
+autoplay — temporizador de 350ms al montar en vez de
+`IntersectionObserver` (el hero siempre está en el viewport ni bien carga),
+y `BarraSegmentada` ya resuelve `prefers-reduced-motion` internamente con
+`gsap.matchMedia`, así que `EjemploBarraHero` solo evita la espera
+artificial (retraso 0) cuando reduced motion está activo. D-039 cierra sin
+salvedades. Verificado por Product Manager antes de mergear, no solo por el
+reporte del especialista: `next build`/`eslint` en verde sobre la rama
+completa, `git status` confirmó que el segundo commit tocó un solo archivo,
+`git merge-tree` contra el `main` ya integrado con CORS y D7-web sin
+conflictos, y `lint`/`build` repetidos sobre `main` ya combinado. Ver D-039
+en `DECISIONS.md`.
 
 **Bloqueado por:** nada.
 

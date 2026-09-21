@@ -132,18 +132,19 @@ bloquea avanzar a D6. `NEXT_PUBLIC_PRIVY_APP_ID` ya está puesto en
 
 ## Fuera de plan · Landing de marketing completa en "/" (D-039)
 
-- [ ] `demo` — CMO: brief de narrativa (documento, no código) para
+- [x] `demo` — CMO: brief de narrativa (documento, no código) para
       reemplazar la vitrina de componentes de D3 en `web/src/app/page.tsx`:
       qué es el producto, problema, usuarios, casos de uso desarrollados, y
       el contenido concreto de la sección de confianza (direcciones de
       contrato verificadas, enlace al explorador, cobertura real de los 40
       tests + fuzzing ya documentados en `STATUS.md`). Sin inventar ninguna
       métrica de uso real.
-- [ ] `design` — Design Lead: construir `web/src/app/page.tsx` y los
+- [x] `design` — Design Lead: construir `web/src/app/page.tsx` y los
       componentes nuevos que haga falta con el brief de CMO ya cerrado,
       muy visual según `docs/BRAND.md` (Acta Viva), CTA claro "Crear tu
       acuerdo" → `/nuevo`. No toca ni duplica `PantallaCarga.tsx` (D-038,
-      ya montada en esa misma pantalla).
+      ya montada en esa misma pantalla). Incluye el autoplay de la barra del
+      hero, cableado por creative-director en un segundo commit.
 
 Orden de ejecución secuencial, confirmado por CEO: CMO primero (brief
 cerrado), Design Lead después (implementación). No compite con el arreglo
