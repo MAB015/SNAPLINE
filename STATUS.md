@@ -249,6 +249,22 @@ archivo de CTO— no correspondía a ninguna de las dos sesiones según el
 reparto de archivos, así que la hizo directamente Product Manager como
 cambio mínimo de una línea, sin abrir una tarea nueva para otro agente.
 
+**Fuera de generación, 2026-09-21 (D-038).** CEO aprobó con el usuario un
+alcance nuevo a mitad del plan, sin pasar por `TASKS.md`: una pantalla de
+carga de marca al abrir "/". Un único worktree
+(`agent-a539e9c93480da821`, rama `worktree-agent-a539e9c93480da821`),
+dirigido por Design Lead a `creative-director`, con `HEAD` en `56d0c0b` al
+momento de trabajar —no en la punta de la rama de Product Manager en ese
+momento—; se confirmó con `git merge-tree` que el merge contra `main` no
+generaba conflicto antes de integrar. Archivos acotados a
+`web/src/app/page.tsx` y el componente nuevo `PantallaCarga.tsx`; no tocó
+`layout.tsx`. Product Manager repitió `lint`/`build` de forma independiente
+sobre la rama y sobre `main` ya mergeado (commit `0406214`), no solo confió
+en el reporte de Design Lead. Sin cruce con ningún archivo de D6/D7. Queda
+pendiente una revisión visual en navegador (375px/800px, ambos temas) que
+ni Design Lead ni Product Manager pueden hacer desde su rol — anotado en
+riesgos abiertos.
+
 ## `design` — ✅ D5 listo, snap con GSAP
 
 **Hecho:** dirección visual revisada de Acta a **Acta Viva** (D-029) y
@@ -310,6 +326,21 @@ tests automáticos de interfaz: la comprobación es visual.
 
 **Riesgo:** D7 suma el anillo 3D en su caja de un día. El orden de corte
 sigue en `TASKS.md`: primero cae el stretch de D8, luego el anillo.
+
+**Fuera de plan, ya en `main` (D-038):** pantalla de carga de marca al abrir
+"/" (`PantallaCarga.tsx`), encargo directo de CEO aprobado con el usuario a
+mitad del plan, sin paso previo por `TASKS.md` — registrado ahora en el
+mismo bloque que la integra. Dirigida por Design Lead a
+`creative-director` (rama `worktree-agent-a539e9c93480da821`, commit
+`10b367e`); autocontenida, no tocó `layout.tsx`, mismo patrón que el
+interruptor de tema (D-034). Verificado por Product Manager, no solo por el
+reporte de Design Lead: diff acotado a `web/src/app/page.tsx` (import y
+montaje de una línea) y el componente nuevo; sin cruce con ningún alcance
+activo de `TASKS.md` (D6/D7 no tocan `/`); `lint`/`build` corridos de forma
+independiente sobre la rama y de nuevo sobre `main` ya mergeado (`0406214`),
+los dos en verde. Pendiente un ojo humano con navegador para confirmar el
+fotograma final a 375px/800px en los dos temas antes de grabar — ver
+riesgos abiertos.
 
 **Bloqueado por:** nada.
 
@@ -415,6 +446,7 @@ edición.
 | El stretch de pago en pesos se come tiempo del ensayo | Solo se toca si D1–D7 cerraron a tiempo. Corte a las 6 horas en D8 |
 | Las wallets embebidas se crean sin gas y no pueden retirar | Goteo de HSK implementado (`web/src/app/api/goteo/route.ts`), pendiente de `DEPLOYER_PRIVATE_KEY` en `web/.env.local` para probarlo de punta a punta. Privy con HSKChain Testnet aún sin probar en el navegador |
 | La guía de submission de Cali aparece tarde y exige algo no previsto | Conseguirla cuanto antes. Está en `TASKS.md` como bloqueada por información externa |
+| La pantalla de carga de marca (D-038) no se revisó en navegador real, solo por código y `build`/`lint` | Confirmar el fotograma a 375px/800px en los dos temas antes de grabar en D8/D9; ni Design Lead ni Product Manager tienen herramienta de navegador en su rol |
 
 ## Contexto del evento
 
