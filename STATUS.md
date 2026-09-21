@@ -156,35 +156,38 @@ Tests delegados con autorización explícita del usuario, en archivos separados.
 
 ### Organización de agentes
 
-Por solicitud del usuario, el trabajo siguiente usa un coordinador principal
-y tres agentes con ramas y worktrees separados, creados desde el cierre de D1.
-El coordinador fija interfaces, asigna archivos, resuelve dependencias, revisa
-entregas y ejecuta los tests integrados antes de cerrar tareas. `main` no recibe
-cambios automáticamente.
-
-| Responsable | Rama | Archivos asignables |
-|---|---|---|
-| Implementación | `feat/contracts-implementation` | `contracts/src/` |
-| Pruebas | `feat/contracts-tests` | `contracts/test/` |
-| Infraestructura | `feat/infra-validation` | CI y configuración de herramientas |
-| Plataforma | `feat/infra-plataforma` | `supabase/` y despliegue |
-
-Worktrees locales bajo `F:/Projects/SNAPLINE-AI-agents/`: `implementation`,
-`tests`, `infra` e `integration`. Otro proceso consolidó D1 en main y guardó
-los tests en 60e021e. Tras autorización del usuario, el coordinador conservó
-esos commits y creó `integration` con `feat/contracts-split-pool` desde 4e6163d.
-El checkout principal permanece en main; no se fusionó D2 allí.
-Cada agente trabaja únicamente en su directorio; ninguno cambia ramas en el
-checkout de otro. Las interfaces compartidas se acuerdan antes de escribir.
-
-Los agentes entregan cambios y evidencia de validación; el coordinador integra
-una tarea por commit junto con su tracking. Solo el coordinador modifica
-STATUS, TASKS y DECISIONS, para evitar conflictos. Se mantienen cuatro puestos
-simultáneos: coordinador y tres agentes. Factory, tests y CI entregados; los
-agentes alcanzaron su límite de uso durante la revisión adicional y el
-coordinador terminó la integración. En los tests recuperados se corrigieron
+**Generación D1–D2 (contratos), cerrada.** Coordinador principal y tres
+agentes (`feat/contracts-implementation`, `feat/contracts-tests`,
+`feat/infra-validation`) con ramas y worktrees separados. Factory, tests y CI
+entregados y fusionados a `main`. En los tests recuperados se corrigieron
 aritmética uint16 y una expectativa de revert que interceptaba un getter.
-Despliegue pendiente de configuración externa.
+
+**Generación D3-porte + D4 (diseño y plataforma web), en curso.** Dos ramas
+en paralelo desde `main` (16e0891), cada una en su worktree bajo
+`F:/Projects/SNAPLINE-AI-agents/`, con límite de archivos para que no se
+crucen:
+
+| Responsable | Rama | Worktree | Archivos asignables |
+|---|---|---|---|
+| Diseño | `feat/design-porte-acta-viva` | `design` | `web/src/app/globals.css`, `web/src/components/`, `web/src/app/acuerdo/[id]/page.tsx`, componentes nuevos (identicon, hash vivo, texturas) |
+| Plataforma web | `feat/web-identidad-borrador` | `plataforma` | `web/src/app/layout.tsx`, `web/src/app/nuevo/`, `web/src/lib/wagmi.ts`, `web/src/lib/privy.ts`, `web/src/lib/supabase.ts`, `web/package.json` |
+
+**Interfaz fijada para evitar el choque en `layout.tsx`:** el interruptor de
+tema claro/oscuro que pide D3 se implementa como componente de cliente
+contenido dentro de `web/src/app/acuerdo/[id]/page.tsx` (la única pantalla que
+D3 exige mostrar en los dos temas), sin tocar el layout raíz. `layout.tsx` es
+de uso exclusivo de la rama de plataforma, que lo necesita para envolver la
+app con `PrivyProvider`. Si D5 en adelante exige el interruptor a nivel de
+toda la app, se resuelve entonces, con el layout ya estable.
+
+`web/src/lib/acuerdo.ts` (tipos `Participante`/`Acuerdo`) es de solo
+extensión para ambas ramas: se agregan funciones, no se cambian firmas
+existentes. Cualquier dependencia nueva de npm se avisa al coordinador antes
+de instalarla, para que `web/package.json` no divergiera entre ramas.
+
+Cada agente trabaja únicamente en su worktree; ninguno cambia ramas en el
+checkout de otro. El coordinador integra una tarea por commit junto con su
+tracking. Solo el coordinador modifica STATUS, TASKS y DECISIONS.
 
 ## `design` — 🟡 D3 parcial: base en código, falta portar a Acta Viva
 
