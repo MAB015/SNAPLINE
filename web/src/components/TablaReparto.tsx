@@ -1,3 +1,4 @@
+import { ContadorNumero } from "@/components/ContadorNumero";
 import { EstadoFirma } from "@/components/EstadoFirma";
 import { HashVivo } from "@/components/HashVivo";
 import { Identicon } from "@/components/Identicon";
@@ -12,7 +13,9 @@ import {
  * Tabla de reparto (docs/BRAND.md §7, punto 3).
  *
  * Filetes visibles de 1px, porcentajes en mono tabular alineados a la
- * derecha y un total que siempre se muestra: la suma es el contrato.
+ * derecha y un total que siempre se muestra: la suma es el contrato. Los
+ * porcentajes de la columna "Parte" y el total cuentan desde 0 con GSAP al
+ * cargar (docs/BRAND.md §10, "Montos"), via `ContadorNumero`.
  */
 export function TablaReparto({
   participantes,
@@ -72,7 +75,7 @@ export function TablaReparto({
               <HashVivo valor={p.direccion} />
             </td>
             <td className="mono py-3 text-right align-baseline">
-              {formatearBps(p.bps)}
+              <ContadorNumero valor={p.bps} formatear={formatearBps} />
             </td>
             <td className="py-3 text-right align-baseline">
               <EstadoFirma estado={p.firma} />
@@ -86,7 +89,7 @@ export function TablaReparto({
             Total
           </td>
           <td className="mono py-3 text-right font-medium">
-            {formatearBps(total)}
+            <ContadorNumero valor={total} formatear={formatearBps} />
           </td>
           <td />
         </tr>
