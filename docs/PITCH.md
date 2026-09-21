@@ -13,9 +13,16 @@ ya está decidido.
 
 ## El problema, sin adornos
 
-Un equipo distribuido termina un proyecto y llega el pago. Desde ese momento
-el reparto depende de tres cosas frágiles: que alguien recuerde lo que se
-acordó, que esa persona tenga la plata en su cuenta, y que la reparta.
+El cliente que tenemos en la cabeza: una agencia creativa o de producto
+chica, de 3 a 8 personas, con sede formal en Colombia y colaboradores
+freelance repartidos en dos o tres países de la región. En casi todas hay un
+socio que hoy hace de banco humano — cobra el proyecto completo en su cuenta,
+lo convierte, y reparte a mano por Wise, Payoneer o un cambista informal,
+sin que nadie se lo haya pedido y sin que eso sea su trabajo.
+
+Ese equipo termina un proyecto y llega el pago. Desde ese momento el reparto
+depende de tres cosas frágiles: que alguien recuerde lo que se acordó, que
+esa persona tenga la plata en su cuenta, y que la reparta.
 
 Las tres fallan igual. El acuerdo era un mensaje de hace dos meses y cada
 quien recuerda otra versión. El dinero cae en una sola cuenta, y esa persona
@@ -62,6 +69,20 @@ SNAPLINE ataca exactamente eso por los dos extremos:
 En el demo, Sofía —la ilustradora— hace las dos cosas. Ese es el argumento
 completo.
 
+## La economía del clon
+
+Cada acuerdo nuevo no despliega un contrato desde cero: es un clon EIP-1167
+de 45 bytes de runtime contra una implementación `SplitPool` inmutable, ya
+verificada en el explorador. El despliegue completo de los tres contratos
+—factory, implementación y el token de prueba— costó 0,00195 HSK. Un pool
+nuevo es una fracción de eso.
+
+Esto es una propiedad técnica del diseño, no una cifra de tracción: no
+hemos desplegado pools para clientes reales todavía, y este párrafo no dice
+lo contrario. Lo que dice es que agregar la agencia número cien no es una
+decisión de arquitectura ni un problema de costo — es una llamada al
+factory.
+
 ## Lo que está simulado, dicho antes de que lo pregunten
 
 **La salida a pesos es un mock.** No mueve dinero real y no habla con ningún
@@ -107,6 +128,24 @@ está escrito en el README.
   reparto", no "acepto este reparto cuantas veces quieras".
 - **Un pool por proyecto con clones EIP-1167.** Tu proyecto es una dirección.
 
+## Listo para auditoría, no auditado
+
+Hay una diferencia entre "confíen en nosotros" y lo que ya se puede
+verificar hoy: los tres contratos están desplegados y verificados en el
+explorador de HSKChain Testnet, con dirección pública y código fuente
+legible por cualquiera. Cuarenta tests pasan sin fallos ni omisiones. Dos
+invariantes centrales —conservación de fondos y ausencia de polvo
+acumulable— corren cada una 1000 casos de fuzzing, y otros 1000 casos de
+fuzzing validan acuerdos firmados con bps, términos y salt variables.
+Slither corrió limpio: seis hallazgos, ninguno alto, cada uno explicado en
+`contracts/audit/slither-2026-09-20.txt`.
+
+Eso es rigor de ingeniería real, no una promesa. Lo que no es, y no decimos
+que sea, es una auditoría externa. El premio de este hackathon no financia
+la demo — la demo ya funciona sin él. Financia exactamente el paso que
+falta antes de que este código toque dinero real: la auditoría externa y la
+integración de un proveedor de salida a pesos con licencia.
+
 ## Qué sigue
 
 Tres horizontes, detallados en `docs/ROADMAP.md`:
@@ -114,16 +153,32 @@ Tres horizontes, detallados en `docs/ROADMAP.md`:
 1. **Semanas:** anclar los términos de forma permanente, soportar multisig,
    auditoría.
 2. **Meses, piloto con una agencia:** salida a pesos de verdad con un
-   proveedor con licencia, mainnet con patrocinio de gas para que el
-   participante sin cripto no necesite tener HSK para retirar.
+   proveedor con licencia (Littio, Koywe o Bitso Business, evaluados en el
+   roadmap) — `MockOffRamp` ya tiene la forma de esa integración, cotización,
+   ejecución y estado, así que sustituirlo es integrar un proveedor real, no
+   rediseñar nada; mainnet con patrocinio de gas para que el participante sin
+   cripto no necesite tener HSK para retirar.
+
+   El perfil de piloto candidato: una agencia de diseño o un estudio de
+   desarrollo remoto, de 4 a 6 colaboradores freelance, del mismo tipo
+   descrito arriba. El canal de acceso realista es una comunidad de
+   freelancers de la región, no una relación directa — hoy no hay ninguna
+   agencia identificada ni ninguna conversación iniciada, y este documento no
+   insinúa lo contrario.
 3. **Apuestas:** Bre-B como riel de liquidación, renegociación con un
    mecanismo que no destruya la propiedad que hace útil al producto, y
    disputas.
 
 ## Por qué Colombia
 
-Porque el problema es peor aquí y la solución es más valiosa aquí. Equipos
-repartidos entre países, cobros internacionales caros, y una mayoría de
-colaboradores que no van a aprender de cripto para que les paguen. Bre-B
-acaba de dar el riel de liquidación instantánea que faltaba. SNAPLINE es lo
-que va encima.
+El segmento que describimos arriba —agencias chicas con sede en Colombia y
+colaboradores freelance en dos o tres países de la región— tiene el
+problema más agudo que en otros mercados: cobros internacionales caros,
+bancos que no se hablan entre países, y una mayoría de colaboradores que no
+va a aprender de cripto para que les paguen.
+
+Bre-B, el sistema de pagos inmediatos del Banco de la República, es
+infraestructura reciente: es lo que hace viable prometer salida a pesos
+ahora, no hace dos años. SNAPLINE es lo que va encima — hoy simulado en el
+demo, como se explica arriba, mientras se resuelve el acceso a una entidad
+vigilada.
