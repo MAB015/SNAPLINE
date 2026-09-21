@@ -1,6 +1,6 @@
 # Estado del proyecto — SNAPLINE
 
-**Última actualización:** 2026-09-21 · **Bloque cerrado:** D5 · firma EIP-712, despliegue del pool y snap 2D con GSAP en main, código verificado por tipos/build/criptografía; verificación conductual real diferida a propósito a D8 (decisión del usuario)
+**Última actualización:** 2026-09-21 · **Bloque cerrado:** D6 · `/pagar/[dir]` y `/pool/[dir]` en main, código verificado por build/eslint y lectura de cadena real contra un pool de prueba manual; verificación conductual real diferida a propósito a D8 junto con la de D5 (decisión del usuario)
 **Cierre del hackathon:** 1 de octubre de 2026 · **Días restantes de trabajo:** 10
 
 Este archivo se actualiza en el mismo commit que el trabajo que describe.
@@ -15,7 +15,7 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 | `infra` | 🟡 D4 casi listo | Fondeo de testnet; Vercel en D9–D10 |
 | `contracts` | ✅ D2 desplegado | Consumido desde D5 web; sin tareas propias hasta D8 |
 | `design` | ✅ D5 listo, snap con GSAP | D7 · anillo 3D y pulido |
-| `web` | ✅ D5 código listo, corrida real en D8 | D6 · `/pagar/[dir]` y `/pool/[dir]` |
+| `web` | ✅ D6 código listo, corrida real en D8 | D7 · salida a pesos y pulido |
 | `demo` | 🟡 Guion escrito | D8 · datos y ensayos |
 
 ---
@@ -265,6 +265,28 @@ pendiente una revisión visual en navegador (375px/800px, ambos temas) que
 ni Design Lead ni Product Manager pueden hacer desde su rol — anotado en
 riesgos abiertos.
 
+**Generación D6 (web, cobro y retiro).** Un único worktree
+(`agent-a374d5e4199c337c3`, rama `worktree-agent-a374d5e4199c337c3`),
+dirigido por CTO a `frontend-engineer`. Archivos acotados a
+`web/src/lib/pool.ts`, `web/src/lib/token.ts`, `web/src/app/pagar/[dir]/*`
+y `web/src/app/pool/[dir]/*`, sin cruce con `acuerdo.ts`, `wagmi.ts` ni
+`layout.tsx`. El trabajo llegó a Product Manager sin commitear (archivos
+sin trackear en el worktree); se resolvió pidiendo que se commiteara antes
+de mergear, en vez de que Product Manager commiteara en nombre de otro rol
+— el commit (`e9f0551`) lo hizo quien construyó el código. Confirmado con
+`git merge-tree` que la rama fusionaba sin conflicto contra `main` a pesar
+de estar armada sobre un commit anterior a D-038 (sin cruce de archivos
+real); `next build`/`eslint` corridos de forma independiente por Product
+Manager antes de mergear (`7049ffe`), no solo el reporte de CTO. Aparte,
+sin relación con D6: al revisar se encontraron dos commits de tracking
+(regla de elección de modelo, entradas de roadmap) hechos por Product
+Manager en un bloque anterior y nunca fusionados a `main` por quedar en una
+rama sin push (`claude/snapline-agents-verification-d18624`); se
+fusionaron en el mismo cierre (`0071107`) sin pérdida — las actualizaciones
+de STATUS/TASKS/DECISIONS de esa rama duplicaban exactamente lo ya
+integrado a `main` por otra vía (D-038), así que no hubo nada que
+reconciliar ahí.
+
 ## `design` — ✅ D5 listo, snap con GSAP
 
 **Hecho:** dirección visual revisada de Acta a **Acta Viva** (D-029) y
@@ -344,7 +366,7 @@ riesgos abiertos.
 
 **Bloqueado por:** nada.
 
-## `web` — ✅ D5 código listo, corrida real diferida a D8
+## `web` — ✅ D6 código listo, corrida real diferida a D8
 
 **Hecho:** andamiaje de Next.js 16 con App Router, TypeScript y Tailwind 4,
 adelantado de D4 a D3 (D-032). En D4 (rama `feat/web-identidad-borrador`,
@@ -417,11 +439,47 @@ tipos, build y criptografía (`structHash` con oráculo independiente,
 D-037, y una revisión de código con triple cruce). El usuario decidió
 avanzar igual a D6 y correr esa verificación real más adelante, junto con
 los ensayos de punta a punta de D8, que ya la exigían de todos modos —no
-duplica trabajo. Ver `TASKS.md` D8. `/pagar/[dir]` y `/pool/[dir]` (D6);
-salida a pesos (D7) siguen sin empezar.
+duplica trabajo. Ver `TASKS.md` D8.
 
-**Bloqueado por:** nada para seguir a D6. La verificación conductual de D5
-queda anotada como tarea de D8, no como bloqueo de `web`.
+**Hecho en D6** (worktree `agent-a374d5e4199c337c3`, rama
+`worktree-agent-a374d5e4199c337c3`, commit `e9f0551`, integrada en
+`7049ffe`): `web/src/lib/token.ts` (nuevo) trae el ABI mínimo de `MockUSDT`
+—dirección literal copiada de `deployments/hashkey-testnet.json`, mismo
+patrón que `firma.ts`— y los helpers de conversión de unidades.
+`web/src/lib/pool.ts` (nuevo) trae el ABI mínimo de `SplitPool`, sin
+dirección hardcodeada: llega por el parámetro `[dir]` de la ruta. `/pagar/[dir]`
+(`page.tsx` + `PagarCliente.tsx`) es un link público sin sesión, con
+`MockUSDT.mint()` como faucet a la vista —público y sin permisos en el
+contrato, a propósito, distinto del goteo de HSK que sí necesita clave
+privada— y transferencia directa al pool sin `approve`: `SplitPool.sol` no
+tiene función de depósito. `/pool/[dir]` (`page.tsx` + `PoolCliente.tsx`)
+lee total recibido, mi parte y ya retirado en una sola llamada
+(`leerCifrasPool`), y el botón de retiro usa la misma protección
+anti-doble-envío por `sessionStorage` que el despliegue de D5 en
+`AcuerdoCliente.tsx`. Ninguno de los dos archivos nuevos ni las dos rutas
+tocan `web/src/lib/acuerdo.ts`, `web/src/lib/wagmi.ts` ni `layout.tsx`.
+
+**Validado por Product Manager antes de mergear, no solo por el reporte de
+quien construyó:** `next build` y `eslint` en verde corridos de forma
+independiente sobre la rama; `git merge-tree` contra `main` sin conflictos;
+`MOCK_USDT_ADDRESS` en `token.ts` coincide con
+`deployments/hashkey-testnet.json`. Lectura RPC directa contra un **pool de
+prueba manual** en HSKChain Testnet (dirección `0x4A1e98488d6b5601F739362ceE0e45a6284c431d`,
+bytecode de 45 bytes — tamaño de un clon EIP-1167, coherente con que salió
+de `SplitPoolFactory.createPool()` y no de un despliegue directo, que
+`SplitPool.sol` bloquea solo): `totalReceived` = 40.000000 mUSDT,
+`totalWithdrawn` = 24.000000 mUSDT, `balanceOf(pool)` = 16.000000 mUSDT —
+40 = 24 + 16. **No es el pool del demo** — ese sale del flujo real de firma
+de D5, diferido a D8 — se anota así para no confundir con datos de D8.
+
+**Diferido a propósito, no bloqueante (mismo motivo que D5):** ninguna
+transacción de `/pagar/[dir]`/`/pool/[dir]` se firmó todavía desde una
+wallet de navegador vía Privy — falta `NEXT_PUBLIC_PRIVY_APP_ID` en el
+worktree donde se construyó D6. Verificación conductual diferida a D8,
+junto con la de D5. Ver `TASKS.md` D8.
+
+**Bloqueado por:** nada para seguir a D7. Las verificaciones conductuales
+de D5 y D6 quedan anotadas como tareas de D8, no como bloqueo de `web`.
 
 ## `demo` — 🟡 Guion escrito
 
@@ -441,7 +499,7 @@ edición.
 |---|---|
 | Privy consume más tiempo del previsto | Corte a las 3 horas en D4: se cae a wallet externa y la embebida pasa a stretch de D8 |
 | El despliegue multi-firma (D5) se atrasa | Es el día crítico. Si se cae, se sacrifica D7 completo (pulido y animación) |
-| El código de D5 (firma, despliegue, snap) está integrado a `main` pero la verificación conductual real (tres sesiones, Privy, pool en el explorador) queda diferida a D8 por decisión del usuario | `NEXT_PUBLIC_PRIVY_APP_ID` ya está puesto en `web/.env.local`; falta correr la prueba, prevista junto con los ensayos de punta a punta de D8 (ver `TASKS.md`). Si la última firma la completa una wallet embebida sin HSK, revisar si hace falta `DEPLOYER_PRIVATE_KEY` para esa corrida, no solo para el goteo |
+| El código de D5 (firma, despliegue, snap) y D6 (`/pagar`, `/pool`) está integrado a `main` pero la verificación conductual real (tres sesiones, Privy, pool en el explorador, pago y retiro desde navegador) queda diferida a D8 por decisión del usuario | `NEXT_PUBLIC_PRIVY_APP_ID` ya está puesto en `web/.env.local`; falta correr la prueba, prevista junto con los ensayos de punta a punta de D8 (ver `TASKS.md`). Si la última firma la completa una wallet embebida sin HSK, revisar si hace falta `DEPLOYER_PRIVATE_KEY` para esa corrida, no solo para el goteo |
 | El faucet de HSKChain Testnet falla el día de grabar | MockUSDT tiene faucet propio. Para el gas: reservar HSK de testnet con anticipación en D2 |
 | El stretch de pago en pesos se come tiempo del ensayo | Solo se toca si D1–D7 cerraron a tiempo. Corte a las 6 horas en D8 |
 | Las wallets embebidas se crean sin gas y no pueden retirar | Goteo de HSK implementado (`web/src/app/api/goteo/route.ts`), pendiente de `DEPLOYER_PRIVATE_KEY` en `web/.env.local` para probarlo de punta a punta. Privy con HSKChain Testnet aún sin probar en el navegador |

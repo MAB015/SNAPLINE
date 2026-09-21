@@ -122,10 +122,19 @@ bloquea avanzar a D6. `NEXT_PUBLIC_PRIVY_APP_ID` ya está puesto en
 
 ## D6 · Web, cobro y retiro — viernes 26
 
-- [ ] `web` — `/pagar/[dir]`: link público, sin sesión requerida
-- [ ] `web` — faucet de MockUSDT a la vista en la pantalla de pago
-- [ ] `web` — `/pool/[dir]`: total recibido, mi parte, ya retirado
-- [ ] `web` — acción de retirar
+- [x] `web` — `/pagar/[dir]`: link público, sin sesión requerida
+- [x] `web` — faucet de MockUSDT a la vista en la pantalla de pago
+- [x] `web` — `/pool/[dir]`: total recibido, mi parte, ya retirado
+- [x] `web` — acción de retirar
+
+**Código de las cuatro tareas de arriba está en `main`, verificado por
+Product Manager con `next build`/`eslint` en verde y lectura directa contra
+un pool de prueba manual en HSKChain Testnet (no el pool del demo, que sale
+del flujo real de firma de D5, diferido a D8).** La verificación
+conductual real —wallet de navegador vía Privy pagando y retirando— queda
+diferida a D8 junto con la de D5, mismo motivo: falta
+`NEXT_PUBLIC_PRIVY_APP_ID` en el worktree donde se construyó D6. Ver
+`STATUS.md`.
 
 ## D7 · Salida a pesos y pulido — sábado 27
 
@@ -150,6 +159,9 @@ bloquea avanzar a D6. `NEXT_PUBLIC_PRIVY_APP_ID` ya está puesto en
       `createPool`, el pool visible en el explorador, y una recarga a mitad
       de la confirmación para confirmar que no hay doble despliegue
       *(diferido a propósito desde D5, decisión del usuario — ver `STATUS.md`)*
+- [ ] `web` — correr `/pagar/[dir]` y `/pool/[dir]` (D6) con wallet real de
+      navegador vía Privy: faucet, pago y retiro, contra el pool real que
+      salga del flujo de D5 *(diferido a propósito desde D6, mismo motivo)*
 - [ ] `web` — pasar `ethskills.com/qa/SKILL.md` contra la app antes de grabar
 - [ ] `demo` — tres ensayos de punta a punta
 - [ ] `demo` — borrar el acuerdo de prueba para grabar limpio
