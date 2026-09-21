@@ -172,6 +172,19 @@ diferida a D8 junto con la de D5, mismo motivo: falta
 - [ ] `web` — correr `/pagar/[dir]` y `/pool/[dir]` (D6) con wallet real de
       navegador vía Privy: faucet, pago y retiro, contra el pool real que
       salga del flujo de D5 *(diferido a propósito desde D6, mismo motivo)*
+
+**Adelantado a antes de D7 (2026-09-21).** CEO dio luz verde con el usuario
+para correr las dos verificaciones conductuales de arriba desde ahora, sin
+cambiar su alcance ni borrarlas de esta lista — motivo: ritmo acelerado
+confirmado por el usuario y `DEPLOYER_PRIVATE_KEY` ya puesta en
+`web/.env.local` del checkout principal, que era justo la condición que
+había motivado posponerlas a D8 (ver `STATUS.md`). Las ejecuta el
+orquestador directo con herramientas de navegador, mismo patrón que D-038
+(`PantallaCarga.tsx`): es la única sesión con esa herramienta disponible.
+El resultado real de la corrida —pasó/falló, qué se encontró— se registra
+en `STATUS.md` en un commit posterior de Product Manager cuando termine,
+no en este.
+
 - [ ] `web` — pasar `ethskills.com/qa/SKILL.md` contra la app antes de grabar
 - [ ] `demo` — tres ensayos de punta a punta
 - [ ] `demo` — borrar el acuerdo de prueba para grabar limpio
