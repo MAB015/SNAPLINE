@@ -130,6 +130,21 @@ bloquea avanzar a D6. `NEXT_PUBLIC_PRIVY_APP_ID` ya está puesto en
       entrada propia en `DECISIONS.md`: son correcciones puntuales, no una
       decisión de arquitectura o alcance.
 
+## Fuera de plan · Mesa estratégica: diseño excepcional y tracción creíble (D-040)
+
+- [x] `demo` — CMO: perfil de cliente target y narrativa de tracción
+      honesta (sin contacto real inventado) volcados en `docs/PITCH.md`.
+      Ver D-040 en `DECISIONS.md`.
+- [x] `docs` — COO: horizonte 2 de `docs/ROADMAP.md` extendido con el
+      piloto de validación (sin contacto real) y outreach puntual acotado
+      por "una persona, en una tarde". Ver D-040 en `DECISIONS.md`.
+
+Encargo cerrado por CEO tras la síntesis de la mesa (CTO, CMO, COO, Design
+Lead) y la confirmación del usuario sobre el piloto. `docs/PITCH.md` y
+`docs/ROADMAP.md` quedaron actualizados con esta mesa; no hay tarea de
+Design Lead ni de CTO en este encargo puntual — el aporte de Design Lead
+de la misma mesa vive en el brief de landing de D-039, abajo.
+
 ## Fuera de plan · Landing de marketing completa en "/" (D-039)
 
 - [x] `demo` — CMO: brief de narrativa (documento, no código) para
@@ -138,7 +153,8 @@ bloquea avanzar a D6. `NEXT_PUBLIC_PRIVY_APP_ID` ya está puesto en
       el contenido concreto de la sección de confianza (direcciones de
       contrato verificadas, enlace al explorador, cobertura real de los 40
       tests + fuzzing ya documentados en `STATUS.md`). Sin inventar ninguna
-      métrica de uso real.
+      métrica de uso real. **Entregado directo a CEO/orquestador para
+      relayar a Design Lead — no vive como archivo en el repo.**
 - [x] `design` — Design Lead: construir `web/src/app/page.tsx` y los
       componentes nuevos que haga falta con el brief de CMO ya cerrado,
       muy visual según `docs/BRAND.md` (Acta Viva), CTA claro "Crear tu

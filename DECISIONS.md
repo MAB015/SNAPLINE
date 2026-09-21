@@ -6,6 +6,52 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-21 · Mesa estratégica: diseño excepcional y tracción creíble
+
+### D-040 · Piloto sin nombrar en el pitch: perfil target, no un contacto inventado
+CEO convocó a CTO, CMO, COO y Design Lead por separado —cada uno dio su
+perspectiva desde su área, sin coordinarse entre sí— para pensar dos ejes en
+conjunto: diseño excepcional y tracción creíble hacia nuevos clientes o
+usuarios. CEO sintetizó acuerdos, tensiones y dejó una sola decisión
+pendiente: si el pitch nombra un piloto candidato real o describe solo un
+perfil target, porque CMO no tenía confirmado si existía algún contacto
+real con una agencia o estudio. El usuario confirmó que no hay ningún
+contacto real: se va con la recomendación de la mesa, un perfil de cliente
+target descrito con precisión, sin nombrar una conversación que no existe.
+
+Volcado en `docs/PITCH.md`: perfil de cliente nombrado en "El problema, sin
+adornos" (agencia chica de 3 a 8 personas, sede en Colombia, colaboradores
+freelance regionales, un socio que hace de "banco humano"); sección nueva
+"La economía del clon" (0,00195 HSK de despliegue, clon EIP-1167 de 45
+bytes, con disclaimer explícito de que es capacidad técnica, no tracción de
+mercado); sección nueva "Listo para auditoría, no auditado" (40 tests, dos
+invariantes con 1000 casos de fuzzing cada una, Slither limpio, sin decir
+nunca "auditado" ni "seguro"); en "Qué sigue" (horizonte 2) nombra
+Littio/Koywe/Bitso y aclara que `MockOffRamp` ya tiene la forma de esa
+integración, junto con el perfil de piloto sin nombre ni conversación
+iniciada; "Por qué Colombia" reescrita con el segmento nombrado y Bre-B
+como infraestructura habilitante, no como diferencial inventado.
+
+Volcado en `docs/ROADMAP.md`: "Mainnet y una estrategia de gas" (Horizonte
+2) nombra el mecanismo concreto (relayer o paymaster ERC-4337, no
+"patrocinio" genérico); "Historial de movimientos del pool" (Horizonte 1)
+extendido con la vista consolidada "mis proyectos" como el mismo trabajo de
+indexado con un segundo consumidor; ítem nuevo "Primer piloto de
+validación" al inicio de Horizonte 2, con la misma nota de honestidad — no
+hay contacto real todavía; dos ítems de outreach ("Conversaciones uno a uno
+con candidatos al piloto" y "Presencia en comunidades de freelancers y
+estudios LatAm"), cada uno acotado con el filtro "una persona, en una
+tarde" que propuso COO como criterio de admisión para separar outreach
+puntual —que sí cabe en el roadmap— de un plan de go-to-market formal, que
+no cabe.
+
+**Descartado:** nombrar una agencia o una conversación concreta en el pitch
+para sonar más avanzado. Se descartó porque no existe, y `CLAUDE.md`
+prohíbe maquillar lo que es mock o está incompleto — la misma regla que ya
+rige `MockOffRamp` en la interfaz.
+
+---
+
 ## 2026-09-21 · Landing completa en "/", fuera de plan
 
 ### D-039 · Landing de marketing completa en "/" en vez de la versión acotada
