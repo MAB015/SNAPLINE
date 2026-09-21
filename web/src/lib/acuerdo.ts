@@ -1,3 +1,5 @@
+import { keccak256, toBytes } from "viem";
+
 /** Tipos de la pantalla de reparto. Sin dependencias de cadena: en D3 la
  *  maqueta es estatica y en D5 estos mismos tipos se llenan con datos reales. */
 
@@ -37,6 +39,11 @@ export function sumaBps(participantes: Participante[]): number {
 
 export function todasFirmadas(participantes: Participante[]): boolean {
   return participantes.every((p) => p.firma === "firmado");
+}
+
+/** Del texto de términos solo se guarda esto (docs/ARCHITECTURE.md §2, §4). */
+export function calcularHashTerminos(texto: string): `0x${string}` {
+  return keccak256(toBytes(texto));
 }
 
 /** Datos falsos de docs/DEMO-SCRIPT.md. Se borran cuando entre el relay. */
