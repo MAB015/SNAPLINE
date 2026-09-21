@@ -6,6 +6,33 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-21 · D5, web y snap
+
+### D-037 · `calcularStructHash` empaqueta arrays completos, no elementos sueltos
+`web/src/lib/firma.ts` calculaba el hash de `participants`/`bps` con
+`encodePacked` pasando un tipo `address`/`uint16` suelto por cada elemento
+(N argumentos). En viem eso empaqueta cada elemento sin relleno —20 y 2
+bytes—, pero `SplitPoolFactory.sol` (ya desplegado, congelado) hace
+`abi.encodePacked(array)` pasando el arreglo completo como un único
+argumento, y la regla real de Solidity rellena cada elemento de un array a
+32 bytes antes de empaquetarlo —la misma convención que usa el helper de
+test `_structHash` en `SplitPoolFactory.t.sol`—. Con el bug, el hash del
+cliente no coincidía con el que calcula el contrato, así que `leerConsumido`
+y `buscarPoolDesplegado` nunca iban a encontrar un pool recién desplegado:
+justo el paso posterior al momento más importante del video. La firma
+EIP-712 en sí no tenía el bug, porque usa el `hashTypedData` interno de
+viem, código separado de `calcularStructHash`.
+
+Fix: `encodePacked(["address[]"], [participants])` y
+`encodePacked(["uint16[]"], [bps])`, pasando el arreglo completo como un
+único argumento tipado. Verificado con un oráculo independiente
+(`encodeAbiParameters` elemento por elemento, 32 bytes cada uno) antes de
+integrar a `main`; `npm run lint` y `npm run build` en verde.
+**Descartado:** dejar el bug y depender solo de que el contrato confirme el
+despliegue por otra vía (el evento `PoolCreated` filtrado por `structHash`
+tampoco habría emparejado, así que no había una ruta alternativa sin este
+fix).
+
 ## 2026-09-21 · Orquestación de agentes
 
 ### D-036 · Roles de agentes con nombre propio, y Product Manager como gatekeeper único de merges

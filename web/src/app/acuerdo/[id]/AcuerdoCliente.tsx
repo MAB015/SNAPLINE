@@ -9,6 +9,7 @@ import { CodigoBarras } from "@/components/CodigoBarras";
 import { EstadoAcuerdo } from "@/components/EstadoFirma";
 import { HashVivo } from "@/components/HashVivo";
 import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
+import { SelloTinta } from "@/components/SelloTinta";
 import { TablaReparto } from "@/components/TablaReparto";
 import { todasFirmadas, type Acuerdo, type Participante } from "@/lib/acuerdo";
 import {
@@ -413,9 +414,16 @@ function Contenido({ id }: { id: string }) {
           >
             <div className="textura-rejilla pointer-events-none absolute inset-0" aria-hidden="true" />
             <div className="relative">
-              <p className="mono text-xs tracking-wide uppercase opacity-80">
-                Bloque del acuerdo · sellado en cadena
-              </p>
+              <div className="flex items-start justify-between gap-4">
+                <p className="mono text-xs tracking-wide uppercase opacity-80">
+                  Bloque del acuerdo · sellado en cadena
+                </p>
+                {/* Paso 3 del snap (docs/BRAND.md §13): el sello se anima solo
+                    al montarse, justo cuando este bloque reemplaza al de
+                    espera porque `estadoPool` ya confirmó el despliegue real
+                    en cadena — no antes. */}
+                <SelloTinta />
+              </div>
               <p className="mt-4 text-sm">Dirección del pool</p>
               <div className="mt-1">
                 <HashVivo valor={estadoPool.direccion} superficie="chain" />

@@ -92,15 +92,27 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 
 ## D5 · Web, firma y snap — jueves 25
 
-- [ ] `web` — `/acuerdo/[id]` conectada a datos reales
-- [ ] `web` — firma EIP-712 desde el cliente
-- [ ] `web` — escritura y lectura de firmas en el relay
-- [ ] `web` — estado de firmas por participante
-- [ ] `web` — despliegue del pool en una sola transacción con la última firma
-- [ ] `web` — evitar retiro o despliegue doble al recargar durante la firma
-- [ ] `design` — snap 2D con GSAP: la línea se tensa, caen las marcas y el
+- [x] `web` — `/acuerdo/[id]` conectada a datos reales
+- [x] `web` — firma EIP-712 desde el cliente
+- [x] `web` — escritura y lectura de firmas en el relay
+- [x] `web` — estado de firmas por participante
+- [x] `web` — despliegue del pool en una sola transacción con la última firma
+- [x] `web` — evitar retiro o despliegue doble al recargar durante la firma
+- [x] `design` — snap 2D con GSAP: la línea se tensa, caen las marcas y el
       bloque cruza de papel a cadena. Obligatorio; el anillo no lo reemplaza
-- [ ] `design` — scramble de hashes y contador de montos con GSAP
+      *(sello de tinta del cruce conectado en `AcuerdoCliente.tsx` al mergear)*
+- [x] `design` — scramble de hashes y contador de montos con GSAP
+
+**Código de las ocho tareas de arriba está en `main`, pero D5 no se da por
+cerrado del todo:** falta la corrida real contra HSKChain Testnet que pide
+`docs/SCOPE-PLAN.md` como criterio de terminado —dos wallets firmando, la
+última desplegando el pool, y una recarga a mitad de la confirmación—.
+Bloqueada por `NEXT_PUBLIC_PRIVY_APP_ID`, ver `STATUS.md` § `web` y §
+Riesgos abiertos.
+
+- [ ] `web` — correr el flujo end-to-end de D5 contra HSKChain Testnet real
+      (dos firmas, despliegue del pool, recarga a mitad de camino) en cuanto
+      exista `NEXT_PUBLIC_PRIVY_APP_ID`; recién ahí D5 queda cerrado del todo
 
 ## D6 · Web, cobro y retiro — viernes 26
 

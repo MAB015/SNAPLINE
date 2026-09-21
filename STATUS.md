@@ -1,6 +1,6 @@
 # Estado del proyecto — SNAPLINE
 
-**Última actualización:** 2026-09-21 · **Bloque cerrado:** D3 y D4 · Diseño en Acta Viva, Privy, viem/wagmi y borrador
+**Última actualización:** 2026-09-21 · **Bloque cerrado:** D5 (parcial) · firma EIP-712, despliegue del pool y snap 2D con GSAP integrados a main; prueba end-to-end contra testnet real todavía pendiente
 **Cierre del hackathon:** 1 de octubre de 2026 · **Días restantes de trabajo:** 10
 
 Este archivo se actualiza en el mismo commit que el trabajo que describe.
@@ -13,9 +13,9 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 |---|---|---|
 | `docs` | ✅ Listo | Solo mantenimiento del tracking |
 | `infra` | 🟡 D4 casi listo | Fondeo de testnet; Vercel en D9–D10 |
-| `contracts` | ✅ D2 desplegado | D5 · despliegue del pool desde la web |
-| `design` | ✅ D3 listo, Acta Viva | D5 · snap 2D con GSAP |
-| `web` | ✅ D4 listo | D5 · `/acuerdo/[id]` a datos reales |
+| `contracts` | ✅ D2 desplegado | Consumido desde D5 web; sin tareas propias hasta D8 |
+| `design` | ✅ D5 listo, snap con GSAP | D7 · anillo 3D y pulido |
+| `web` | 🟡 D5 integrado, sin probar en vivo | D5 · corrida end-to-end contra testnet real antes de cerrar; luego D6 |
 | `demo` | 🟡 Guion escrito | D8 · datos y ensayos |
 
 ---
@@ -218,7 +218,28 @@ el rol que hereda exactamente lo que decía el párrafo anterior — mapa de
 quién trabaja dónde, dueño único de esta escritura, y gatekeeper de merges
 a `main`. Ver `CLAUDE.md` § Orquestación de agentes.
 
-## `design` — ✅ D3 listo, en Acta Viva
+**Generación D5 (web, firma y snap), primer bloque bajo el rol formal de
+Product Manager.** Tres worktrees en paralelo, alcances sin cruce
+(`web/src/app/acuerdo/[id]/*` y `web/src/lib/{firma,supabase}.ts` para CTO;
+`web/src/components/*` y `web/package.json` para Design Lead): dos ramas
+resultaron ser el mismo trabajo de CTO por una sesión duplicada
+(`feat/web-firma-eip712`, con un fix crítico de `structHash` aplicado tras
+triple verificación, y `feat/web-firma-snap`, idéntica pero sin el fix) más
+una de Design Lead (`feat/design-snap-scramble`). Product Manager confirmó
+con `git merge-tree` que las dos ramas reales a fusionar no tocaban archivos
+en común, corrió `build`/`lint` sobre cada rama y sobre la combinación antes
+de mergear, y descartó la rama duplicada sin el fix. Un merge de la rama de
+diseño se hizo y se deshizo en el momento —local, nunca publicado— al llegar
+un aviso del orquestador de que Design Lead había encontrado un bug real
+(`ContadorNumero` saltaba a cero al montar) y pidió esperar el commit de fix
+antes de integrar; llegado ese commit (`04927a8`), se repitió la
+verificación y se fusionó. La única integración entre las dos ramas
+—montar `SelloTinta` dentro del bloque `chain` de `AcuerdoCliente.tsx`,
+archivo de CTO— no correspondía a ninguna de las dos sesiones según el
+reparto de archivos, así que la hizo directamente Product Manager como
+cambio mínimo de una línea, sin abrir una tarea nueva para otro agente.
+
+## `design` — ✅ D5 listo, snap con GSAP
 
 **Hecho:** dirección visual revisada de Acta a **Acta Viva** (D-029) y
 documentada en `docs/BRAND.md`: narrativa papel → cadena, temas claro y
@@ -241,19 +262,48 @@ términos (`CodigoBarras.tsx`); interruptor de tema local a cada pantalla
 participante. `/acuerdo/[id]` funciona en los dos temas y en los dos estados
 (papel y bloque sellado con superficie `chain` propia).
 
-**Validación:** `next build` y `eslint` pasan (verificado 2026-09-21, tras
-reinstalar `node_modules` — la corrupción era del entorno local, no del
-código). Sin tests automáticos de interfaz: la comprobación es visual.
+**Hecho en D5** (rama `feat/design-snap-scramble`, integrada en cc4b9f1):
+`gsap` sumado a `web/package.json` (D-030 ya lo prevía). El snap de
+`BarraSegmentada.tsx` pasa de keyframes CSS a un timeline de GSAP —línea que
+se tensa bajo 380ms y marcas que caen de golpe, con `prefers-reduced-motion`
+resuelto en JS vía `gsap.matchMedia`— y expone `onSnapCompleto`, prop
+opcional para encadenar animación futura sin acoplar componentes.
+`SelloTinta.tsx` (nuevo): el sello "Sellado" del paso 3 del snap
+(docs/BRAND.md §13, cruce papel → cadena), autocontenido y pensado para que
+lo monte quien tenga el archivo de la pantalla. `HashVivo.tsx` ahora hace
+scramble del valor abreviado al montar con `ScrambleTextPlugin`, una sola
+vez. `ContadorNumero.tsx` (nuevo) cuenta de 0 al valor final con
+desaceleración; `TablaReparto` lo usa en la columna "Parte" y en el total.
+Un bug real encontrado en la propia verificación de Design Lead antes de
+pedir el merge —`ContadorNumero` mostraba el valor final en el primer
+pintado y saltaba a 0 recién al montar el efecto, un glitch visible en
+video— se corrigió en el mismo bloque (commit `04927a8`, arranca en
+`formatear(0)`) antes de integrar.
 
-**Falta:** nada del alcance de D3. El pulido y el sello en el resto de
-superficies, y el anillo 3D, siguen en D7. El snap 2D con GSAP es D5.
+**Integración con `web` cerrada por Product Manager:** `SelloTinta` no
+estaba montado en ningún lado —correctamente, según el reparto de archivos:
+`AcuerdoCliente.tsx` es de `web`, no de `design`—. Se agregó el import y una
+línea de JSX dentro del bloque `data-surface="chain"` de
+`web/src/app/acuerdo/[id]/AcuerdoCliente.tsx`, que solo se monta cuando
+`estadoPool` ya confirmó el despliegue real en cadena. `onSnapCompleto` no
+se cableó: encadenarlo al sello habría disparado el "Sellado" apenas se
+completan las firmas en el relay, antes de que el pool exista de verdad en
+cadena (puede tardar varios segundos más) — `SelloTinta` se anima solo al
+montarse, que es el punto correcto. Cambio mínimo, sin alcance nuevo;
+`build` y `eslint` verificados después.
+
+**Validación:** `next build` y `eslint` pasan (verificado 2026-09-21, tras
+reinstalar `node_modules` para D3 y de nuevo tras sumar `gsap` en D5). Sin
+tests automáticos de interfaz: la comprobación es visual.
+
+**Falta:** el anillo 3D y el pulido del resto de superficies siguen en D7.
 
 **Riesgo:** D7 suma el anillo 3D en su caja de un día. El orden de corte
 sigue en `TASKS.md`: primero cae el stretch de D8, luego el anillo.
 
 **Bloqueado por:** nada.
 
-## `web` — ✅ D4 listo
+## `web` — 🟡 D5 integrado, sin correr contra testnet real
 
 **Hecho:** andamiaje de Next.js 16 con App Router, TypeScript y Tailwind 4,
 adelantado de D4 a D3 (D-032). En D4 (rama `feat/web-identidad-borrador`,
@@ -268,14 +318,66 @@ Supabase con generación del link (`web/src/lib/supabase.ts`). La app
 degrada con gracia sin `NEXT_PUBLIC_PRIVY_APP_ID`: se sirve sin Privy en vez
 de romper el build.
 
-**Validación:** `next build` y `eslint` pasan (verificado 2026-09-21). Sin
+**Hecho en D5** (rama `feat/web-firma-eip712`, integrada en `bdfe39a`):
+`/acuerdo/[id]` conectada a datos reales — `page.tsx` queda como server
+component que solo desenvuelve el `[id]`, todo el resto pasa a
+`AcuerdoCliente.tsx` (nuevo, cliente). Firma EIP-712 con `useSignTypedData`
+de wagmi; `web/src/lib/firma.ts` (nuevo) trae el dominio, los tipos, el ABI
+mínimo del `SplitPoolFactory` ya desplegado, `calcularStructHash` y
+`recuperarFirmante`. Escritura y lectura de firmas en el relay
+(`web/src/lib/supabase.ts` extendido: `obtenerBorrador`, `obtenerFirmas`,
+`guardarFirma`) con verificación criptográfica de cada fila antes de
+confiarla —recuperando el firmante y comparándolo contra el `signer`
+declarado— porque el relay no tiene unicidad (D-031) y puede traer filas
+basura. Estado de firmas por participante reflejado en `TablaReparto` y
+`EstadoAcuerdo`. Despliegue del pool en una sola transacción con la última
+firma, disparado desde la sesión de quien firma al completar el cupo, nunca
+desde quien solo recarga la página. Protección anti-doble-despliegue en dos
+capas: `consumed(structHash)` leído en cadena antes de firmar/desplegar
+(fuente de verdad real) y una clave de `sessionStorage` por `structHash`
+para resumir una tx ya enviada por esta misma pestaña sin reenviarla si la
+página se recarga a mitad de la confirmación.
+
+**Fix aplicado antes de mergear** (commit `36a5396`, ver D-037 en
+`DECISIONS.md`): `calcularStructHash` empaquetaba `participants`/`bps` con
+`encodePacked` pasando cada elemento suelto, que en viem no aplica el
+relleno a 32 bytes que sí aplica `abi.encodePacked(array)` en Solidity. El
+hash no coincidía con el que calcula el contrato ya desplegado, así que
+`leerConsumido`/`buscarPoolDesplegado` nunca iban a encontrar el pool recién
+creado — justo el paso posterior al momento más importante del video. La
+firma EIP-712 en sí no tenía el bug. Verificado con un oráculo independiente
+antes de integrar.
+
+**Rama descartada, no mergeada:** `feat/web-firma-snap` (commit `6451032`)
+es el mismo trabajo sin el fix de arriba. Queda sin fusionar; a borrar
+cuando se confirme que no hace falta como referencia.
+
+**Integración con `design`:** ver el sello de tinta en la sección `design`
+de arriba — el cableado de `SelloTinta` en `AcuerdoCliente.tsx` lo hizo
+Product Manager al mergear, cambio mínimo de una línea de import y una de
+JSX.
+
+**Validación:** `next build` y `eslint` pasan sobre las dos ramas ya
+integradas y combinadas (verificado 2026-09-21). Sin
 `DEPLOYER_PRIVATE_KEY` en `web/.env.local` el goteo responde 500, sin tumbar
 el resto de la app — falta ponerlo, ver sección `infra`.
 
-**Falta:** conectar `/acuerdo/[id]` a datos reales y firma EIP-712 (D5);
-`/pagar/[dir]` y `/pool/[dir]` (D6); salida a pesos (D7).
+**Falta, y es lo único que bloquea cerrar D5 del todo:** el criterio de
+terminado de D5 en `docs/SCOPE-PLAN.md` es "tres sesiones distintas firman y
+el pool aparece en el explorador" — **eso no está verificado todavía**, solo
+tipos/build/criptografía y una revisión de código con triple cruce. Hace
+falta correr el flujo real contra HSKChain Testnet: dos wallets firmando, la
+última disparando `createPool`, y una recarga a mitad de la confirmación
+para probar la protección anti-doble-despliegue. El checkout de `main` ya
+tiene un `web/.env.local` (gitignorado) con Supabase configurado, pero
+`NEXT_PUBLIC_PRIVY_APP_ID` sigue vacío ("Privy pendiente" en el propio
+archivo) — sin eso la pantalla se sirve en su modo degradado y no hay
+wallet con la que firmar. No se puede correr esa prueba sin decidir de
+dónde sale ese valor. `/pagar/[dir]` y `/pool/[dir]` (D6); salida a pesos
+(D7) siguen sin empezar.
 
-**Bloqueado por:** nada. Sigue en D5.
+**Bloqueado por:** `NEXT_PUBLIC_PRIVY_APP_ID` para la corrida end-to-end de
+D5. El resto de D5 (código) está en `main`.
 
 ## `demo` — 🟡 Guion escrito
 
@@ -295,6 +397,7 @@ edición.
 |---|---|
 | Privy consume más tiempo del previsto | Corte a las 3 horas en D4: se cae a wallet externa y la embebida pasa a stretch de D8 |
 | El despliegue multi-firma (D5) se atrasa | Es el día crítico. Si se cae, se sacrifica D7 completo (pulido y animación) |
+| El código de D5 (firma, despliegue, snap) está integrado a `main` pero nunca se corrió contra HSKChain Testnet real | Falta `NEXT_PUBLIC_PRIVY_APP_ID` en `web/.env.local` (Supabase ya está configurado ahí). Sin ella no hay wallet con la que probar dos firmas reales, la última disparando `createPool`, ni la recarga a mitad de camino. `docs/SCOPE-PLAN.md` no da D5 por cerrado sin esa corrida |
 | El faucet de HSKChain Testnet falla el día de grabar | MockUSDT tiene faucet propio. Para el gas: reservar HSK de testnet con anticipación en D2 |
 | El stretch de pago en pesos se come tiempo del ensayo | Solo se toca si D1–D7 cerraron a tiempo. Corte a las 6 horas en D8 |
 | Las wallets embebidas se crean sin gas y no pueden retirar | Goteo de HSK implementado (`web/src/app/api/goteo/route.ts`), pendiente de `DEPLOYER_PRIVATE_KEY` en `web/.env.local` para probarlo de punta a punta. Privy con HSKChain Testnet aún sin probar en el navegador |
