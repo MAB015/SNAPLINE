@@ -43,8 +43,17 @@ Validado localmente y en GitHub: formato y tests pasan en Linux en la
 [ejecución 35537664699](https://github.com/MAB015/SNAPLINE/actions/runs/35537664699)
 del commit 9d96b48. Rama publicada en origin/feat/contracts-split-pool.
 
-**Falta:** fondeo de las cuatro cuentas de testnet. El andamiaje de Next.js
-se adelantó a D3 y lo hizo `design`; falta añadirle viem/wagmi en D4.
+**Andamiaje de Next.js**, adelantado a D3 por `design` (D-032): App Router,
+TypeScript y Tailwind 4. Falta añadirle viem/wagmi.
+
+**Relay de firmas**, adelantado desde D4 en `feat/infra-plataforma` porque no
+depende del ABI ni del diseño: proyecto `snapline` en Supabase, tablas `drafts`
+y `signatures` con RLS, lectura por función para que la clave anónima no pueda
+listar borradores ajenos, y sin `update` ni `delete` para nadie. Migración
+versionada en `supabase/migrations/`. Ver D-031.
+
+**Falta:** fondeo de las cuatro cuentas de testnet; viem/wagmi sobre el
+andamiaje de Next.js; proyecto de Vercel y primer despliegue.
 
 **Nota:** el CI no se añade hasta que haya algo que construir. Un `main` con
 CI en rojo incumple la regla de "siempre desplegable".
@@ -158,6 +167,7 @@ cambios automáticamente.
 | Implementación | `feat/contracts-implementation` | `contracts/src/` |
 | Pruebas | `feat/contracts-tests` | `contracts/test/` |
 | Infraestructura | `feat/infra-validation` | CI y configuración de herramientas |
+| Plataforma | `feat/infra-plataforma` | `supabase/` y despliegue |
 
 Worktrees locales bajo `F:/Projects/SNAPLINE-AI-agents/`: `implementation`,
 `tests`, `infra` e `integration`. Otro proceso consolidó D1 en main y guardó

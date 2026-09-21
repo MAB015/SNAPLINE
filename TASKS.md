@@ -84,7 +84,8 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [ ] `web` — goteo de gas: la cuenta de despliegue envía un mínimo de HSK a
       cada wallet embebida recién creada, o no puede retirar nunca
 - [ ] `web` — `/nuevo`: participantes, bps con validación de 10000, términos
-- [ ] `infra` — Supabase: tablas `drafts` y `signatures`
+- [x] `infra` — Supabase: tablas `drafts` y `signatures` *(hecho el 20/09,
+      adelantado desde D4: no dependía del ABI ni del diseño)*
 - [ ] `web` — guardar el borrador y generar el link para compartir
 
 ## D5 · Web, firma y snap — jueves 25

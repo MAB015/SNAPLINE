@@ -67,6 +67,39 @@ la portada, que suma medio día sin cambiar el argumento. Queda en el roadmap.
 
 ## 2026-09-20 · Plataforma
 
+### D-031 · El relay se lee por función, no por política de `select`
+Proyecto `snapline` creado en Supabase (`us-east-1`, coste mensual 0) con las
+dos tablas de `docs/ARCHITECTURE.md` §4. Tres desviaciones respecto al esquema
+de una línea que había ahí, cada una con su motivo:
+
+**Lectura por `security definer`.** Una política `select using (true)` habría
+sido más simple, pero con la clave anónima en el navegador cualquiera podría
+listar *todos* los borradores: el relay se vuelve un directorio público de
+acuerdos ajenos. En su lugar no hay política de `select` y se lee por
+`get_draft(id)` y `get_signatures(draft_id)`, que es exactamente lo que hace
+el link para compartir. El linter de Supabase marca esas dos funciones con
+WARN por ser ejecutables por `anon`: es intencional, solo aceptan un id y
+devuelven una fila.
+**Descartado:** `select using (true)`, que convierte el relay en un directorio.
+
+**Sin unicidad por `(draft_id, signer)`.** Con ella, cualquiera que conozca el
+id del borrador insertaría una firma basura a nombre de un participante y le
+dejaría el hueco ocupado para siempre: un bloqueo del despliegue que no cuesta
+nada montar. Se aceptan varias filas por firmante y el cliente se queda con la
+que verifica.
+**Descartado:** la restricción única, más limpia en la tabla y con una negación
+de servicio abierta a cualquiera.
+
+**Ni `update` ni `delete`, ni política ni privilegio.** El borrador es inmutable
+por construcción. Es la misma propiedad que `docs/THREAT-MODEL.md` §4 da por
+buena en la fila "el relay altera el borrador", solo que aquí se impone en la
+base de datos en vez de confiarla al contrato.
+
+Verificado con el rol `anon`: inserta borrador y firma, el `select` directo
+devuelve cero filas en ambas tablas, `get_draft` y `get_signatures` devuelven
+la suya, y `update`, `delete` y una dirección mal formada fallan. Filas de
+prueba borradas.
+
 ### D-028 · Los nombres de las skills de Vercel estaban mal en `CLAUDE.md`
 *(Registrada como D-025 antes de integrar la rama de D2, que ya usaba ese
 número para el CI. Se renumera aquí; el contenido no cambia.)*
