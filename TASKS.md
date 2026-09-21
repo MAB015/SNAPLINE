@@ -120,6 +120,16 @@ bloquea avanzar a D6. `NEXT_PUBLIC_PRIVY_APP_ID` ya está puesto en
       usuario a mitad del plan, sin paso previo por este archivo. Merge y
       registro por Product Manager. Ver D-038 en `DECISIONS.md`.
 
+## Fuera de plan · Auditoría puntual de accesibilidad (ux-designer)
+
+- [x] `design` — tres arreglos de bajo riesgo sobre `/acuerdo/[id]`:
+      `"use client"` faltante en `TablaReparto.tsx`, foco por teclado en el
+      tooltip de `HashVivo.tsx` (WCAG 1.4.13) y área de toque de sus dos
+      controles llevada a 24×24px (WCAG 2.5.8). Verificado por Design Lead
+      (`lint`/`build`) y mergeado por Product Manager en `36db4cc`. Sin
+      entrada propia en `DECISIONS.md`: son correcciones puntuales, no una
+      decisión de arquitectura o alcance.
+
 ## D6 · Web, cobro y retiro — viernes 26
 
 - [x] `web` — `/pagar/[dir]`: link público, sin sesión requerida

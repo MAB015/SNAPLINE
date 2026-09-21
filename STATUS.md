@@ -370,6 +370,18 @@ flash de un frame entre el tema por defecto y el real, del mecanismo de
 detección de D-034, no de `PantallaCarga.tsx`; no bloquea nada. Ver D-038
 en `DECISIONS.md`.
 
+**Fuera de plan, auditoría de accesibilidad (ux-designer), mergeada en
+`36db4cc`:** tres arreglos puntuales de bajo riesgo sobre `/acuerdo/[id]` —
+`"use client"` faltante en `TablaReparto.tsx` (no rompía nada hoy, pero era
+fragilidad latente si algo la monta desde un Server Component); tooltip de
+`HashVivo.tsx` visible con foco por teclado además de hover (WCAG 1.4.13);
+área de toque del botón de copiar y del enlace al explorador en
+`HashVivo.tsx` llevada a 24×24px (WCAG 2.5.8), sin correr el layout visual
+de la fila. Verificado por Design Lead (`lint`/`build`) antes de pedir el
+merge; Product Manager repitió ambos sobre `main` ya combinado, en verde.
+Sin entrada nueva en `DECISIONS.md`: son correcciones puntuales de
+accesibilidad, no una decisión de arquitectura o alcance.
+
 **Bloqueado por:** nada.
 
 ## `web` — ✅ D6 código listo, corrida real diferida a D8
