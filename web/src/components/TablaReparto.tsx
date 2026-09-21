@@ -1,8 +1,10 @@
 import { EstadoFirma } from "@/components/EstadoFirma";
+import { HashVivo } from "@/components/HashVivo";
+import { Identicon } from "@/components/Identicon";
 import {
-  abreviarDireccion,
   formatearBps,
   sumaBps,
+  tokenParticipante,
   type Participante,
 } from "@/lib/acuerdo";
 
@@ -53,16 +55,21 @@ export function TablaReparto({
         </tr>
       </thead>
       <tbody>
-        {participantes.map((p) => (
+        {participantes.map((p, i) => (
           <tr key={p.direccion} className="border-b border-rule">
             <td className="py-3 align-baseline">
-              {p.nombre}
-              <span className="ml-2 hidden text-xs text-ink-60 sm:inline">{p.rol}</span>
+              <div className="flex items-center gap-2">
+                <Identicon direccion={p.direccion} token={tokenParticipante(i)} />
+                <div>
+                  {p.nombre}
+                  <span className="ml-2 hidden text-xs text-ink-60 sm:inline">
+                    {p.rol}
+                  </span>
+                </div>
+              </div>
             </td>
             <td className="py-3 align-baseline">
-              <span className="mono text-xs text-ink-60" title={p.direccion}>
-                {abreviarDireccion(p.direccion)}
-              </span>
+              <HashVivo valor={p.direccion} />
             </td>
             <td className="mono py-3 text-right align-baseline">
               {formatearBps(p.bps)}

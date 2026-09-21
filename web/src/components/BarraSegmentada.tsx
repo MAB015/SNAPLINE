@@ -1,4 +1,8 @@
-import { formatearBps, type Participante } from "@/lib/acuerdo";
+import {
+  formatearBps,
+  tokenParticipante,
+  type Participante,
+} from "@/lib/acuerdo";
 
 type Props = {
   participantes: Participante[];
@@ -15,32 +19,43 @@ function cortesAcumulados(participantes: Participante[]): number[] {
 }
 
 /**
- * El dispositivo de la linea (docs/BRAND.md §6).
+ * El dispositivo de la linea (docs/BRAND.md §13).
  *
- * Una sola linea horizontal en `ink` con los cortes en `stamp` y las
- * etiquetas colgando debajo en mono. No es una barra apilada de colores:
- * es un objeto unico, marcado.
+ * Una sola barra horizontal dividida en segmentos proporcionales: cada uno
+ * lleva la trama de su participante en su color (§6-7), en lugar de tinta
+ * lisa. Los cortes internos quedan marcados en `stamp`; el borde exterior
+ * hace de extremo de linea. Sigue siendo un solo objeto, no cuatro
+ * rectangulos sueltos.
  *
  * Por debajo de `sm` las etiquetas proporcionales no caben sin cortarse, asi
- * que se apilan. La linea, que es lo que carga la metafora, no cambia.
+ * que se apilan. La barra, que es lo que carga la metafora, no cambia.
  */
 export function BarraSegmentada({ participantes, tensada = false }: Props) {
   const cortes = cortesAcumulados(participantes);
+  const cortesInternos = cortes.slice(0, -1);
 
   return (
     <figure className="m-0">
-      <div className="relative h-4" aria-hidden="true">
+      <div className={`border-ink relative h-8 border ${tensada ? "snap-linea" : ""}`}>
+        <div className="flex h-full w-full overflow-hidden" aria-hidden="true">
+          {participantes.map((p, i) => (
+            <div
+              key={p.direccion}
+              className={`trama-${tokenParticipante(i)} h-full`}
+              style={{ width: `${p.bps / 100}%` }}
+            />
+          ))}
+        </div>
+
         <div
-          className={`absolute inset-x-0 top-1/2 h-px bg-ink ${tensada ? "snap-linea" : ""}`}
-        />
-        <div className={tensada ? "snap-marcas" : ""}>
-          {/* Marca de apertura mas una por cada corte, la ultima cierra. */}
-          <span className="absolute top-0 left-0 h-4 w-px bg-stamp" />
-          {cortes.map((x, i) => (
+          className={`pointer-events-none absolute inset-0 ${tensada ? "snap-marcas" : ""}`}
+          aria-hidden="true"
+        >
+          {cortesInternos.map((x, i) => (
             <span
               key={participantes[i].direccion}
-              className="absolute top-0 h-4 w-px bg-stamp"
-              style={{ left: `${x}%`, transform: "translateX(-100%)" }}
+              className="bg-stamp absolute top-0 h-full w-px"
+              style={{ left: `${x}%` }}
             />
           ))}
         </div>
@@ -56,19 +71,31 @@ export function BarraSegmentada({ participantes, tensada = false }: Props) {
               style={{ width: `${p.bps / 100}%` }}
             >
               <div className="mono text-sm">{formatearBps(p.bps)}</div>
-              <div className="text-xs text-ink-60">{p.nombre}</div>
+              <div className="text-ink-60 flex items-center gap-1.5 text-xs">
+                <span
+                  className={`trama-${tokenParticipante(i)} h-2 w-2 shrink-0`}
+                  aria-hidden="true"
+                />
+                {p.nombre}
+              </div>
             </div>
           ))}
         </div>
 
         {/* Apilado: mismo contenido, sin cortar cifras. */}
         <ul className="sm:hidden">
-          {participantes.map((p) => (
+          {participantes.map((p, i) => (
             <li
               key={p.direccion}
-              className="flex justify-between border-b border-rule py-2"
+              className="border-rule flex items-center justify-between border-b py-2"
             >
-              <span className="text-xs text-ink-60">{p.nombre}</span>
+              <span className="text-ink-60 flex items-center gap-1.5 text-xs">
+                <span
+                  className={`trama-${tokenParticipante(i)} h-2 w-2 shrink-0`}
+                  aria-hidden="true"
+                />
+                {p.nombre}
+              </span>
               <span className="mono text-sm">{formatearBps(p.bps)}</span>
             </li>
           ))}
