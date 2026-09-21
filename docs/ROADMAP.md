@@ -37,9 +37,15 @@ Un correo cuando falta tu firma, otro cuando llega dinero al pool.
 manejo de rebotes. No se ve en tres minutos.
 
 ### Historial de movimientos del pool
-Quién retiró qué y cuándo, leído de los eventos del contrato.
-**Por qué no está en el MVP:** requiere indexar eventos; la vista actual con
-saldos vivos alcanza para el demo.
+Quién retiró qué y cuándo, leído de los eventos del contrato. La misma
+indexación habilita una vista consolidada "mis proyectos": una agencia real
+que corre varios pools a la vez no va a pedir una pantalla por pool, va a
+pedir ver todos sus proyectos juntos — estado de firma, saldo y últimos
+movimientos de cada uno en un solo lugar. Es el mismo trabajo de indexado
+que el historial, con un segundo consumidor de los mismos eventos.
+**Por qué no está en el MVP:** requiere indexar eventos, y hoy no hay más de
+un pool real corriendo a la vez; la vista actual con saldos vivos alcanza
+para el demo.
 
 ### Auditoría de los contratos
 Aunque sea una revisión externa ligera.
@@ -125,6 +131,41 @@ eso se busca puntualmente en ese momento, no como ejercicio separado ahora.
 
 Meses. Lo que hace falta para que una agencia de verdad mueva plata de verdad.
 
+### Primer piloto de validación
+Una agencia real, de 3 a 8 personas, con colaboradores freelance
+regionales, corriendo un proyecto real —no simulado— contra el flujo de
+entrada de SNAPLINE: entra sin wallet, firma el acuerdo, el pool se
+despliega y cobra de verdad. La salida sigue en `MockOffRamp` hasta que
+exista el riel real (ver "Salida a pesos real" más abajo); lo que este
+piloto valida es la entrada, la firma y el reparto en cadena, no el retiro a
+pesos.
+**Por qué no está en el MVP:** necesita una contraparte externa real
+dispuesta a mover un proyecto de verdad por una herramienta sin auditar,
+algo que no se consigue ni se debe forzar en los días que quedan antes del
+cierre. **Nota de honestidad:** al momento de escribir esto no hay ningún
+contacto real ni conversación iniciada con ninguna agencia — esto describe
+el perfil de piloto que se busca, no un piloto en curso.
+
+### Conversaciones uno a uno con candidatos al piloto
+Una persona, en una tarde, escribe directamente a equipos o agencias que ya
+reparten ingresos entre colaboradores de forma informal —hoja de cálculo,
+transferencia manual, acuerdo de palabra— y les cuenta qué resuelve
+SNAPLINE, apuntando al perfil del piloto de arriba. Mensajes directos, sin
+campaña ni CRM.
+**Por qué no está en el MVP:** es la vía hacia el piloto, no una función del
+producto. Hasta que exista al menos una conversación real, es trabajo de
+validación, no de construcción — y no hay ninguna iniciada todavía.
+
+### Presencia en comunidades de freelancers y estudios LatAm
+Una persona, en una tarde, entra a comunidades que ya existen —foros,
+grupos, servidores de freelancers o estudios que trabajan reparto de
+proyectos en la región— y presenta SNAPLINE donde esa audiencia ya se
+junta. No implica crear una comunidad nueva ni sostener presencia
+recurrente.
+**Por qué no está en el MVP:** es outreach puntual, sin canal pago ni
+presupuesto; un plan de go-to-market formal queda fuera de alcance del
+hackathon.
+
 ### Salida a pesos real
 Reemplazar `MockOffRamp` por una implementación contra un proveedor con
 licencia. Candidatos: Littio, Koywe, Bitso Business. La interfaz ya tiene la
@@ -137,8 +178,13 @@ Nadie paga a pesos sin identificar a quien recibe.
 **Por qué no está en el MVP:** es una obligación regulatoria, no una función.
 
 ### Mainnet y una estrategia de gas
-Base o la L2 que corresponda, con patrocinio de gas para que el participante
-sin cripto no necesite tener ETH para retirar.
+Base o la L2 que corresponda, con un mecanismo concreto para que el
+participante sin cripto no necesite tener ETH para retirar: un relayer que
+paga el gas de la transacción de retiro en nombre del usuario, o un
+paymaster tipo ERC-4337 que patrocina esa transacción puntual. El caso que
+lo justifica es real y ya está en el MVP: el colaborador freelance que nunca
+tuvo HSK ni ETH y necesita retirar su parte del pool sin comprar cripto
+antes.
 **Por qué no está en el MVP:** en testnet el gas es gratis y el problema no
 se ve.
 
