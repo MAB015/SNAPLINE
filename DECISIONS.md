@@ -8,7 +8,7 @@ nueva que la revierte.
 
 ## 2026-09-21 · Orquestación de agentes
 
-### D-034 · Roles de agentes con nombre propio, y Product Manager como gatekeeper único de merges
+### D-036 · Roles de agentes con nombre propio, y Product Manager como gatekeeper único de merges
 Desde D1 el proyecto ya coordinaba varios agentes en paralelo a mano
 (`STATUS.md` § Organización de agentes: un coordinador principal más
 agentes por rama/worktree en D1–D2 y D3–D4). Eso funcionó hasta cuatro
@@ -36,6 +36,48 @@ crecimiento que este proyecto no tiene (`CLAUDE.md` ya prohíbe paneles de
 administración, roles y complejidad que no se vea en el video) — cada rol
 nuevo tiene que mapear a una de las seis áreas o a la función de
 integración, sin excepción.
+
+## 2026-09-20 · D3-porte y D4, en paralelo
+
+### D-035 · Goteo de gas del lado del servidor, idempotente por saldo
+`web/src/app/api/goteo/route.ts` guarda `DEPLOYER_PRIVATE_KEY` solo en el
+servidor — nunca llega al navegador — y solo transfiere si `getBalance` da
+cero: una wallet ya fondeada, por el goteo o a mano, no vuelve a recibir. El
+disparo es un efecto en `Providers` que llama al endpoint una vez por
+dirección conectada por sesión de pestaña; si el pedido falla, se avisa por
+consola y el flujo sigue — el participante puede usar el faucet de HSK a
+mano. Monto fijo de 0.01 HSK, pensado para las transacciones de un
+participante en el demo. `Providers` también degrada con gracia sin
+`NEXT_PUBLIC_PRIVY_APP_ID`: sirve la app sin Privy/wagmi en vez de tumbar
+`npm run build`, avisando una sola vez en consola.
+**Descartado:** exigir el goteo antes de continuar — una falla ahí no puede
+bloquear el flujo de firma, que es lo crítico del demo.
+
+`/nuevo` valida direcciones con `isAddress(dir, { strict: false })`: no exige
+mayúsculas de checksum EIP-55, porque quien copia una dirección de un
+explorador o de otra wallet no siempre la trae así, y Solidity compara bytes,
+no casing.
+**Descartado:** exigir checksum, que rechazaría direcciones válidas copiadas
+de fuentes comunes sin ganar nada en seguridad.
+
+### D-034 · El tema oscuro y las superficies se resuelven en cascada CSS, no por rama de componente
+`docs/BRAND.md` pide temas claro/oscuro y superficies papel/cadena
+independientes — un bloque de cadena en tema claro usa las variantes
+oscuras. Se resuelve con variables `--raw-*` en `:root`, redefinidas bajo
+`[data-theme="dark"]` y bajo `[data-surface="chain"]` (que gana en cascada
+por ir después), y `@theme inline` solo re-expone esos crudos como tokens de
+Tailwind sin fijar valores. El interruptor (`InterruptorTema.tsx`) es local a
+la pantalla que lo monta — pone `data-theme` en un `div` propio, no en
+`<html>` — sigue `prefers-color-scheme` por defecto vía
+`useSyncExternalStore` y el interruptor lo anula.
+
+Se declaró local a la pantalla, sin estado compartido ni persistencia,
+específicamente para no tocar `web/src/app/layout.tsx`: esa rama corría en
+paralelo con la que integraba Privy, que sí necesitaba envolver el layout con
+`PrivyProvider`. Evitó el único punto de choque real entre las dos ramas.
+**Descartado:** un `ThemeProvider` de terceros o estado en `layout.tsx`/
+`localStorage` — exigía coordinar ese archivo con la otra rama, y D3 no pide
+que el tema persista entre pantallas ni entre visitas.
 
 ## 2026-09-20 · Diseño en código
 

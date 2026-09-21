@@ -328,7 +328,7 @@ function Formulario() {
         ) : null}
         <button
           type="button"
-          className="mono border border-ink bg-ink px-6 py-3 text-xs uppercase tracking-wide text-paper disabled:cursor-not-allowed disabled:border-rule disabled:bg-transparent disabled:text-ink-60"
+          className="mono border border-ink bg-ink px-6 py-3 text-xs uppercase tracking-wide text-doc disabled:cursor-not-allowed disabled:border-rule disabled:bg-transparent disabled:text-ink-60"
           disabled={!listoParaGuardar || guardando}
           onClick={guardar}
         >
