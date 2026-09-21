@@ -63,6 +63,31 @@ dónde va su pago, y sonido corto en el snap.
 **Por qué no está en el MVP:** el anillo ya protagoniza los dos planos que
 importan, y cada pantalla nueva con 3D suma medio día (D-029).
 
+### Framer Motion, Anime.js, Lenis y Lottie
+Cuatro librerías de animación e interacción evaluadas juntas para reforzar el
+pulido visual de la web, que hoy corre sobre GSAP y `@react-three/fiber`
+(D-030). Ninguna pasa el filtro:
+- **Framer Motion** no es una pieza nueva a evaluar: reabre `D-030`, que ya la
+  descartó por nombre por no traer scramble de texto ni un timeline lo
+  bastante fino para encadenar el snap.
+- **Anime.js** se superpone al 100% con GSAP, que ya está instalado y en uso
+  productivo desde D5. No hay caso para sostener las dos.
+- **Lenis** resuelve un scroll largo de landing. SNAPLINE son seis pantallas
+  de estado y formulario, no ese problema.
+- **Lottie** es la única con algo de mérito a priori — un spinner de carga —
+  pero esa pieza ya la cubre GSAP en una línea, sin abrir un flujo de
+  exportación de assets JSON que un equipo de una persona no tiene montado.
+**Por qué no está en el MVP:** el criterio de admisión de `CLAUDE.md` es
+objetivo — "si ahorra un día, se usa y se declara en `DECISIONS.md`" — no "si
+se ve más pulida", y ninguna de las cuatro tiene hoy un caso concreto de
+ahorro frente a una tarea real de `TASKS.md`. El objetivo de que el producto
+se vea de punta a punta ya tiene dueño: `D-029` (Acta Viva) y `D-030` (GSAP +
+R3F). Esto no es un cierre permanente: si en el trabajo real de D7
+(`ux-designer`/`creative-director`) aparece una animación puntual que a mano
+en GSAP salga claramente más cara que con alguna de estas, se evalúa como
+caso concreto en ese momento y se declara en `DECISIONS.md` — mismo criterio
+que se usó con Foundry.
+
 ---
 
 ## Horizonte 2 — Para un piloto real con una agencia
