@@ -459,6 +459,29 @@ avanzar igual a D6 y correr esa verificación real más adelante, junto con
 los ensayos de punta a punta de D8, que ya la exigían de todos modos —no
 duplica trabajo. Ver `TASKS.md` D8.
 
+**Bug bloqueante encontrado y arreglado durante la corrida real de D5/D6
+(2026-09-21, adelantada antes de D7 con luz verde de CEO — ver `TASKS.md`).**
+`guardarBorrador` en `web/src/lib/supabase.ts` encadenaba
+`.insert({...}).select("id").single()`, que Postgres traduce a `INSERT ...
+RETURNING id`. La tabla `drafts` tiene política de `insert` para `anon` pero
+a propósito no tiene política de `select` (D-031, se lee solo por
+`get_draft`), y Postgres exige esa política inexistente para el
+`RETURNING`, así que todo guardado de borrador fallaba con "new row
+violates row-level security policy for table drafts". El orquestador
+reprodujo la causa exacta con SQL directo contra el proyecto Supabase real
+(`snapline`, `qevrbssusazpeeuhhgxk`), con `set local role anon`, antes de
+mandarlo a arreglar. Arreglado por frontend-engineer (worktree
+`agent-a2585982a4427b4de`, commit `8578c7e`): el `id` se genera en el
+cliente con `crypto.randomUUID()` y se inserta explícito, sin encadenar
+`.select()` — sin `RETURNING` no hace falta política de lectura, y D-031
+no cambia. No toca `guardarFirma` (confirmado sin el mismo patrón),
+migraciones ni políticas RLS. Verificado de forma independiente por Product
+Manager antes de mergear: `next build`/`eslint` en verde sobre la rama,
+diff de un solo archivo, `git merge-tree` limpio contra `main`. La corrida
+real de D5/D6 sigue en curso: falta el click real en la UI a través de
+Privy, que retoma el orquestador desde el checkout principal
+(`F:\Projects\SNAPLINE-AI`, rama `main`) ahora que el fix está integrado.
+
 **Hecho en D6** (worktree `agent-a374d5e4199c337c3`, rama
 `worktree-agent-a374d5e4199c337c3`, commit `e9f0551`, integrada en
 `7049ffe`): `web/src/lib/token.ts` (nuevo) trae el ABI mínimo de `MockUSDT`

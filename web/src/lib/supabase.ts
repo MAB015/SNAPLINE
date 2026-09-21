@@ -31,24 +31,35 @@ function obtenerCliente(): SupabaseClient {
   return cliente;
 }
 
-/** Guarda el borrador y devuelve su id (uuid), que es el `[id]` del link a compartir. */
+/** Guarda el borrador y devuelve su id (uuid), que es el `[id]` del link a compartir.
+ *
+ *  El id se genera en el cliente (`crypto.randomUUID()`) y se inserta explícito
+ *  en vez de dejarlo en manos del `default gen_random_uuid()` de la columna.
+ *  Motivo: `drafts` no tiene política de `select` (D-031, `get_draft` es la
+ *  única lectura permitida), y Postgres exige que las filas de un
+ *  `INSERT ... RETURNING` — que es lo que genera `.select().single()` —
+ *  pasen esa política inexistente, así que el insert entero se rechazaba
+ *  con "new row violates row-level security policy" aunque el insert puro
+ *  era válido. Sin `.select()` no hay `RETURNING` y no hace falta política
+ *  de lectura para insertar. */
 export async function guardarBorrador(
   agreement: BorradorPayload,
   terminosTexto: string,
   creadoPor: `0x${string}`,
 ): Promise<string> {
-  const { data, error } = await obtenerCliente()
+  const id = crypto.randomUUID();
+
+  const { error } = await obtenerCliente()
     .from("drafts")
     .insert({
+      id,
       agreement_json: agreement,
       terms_text: terminosTexto,
       created_by: creadoPor.toLowerCase(),
-    })
-    .select("id")
-    .single();
+    });
 
   if (error) throw new Error(`No se pudo guardar el borrador: ${error.message}`);
-  return data.id as string;
+  return id;
 }
 
 /** Fila de `drafts`, tal como la devuelve `get_draft` (D5, docs/ARCHITECTURE.md §4). */
