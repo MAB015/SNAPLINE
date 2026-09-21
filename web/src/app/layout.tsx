@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, Instrument_Serif } from "next/font/google";
+import { Providers } from "@/lib/providers";
 import "./globals.css";
 
 const serif = Instrument_Serif({
@@ -31,7 +32,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="es"
       className={`${serif.variable} ${sans.variable} ${mono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
