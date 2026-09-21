@@ -94,7 +94,7 @@ export function HashVivo({
         type="button"
         onClick={copiar}
         aria-label={`Copiar ${valor}`}
-        className={`mono text-xs ${colorTexto}`}
+        className={`mono text-xs -m-1 p-1 ${colorTexto}`}
       >
         {/* El span del valor abreviado se queda siempre en el DOM (ver
             comentario de arriba): "copiado" lo tapa con un span aparte en
@@ -110,7 +110,7 @@ export function HashVivo({
       <span
         role="presentation"
         data-surface="doc"
-        className="border-rule bg-doc text-ink pointer-events-none absolute -top-8 left-0 z-10 border px-2 py-1 text-xs whitespace-nowrap opacity-0 transition-opacity group-hover/hash:opacity-100 mono"
+        className="border-rule bg-doc text-ink pointer-events-none absolute -top-8 left-0 z-10 border px-2 py-1 text-xs whitespace-nowrap opacity-0 transition-opacity group-hover/hash:opacity-100 group-focus-within/hash:opacity-100 mono"
       >
         {valor}
       </span>
@@ -120,7 +120,7 @@ export function HashVivo({
         target="_blank"
         rel="noreferrer"
         aria-label="Ver en el explorador de HSKChain"
-        className={colorTexto}
+        className={`-m-2 p-2 ${colorTexto}`}
       >
         <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
           <path d="M4 1H9V6" stroke="currentColor" />

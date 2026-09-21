@@ -1,3 +1,5 @@
+"use client";
+
 import { ContadorNumero } from "@/components/ContadorNumero";
 import { EstadoFirma } from "@/components/EstadoFirma";
 import { HashVivo } from "@/components/HashVivo";
