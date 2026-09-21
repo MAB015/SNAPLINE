@@ -1,14 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
 import { abreviarDireccion, urlExplorador } from "@/lib/acuerdo";
+
+gsap.registerPlugin(ScrambleTextPlugin);
 
 /**
  * Hash vivo (docs/BRAND.md §9): hover despliega el valor completo, clic
  * copia y cambia la etiqueta a "copiado" en el mismo sitio (sin toasts), y
- * un icono de 1px abre el explorador. El scramble al aparecer es D5, con
- * GSAP — este componente ya deja el valor listo para que esa pieza se
- * enchufe encima sin tocar la estructura.
+ * un icono de 1px abre el explorador. Al aparecer, el valor abreviado se
+ * descifra caracter por caracter con `ScrambleTextPlugin` de GSAP, una sola
+ * vez, al montar — no en cada hover ni en cada clic.
+ *
+ * El span con el valor abreviado se queda siempre montado (nunca se
+ * desmonta al copiar) para que el scramble no se vuelva a disparar cada vez
+ * que la etiqueta "copiado" desaparece y el valor vuelve a mostrarse: eso
+ * repetiria la animacion, y la regla es "una vez, no en bucle".
  */
 /** `doc` (por defecto) usa `ink`, pensado para el papel. `chain` usa
  *  `on-chain`: sin esto, un hash dentro del bloque sellado quedaria en
@@ -32,6 +41,41 @@ export function HashVivo({
 }) {
   const [copiado, setCopiado] = useState(false);
   const colorTexto = TEXTO_POR_SUPERFICIE[superficie];
+  const abreviado = abreviarDireccion(valor);
+  const scrambleRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const el = scrambleRef.current;
+    if (!el) return;
+
+    const mm = gsap.matchMedia();
+
+    // docs/BRAND.md §10: con reduced motion, el valor final entra directo,
+    // sin pasar por el plugin de scramble.
+    mm.add("(prefers-reduced-motion: reduce)", () => {
+      el.textContent = abreviado;
+    });
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const tween = gsap.to(el, {
+        duration: 0.6,
+        ease: "none",
+        scrambleText: {
+          text: abreviado,
+          chars: "0123456789abcdef",
+          speed: 0.4,
+        },
+      });
+
+      return () => {
+        tween.kill();
+      };
+    });
+
+    return () => {
+      mm.revert();
+    };
+  }, [abreviado]);
 
   async function copiar() {
     try {
@@ -52,7 +96,13 @@ export function HashVivo({
         aria-label={`Copiar ${valor}`}
         className={`mono text-xs ${colorTexto}`}
       >
-        {copiado ? "copiado" : abreviarDireccion(valor)}
+        {/* El span del valor abreviado se queda siempre en el DOM (ver
+            comentario de arriba): "copiado" lo tapa con un span aparte en
+            lugar de reemplazarlo, para no desmontar el que anima el scramble. */}
+        <span className={copiado ? "hidden" : ""} ref={scrambleRef}>
+          {abreviado}
+        </span>
+        {copiado ? <span>copiado</span> : null}
       </button>
 
       {/* El tooltip siempre se ve como papel, sea cual sea la superficie de
