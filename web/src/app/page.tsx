@@ -1,45 +1,46 @@
 import Link from "next/link";
+import { ContadorTests } from "@/components/ContadorTests";
+import { EjemploBarraHero } from "@/components/EjemploBarraHero";
+import { HashVivo } from "@/components/HashVivo";
 import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
 import { PantallaCarga } from "@/components/PantallaCarga";
-import { SelloSimulado } from "@/components/SelloSimulado";
-import {
-  ACUERDO_DE_MUESTRA,
-  OTRO_ACUERDO_DE_MUESTRA,
-  tokenParticipante,
-  type Acuerdo,
-} from "@/lib/acuerdo";
+import { FACTORY_ADDRESS } from "@/lib/firma";
+import { MOCK_USDT_ADDRESS } from "@/lib/token";
 
-function FilaAcuerdo({ acuerdo }: { acuerdo: Acuerdo }) {
-  return (
-    <li className="border-b border-rule py-4">
-      <div className="flex items-center gap-3">
-        <div className="flex" aria-hidden="true">
-          {acuerdo.participantes.map((p, i) => (
-            <span
-              key={p.direccion}
-              className={`trama-${tokenParticipante(i)} -ml-1 h-4 w-4 border border-doc first:ml-0`}
-            />
-          ))}
-        </div>
-        <div>
-          <p className="text-sm">{acuerdo.proyecto}</p>
-          <p className="mono text-xs text-ink-60">Acuerdo {acuerdo.id}</p>
-        </div>
-      </div>
-      <div className="mt-2 flex gap-4 pl-1">
-        <Link className="mono text-xs underline underline-offset-4" href={`/acuerdo/${acuerdo.id}`}>
-          Papel
-        </Link>
-        <Link
-          className="mono text-xs underline underline-offset-4"
-          href={`/acuerdo/${acuerdo.id}?firmado=1`}
-        >
-          Sellado en cadena
-        </Link>
-      </div>
-    </li>
-  );
-}
+/**
+ * Implementación de referencia de los clones EIP-1167 (deployments/hashkey-
+ * testnet.json → contracts.SplitPool). No tiene su propia transacción — la
+ * crea el constructor del factory — así que no hay una constante existente
+ * en `web/src/lib/` para reutilizar. Mismo patrón de literal-copiado que
+ * `FACTORY_ADDRESS` en `web/src/lib/firma.ts` y `MOCK_USDT_ADDRESS` en
+ * `web/src/lib/token.ts`: el JSON de `deployments/` no sobrevive el build de
+ * Vercel, así que no se importa.
+ */
+const SPLIT_POOL_IMPLEMENTATION_ADDRESS = "0x88ceD9e81cF88DfD6f2f4435DF9047Cb89A5FE7F";
+
+const CONTRATOS_VERIFICADOS = [
+  { nombre: "SplitPoolFactory", direccion: FACTORY_ADDRESS },
+  { nombre: "SplitPool (implementación)", direccion: SPLIT_POOL_IMPLEMENTATION_ADDRESS },
+  { nombre: "MockUSDT", direccion: MOCK_USDT_ADDRESS },
+] as const;
+
+const CASOS_DE_USO = [
+  {
+    titulo: "Agencia de diseño",
+    detalle:
+      "5 personas, pago en USDT: cada quien retira sin pasar por la cuenta de nadie.",
+  },
+  {
+    titulo: "Estudio de desarrollo",
+    detalle:
+      "4 devs en Colombia, Argentina y Perú, con reparto fijo por sprint que no se renegocia.",
+  },
+  {
+    titulo: "Colectivo creativo",
+    detalle:
+      'Freelancers sin estructura legal compartida, donde nadie quiere ser el que "tiene la plata de los demás".',
+  },
+] as const;
 
 export default function Inicio() {
   return (
@@ -56,31 +57,90 @@ export default function Inicio() {
           </p>
           <InterruptorTema />
         </div>
-        <h1 className="font-serif text-3xl leading-tight">SNAPLINE</h1>
-        <p className="mt-4 max-w-prose text-sm">
-          Acuerdos de reparto de ingresos por proyecto. El grupo define los
-          porcentajes, todos firman, y en el momento de la firma se despliega el
-          pool de cobro.
-        </p>
 
-        <p className="mono text-ink-60 mt-12 text-xs tracking-wide uppercase">
-          Sistema visual · D3
-        </p>
-        <ul className="border-ink mt-3 border-t">
-          <FilaAcuerdo acuerdo={ACUERDO_DE_MUESTRA} />
-          <FilaAcuerdo acuerdo={OTRO_ACUERDO_DE_MUESTRA} />
-        </ul>
+        <section>
+          <h1 className="font-serif text-2xl leading-tight sm:text-3xl">
+            SNAPLINE convierte un acuerdo de reparto en una dirección de cobro.
+            El grupo firma, se despliega el pool del proyecto, y cuando llega
+            el dinero el reparto ya está decidido.
+          </h1>
+          <p className="mt-6 max-w-prose text-sm">
+            Cobrar en equipo cruzando fronteras significa que alguien termina
+            de banco humano: recibe la plata en su cuenta y reparte a mano.
+            SNAPLINE saca esa cuenta de en medio.
+          </p>
 
-        <p className="mono text-ink-60 mt-12 text-xs tracking-wide uppercase">
-          Sello de simulado
-        </p>
-        <p className="text-ink-60 mt-2 max-w-prose text-xs">
-          Va en toda superficie donde el dinero no se mueve de verdad: la
-          salida a pesos de D7 y el faucet de MockUSDT.
-        </p>
-        <div className="mt-3">
-          <SelloSimulado detalle="La salida a pesos no existe: no hay proveedor, no hay transferencia bancaria y el comprobante es de mentira." />
-        </div>
+          <EjemploBarraHero />
+        </section>
+
+        <section className="mt-16">
+          <h2 className="text-ink-60 text-xs tracking-wide uppercase">
+            Para quién es
+          </h2>
+          <ul className="border-ink mt-3 border-t">
+            {CASOS_DE_USO.map((caso) => (
+              <li key={caso.titulo} className="border-b border-rule py-4">
+                <p className="text-sm">{caso.titulo}</p>
+                <p className="text-ink-60 mt-1 max-w-prose text-sm">{caso.detalle}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section
+          data-surface="chain"
+          className="bg-chain text-on-chain relative mt-16 overflow-hidden border border-transparent px-6 py-8"
+        >
+          <div className="textura-rejilla pointer-events-none absolute inset-0" aria-hidden="true" />
+          <div className="relative">
+            <h2 className="mono text-xs tracking-wide uppercase opacity-80">
+              Verificado en cadena
+            </h2>
+
+            <ul className="mt-6">
+              {CONTRATOS_VERIFICADOS.map((contrato, i) => (
+                <li
+                  key={contrato.direccion}
+                  className={
+                    i === CONTRATOS_VERIFICADOS.length - 1
+                      ? "py-4"
+                      : "border-on-chain/20 border-b py-4"
+                  }
+                >
+                  <p className="text-sm">{contrato.nombre}</p>
+                  <div className="mt-1">
+                    <HashVivo valor={contrato.direccion} superficie="chain" />
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div className="border-on-chain/20 mt-8 max-w-prose border-t pt-8">
+              <h3 className="mono text-xs tracking-wide uppercase opacity-80">
+                Auditoría
+              </h3>
+              <p className="mt-3 text-sm">
+                Los contratos pasan <ContadorTests valor={40} /> sin fallos ni
+                omitidos. Las dos invariantes de contabilidad
+                corrieron 1000 casos fuzz cada una, y otros 1000 casos fuzz
+                validaron las firmas EIP-712. El análisis con Slither encontró
+                seis hallazgos sobre el código, ninguno alto ni accionable.
+              </p>
+              <p className="mono text-on-chain/60 mt-3 text-xs">
+                Reporte crudo: contracts/audit/slither-2026-09-20.txt
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-16">
+          <Link
+            href="/nuevo"
+            className="mono border-ink bg-ink text-doc inline-block border px-6 py-3 text-xs tracking-wide uppercase"
+          >
+            Crear tu acuerdo
+          </Link>
+        </section>
       </main>
     </ProveedorTema>
   );
