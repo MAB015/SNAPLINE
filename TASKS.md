@@ -172,8 +172,8 @@ diferida a D8 junto con la de D5, mismo motivo: falta
 
 ## D7 · Salida a pesos y pulido — sábado 27
 
-- [ ] `web` — interfaz `OffRampProvider` y `MockOffRamp`
-- [ ] `web` — `/retiro-cop/[dir]`: cotización, comisión, neto, comprobante
+- [x] `web` — interfaz `OffRampProvider` y `MockOffRamp`
+- [x] `web` — `/retiro-cop/[dir]`: cotización, comisión, neto, comprobante
 - [ ] `design` — sello de simulado en todas las superficies del mock
 - [ ] `design` — anillo 3D del pool con `@react-three/fiber`: segmentos por
       bps, material toon, clic con panel de participante, snap en

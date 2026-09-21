@@ -15,7 +15,7 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 | `infra` | 🟡 D4 casi listo | Fondeo de testnet; Vercel en D9–D10 |
 | `contracts` | ✅ D2 desplegado | Consumido desde D5 web; sin tareas propias hasta D8 |
 | `design` | ✅ D5 listo, snap con GSAP | D7 · anillo 3D y pulido |
-| `web` | ✅ D6 código listo, corrida real en D8 | D7 · salida a pesos y pulido |
+| `web` | ✅ D7 (parte web) código listo, corrida real en D8 | D7 · pulido de `design` (anillo 3D, sello, tema oscuro) |
 | `demo` | 🟡 Guion escrito | D8 · datos y ensayos |
 
 ---
@@ -384,7 +384,7 @@ accesibilidad, no una decisión de arquitectura o alcance.
 
 **Bloqueado por:** nada.
 
-## `web` — ✅ D6 código listo, corrida real diferida a D8
+## `web` — ✅ D7 (parte web) código listo, corrida real diferida a D8
 
 **Hecho:** andamiaje de Next.js 16 con App Router, TypeScript y Tailwind 4,
 adelantado de D4 a D3 (D-032). En D4 (rama `feat/web-identidad-borrador`,
@@ -537,8 +537,29 @@ wallet de navegador vía Privy — falta `NEXT_PUBLIC_PRIVY_APP_ID` en el
 worktree donde se construyó D6. Verificación conductual diferida a D8,
 junto con la de D5. Ver `TASKS.md` D8.
 
-**Bloqueado por:** nada para seguir a D7. Las verificaciones conductuales
-de D5 y D6 quedan anotadas como tareas de D8, no como bloqueo de `web`.
+**Hecho en D7** (worktree `agent-abec8784811189666`, commit `4907ecf`):
+interfaz `OffRampProvider` (`quote`/`execute`/`status`) y `MockOffRamp` como
+única implementación del MVP (`web/src/lib/offramp/`), con tasa COP/USD y
+comisión de 150 bps declaradas como ilustrativas en el código. Ruta nueva
+`/retiro-cop/[dir]` (`page.tsx` + `RetiroCopCliente.tsx`): cotiza la parte
+liberable del participante, muestra comisión y neto en pesos, pide una
+cuenta destino simulada y emite un comprobante marcado como simulado en
+tres lugares — el tipo (`simulado: true`), la nota del comprobante y
+`SelloSimulado` en pantalla desde el primer frame. No toca `wagmi.ts`,
+`pool.ts` ni `token.ts`; reusa `leerCifrasPool` para la parte liberable.
+
+**Validado por Product Manager antes de mergear:** `next build`/`eslint` en
+verde sobre la rama, con `/retiro-cop/[dir]` registrado; `git merge-tree`
+contra `main` sin conflictos; sin cruce con ningún otro worktree activo.
+
+**Diferido a propósito, no bloqueante:** sin verificación conductual real
+contra una wallet de navegador vía Privy — mismo motivo que D5/D6, entra en
+los ensayos de D8.
+
+**Bloqueado por:** nada para seguir con el resto de D7 (`design`: sello de
+simulado en el resto de superficies, anillo 3D, recibo de transacción,
+tema oscuro). Las verificaciones conductuales de D5, D6 y D7 quedan
+anotadas como tareas de D8, no como bloqueo de `web`.
 
 ## `demo` — 🟡 Guion escrito
 
