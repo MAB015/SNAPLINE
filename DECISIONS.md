@@ -33,10 +33,24 @@ ningún alcance activo de `TASKS.md` (D6/D7 no tocan `/` ni esos archivos);
 `npm run lint` y `npm run build` corridos de forma independiente sobre la
 rama y de nuevo sobre `main` ya mergeado (`0406214`), los dos en verde.
 
-**Pendiente, no bloqueante:** falta la revisión visual en navegador a
-375px/800px en los dos temas — ni Design Lead ni Product Manager tienen
-herramienta de navegador en su rol. Anotado como riesgo en `STATUS.md`;
-alguien con esa herramienta debe confirmarlo antes de grabar (D8/D9).
+**Revisión visual en navegador, cerrada el 2026-09-21 por el orquestador**
+(ni Design Lead ni Product Manager tienen herramienta de navegador en su
+rol): `next dev` contra el checkout real de `main`, desktop (~780px) y
+mobile (375px, confirmado por DOM — un artefacto de la herramienta de
+captura mostraba una columna angosta, pero `innerWidth`/ancho de `body`
+medían 375px exactos, no es un bug del sitio), temas claro y oscuro. Sin
+defectos: título serif, barra fina 0→100%, contador mono y textura de
+fondo correctos en los cuatro casos; el progreso pasa 0/33/66/85/95/99/100%
+con la desaceleración documentada y transiciona a "/" sin salto ni
+parpadeo de layout.
+
+**Hallazgo aparte, no de esta tarea:** en la primera carga el tema arranca
+en claro (valor por defecto antes de hidratar) y cambia a oscuro un frame
+después, cuando `useSyncExternalStore` (D-034) detecta el
+`prefers-color-scheme` real. Es el mecanismo de detección de tema el que
+lo produce, no `PantallaCarga.tsx`; no bloquea nada y queda fuera del
+alcance de D-038. Candidato a revisar si algún día se quiere resolver a
+nivel de sistema — no se abre tarea nueva por esto solo.
 
 **Descartado:** no aplica — la decisión abierta era solo de alcance
 (agregar la pantalla o no), y esa la tomó CEO con el usuario fuera de este

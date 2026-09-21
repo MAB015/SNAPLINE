@@ -260,10 +260,9 @@ generaba conflicto antes de integrar. Archivos acotados a
 `web/src/app/page.tsx` y el componente nuevo `PantallaCarga.tsx`; no tocó
 `layout.tsx`. Product Manager repitió `lint`/`build` de forma independiente
 sobre la rama y sobre `main` ya mergeado (commit `0406214`), no solo confió
-en el reporte de Design Lead. Sin cruce con ningún archivo de D6/D7. Queda
-pendiente una revisión visual en navegador (375px/800px, ambos temas) que
-ni Design Lead ni Product Manager pueden hacer desde su rol — anotado en
-riesgos abiertos.
+en el reporte de Design Lead. Sin cruce con ningún archivo de D6/D7. Revisión
+visual en navegador cerrada por el orquestador el 2026-09-21, sin hallazgos
+—ver `design` más abajo y D-038 en `DECISIONS.md`.
 
 **Generación D6 (web, cobro y retiro).** Un único worktree
 (`agent-a374d5e4199c337c3`, rama `worktree-agent-a374d5e4199c337c3`),
@@ -360,9 +359,16 @@ reporte de Design Lead: diff acotado a `web/src/app/page.tsx` (import y
 montaje de una línea) y el componente nuevo; sin cruce con ningún alcance
 activo de `TASKS.md` (D6/D7 no tocan `/`); `lint`/`build` corridos de forma
 independiente sobre la rama y de nuevo sobre `main` ya mergeado (`0406214`),
-los dos en verde. Pendiente un ojo humano con navegador para confirmar el
-fotograma final a 375px/800px en los dos temas antes de grabar — ver
-riesgos abiertos.
+los dos en verde.
+
+**Revisión visual cerrada el 2026-09-21 por el orquestador** (navegador
+real, ni Design Lead ni Product Manager tienen esa herramienta en su rol):
+desktop y mobile (375px, confirmado por DOM), temas claro y oscuro, sin
+defectos — barra, contador y textura correctos, transición a "/" sin
+salto. Detalle sin relación con esta tarea: en la primera carga hay un
+flash de un frame entre el tema por defecto y el real, del mecanismo de
+detección de D-034, no de `PantallaCarga.tsx`; no bloquea nada. Ver D-038
+en `DECISIONS.md`.
 
 **Bloqueado por:** nada.
 
@@ -504,7 +510,6 @@ edición.
 | El stretch de pago en pesos se come tiempo del ensayo | Solo se toca si D1–D7 cerraron a tiempo. Corte a las 6 horas en D8 |
 | Las wallets embebidas se crean sin gas y no pueden retirar | Goteo de HSK implementado (`web/src/app/api/goteo/route.ts`), pendiente de `DEPLOYER_PRIVATE_KEY` en `web/.env.local` para probarlo de punta a punta. Privy con HSKChain Testnet aún sin probar en el navegador |
 | La guía de submission de Cali aparece tarde y exige algo no previsto | Conseguirla cuanto antes. Está en `TASKS.md` como bloqueada por información externa |
-| La pantalla de carga de marca (D-038) no se revisó en navegador real, solo por código y `build`/`lint` | Confirmar el fotograma a 375px/800px en los dos temas antes de grabar en D8/D9; ni Design Lead ni Product Manager tienen herramienta de navegador en su rol |
 
 ## Contexto del evento
 
