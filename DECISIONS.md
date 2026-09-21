@@ -6,6 +6,46 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-21 · Landing completa en "/", fuera de plan
+
+### D-039 · Landing de marketing completa en "/" en vez de la versión acotada
+Diagnóstico: `web/src/app/page.tsx` sigue siendo literalmente la vitrina de
+componentes de D3 — etiqueta "Sistema visual · D3" y dos acuerdos de
+muestra —, no una landing de producto, y `docs/DEMO-SCRIPT.md` abre el
+video ahí (0:00–0:20). CEO propuso primero una versión acotada: reusar la
+línea del guion, CTA simple, sin reviews ni casos de uso desarrollados. Con
+esa propuesta ya explicada, el usuario eligió explícitamente ir más allá:
+storytelling desarrollado (qué es el producto, problema, usuarios, casos de
+uso), muy visual según `docs/BRAND.md` (Acta Viva), CTA claro "Crear tu
+acuerdo" → `/nuevo` (no "crear cuenta": no hay sistema de cuentas, y
+`/nuevo` ya dispara el login de Privy).
+
+Sobre la sección de "reviews" que CEO había descartado de entrada —no hay
+usuarios reales y `CLAUDE.md` prohíbe maquillar—: el usuario decidió no
+vaciar el espacio sino llenarlo con contenido honesto y verificable, una
+sección de confianza con verificación en cadena real: direcciones de
+contrato verificadas, enlace al explorador, y la cobertura real de los 40
+tests + fuzzing ya documentados en `STATUS.md`. No se inventa ninguna
+métrica de uso real.
+
+Orden de ejecución, confirmado por CEO: CMO arma el brief de narrativa
+(documento, no código) con el contenido concreto de cada sección; Design
+Lead construye `web/src/app/page.tsx` y los componentes nuevos recién con
+ese brief cerrado. Secuencial, no en paralelo — mismo patrón que D-038.
+Product Manager registra el encargo en `TASKS.md` § Fuera de plan y hace
+el merge cuando cada etapa cierre. No toca ni duplica `PantallaCarga.tsx`
+(D-038). Sigue siendo el punto 5 de 6 en "Lo primero que se corta" de
+`docs/SCOPE-PLAN.md`: si D7 se atrasa, es lo primero que se revierte a la
+versión mínima actual.
+
+**Descartado:** la versión acotada que propuso CEO primero (CTA simple,
+sin storytelling desarrollado ni sección de confianza) — el usuario, ya
+con esa opción explicada, prefirió la completa. También descartado:
+testimonios o reviews inventados para llenar esa sección — maquillar sin
+usuarios reales viola la regla de honestidad de `CLAUDE.md`; se reemplaza
+por verificación en cadena real, que es honesta y además refuerza el
+diferencial técnico del proyecto.
+
 ## 2026-09-21 · Pantalla de carga, fuera de plan
 
 ### D-038 · Pantalla de carga de marca, encargo directo de CEO fuera de `TASKS.md`

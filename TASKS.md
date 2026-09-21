@@ -130,6 +130,30 @@ bloquea avanzar a D6. `NEXT_PUBLIC_PRIVY_APP_ID` ya está puesto en
       entrada propia en `DECISIONS.md`: son correcciones puntuales, no una
       decisión de arquitectura o alcance.
 
+## Fuera de plan · Landing de marketing completa en "/" (D-039)
+
+- [ ] `demo` — CMO: brief de narrativa (documento, no código) para
+      reemplazar la vitrina de componentes de D3 en `web/src/app/page.tsx`:
+      qué es el producto, problema, usuarios, casos de uso desarrollados, y
+      el contenido concreto de la sección de confianza (direcciones de
+      contrato verificadas, enlace al explorador, cobertura real de los 40
+      tests + fuzzing ya documentados en `STATUS.md`). Sin inventar ninguna
+      métrica de uso real.
+- [ ] `design` — Design Lead: construir `web/src/app/page.tsx` y los
+      componentes nuevos que haga falta con el brief de CMO ya cerrado,
+      muy visual según `docs/BRAND.md` (Acta Viva), CTA claro "Crear tu
+      acuerdo" → `/nuevo`. No toca ni duplica `PantallaCarga.tsx` (D-038,
+      ya montada en esa misma pantalla).
+
+Orden de ejecución secuencial, confirmado por CEO: CMO primero (brief
+cerrado), Design Lead después (implementación). No compite con el arreglo
+del bug de RLS en `guardarBorrador` en curso con CTO/frontend-engineer —
+archivos y áreas distintas. Sigue siendo el punto 5 de 6 en "Lo primero
+que se corta" de `docs/SCOPE-PLAN.md`: si D7 se atrasa, esto es lo primero
+que se revierte a la versión mínima actual. Encargo fuera de plan aprobado
+por CEO y confirmado por el usuario, mismo patrón que D-038. Ver D-039 en
+`DECISIONS.md`.
+
 ## D6 · Web, cobro y retiro — viernes 26
 
 - [x] `web` — `/pagar/[dir]`: link público, sin sesión requerida
