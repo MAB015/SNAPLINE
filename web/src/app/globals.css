@@ -1,14 +1,66 @@
 @import "tailwindcss";
 
-/* Sistema visual "Acta" — docs/BRAND.md.
-   Seis colores, tres familias, seis tamanos. Nada intermedio. */
+/* Sistema visual "Acta Viva" — docs/BRAND.md.
+   Los colores van por SUPERFICIE, no por tema: la paleta cruda vive en
+   `--raw-*` y se resuelve segun el atributo `data-theme` (claro/oscuro,
+   heredado del interruptor local a /acuerdo/[id]) y `data-surface` (doc/chain,
+   fijo por bloque). `@theme inline` solo re-expone esos crudos como tokens de
+   Tailwind: no fija valores, para que sigan resolviendose en cascada. */
+:root {
+  --raw-doc: #faf8f3;
+  --raw-chain: #14120e;
+  --raw-ink: #14120e;
+  --raw-on-chain: #ede9df;
+
+  --raw-p1: #2743c9;
+  --raw-p2: #16774b;
+  --raw-p3: #6e3bc8;
+  --raw-p4: #ad5414;
+  --raw-stamp: #b3261e;
+  --raw-caution: #8a6d00;
+}
+
+/* Tema oscuro: se aplica en el div local del interruptor (§4), no en <html>.
+   La pagina que lo envuelve queda intacta si el interruptor no esta montado. */
+[data-theme="dark"] {
+  --raw-doc: #1b1914;
+  --raw-chain: #0c0c0e;
+  --raw-ink: #ede9df;
+
+  --raw-p1: #7d95ff;
+  --raw-p2: #4cc38a;
+  --raw-p3: #b292ff;
+  --raw-p4: #f29a52;
+  --raw-stamp: #f0524a;
+  --raw-caution: #e0b52e;
+}
+
+/* Superficie cadena: siempre la variante oscura, en cualquier tema de pagina
+   (docs/BRAND.md §6: "En el tema claro, un bloque de cadena usa las
+   variantes oscuras"). Va despues del tema para ganarle en cascada. */
+[data-surface="chain"] {
+  --raw-p1: #7d95ff;
+  --raw-p2: #4cc38a;
+  --raw-p3: #b292ff;
+  --raw-p4: #f29a52;
+  --raw-stamp: #f0524a;
+  --raw-caution: #e0b52e;
+}
+
 @theme inline {
-  --color-paper: #faf8f3;
-  --color-ink: #14120e;
-  --color-ink-60: rgb(20 18 14 / 0.6);
-  --color-rule: rgb(20 18 14 / 0.18);
-  --color-stamp: #b3261e;
-  --color-caution: #8a6d00;
+  --color-doc: var(--raw-doc);
+  --color-chain: var(--raw-chain);
+  --color-ink: var(--raw-ink);
+  --color-ink-60: color-mix(in srgb, var(--raw-ink) 60%, transparent);
+  --color-rule: color-mix(in srgb, var(--raw-ink) 18%, transparent);
+  --color-on-chain: var(--raw-on-chain);
+
+  --color-p1: var(--raw-p1);
+  --color-p2: var(--raw-p2);
+  --color-p3: var(--raw-p3);
+  --color-p4: var(--raw-p4);
+  --color-stamp: var(--raw-stamp);
+  --color-caution: var(--raw-caution);
 
   --font-serif: var(--font-instrument-serif), Georgia, serif;
   --font-sans: var(--font-plex-sans), system-ui, sans-serif;
@@ -28,13 +80,20 @@
   --shadow-*: initial;
 }
 
+/* De aqui para abajo, CSS de mano: siempre contra `--raw-*`, nunca contra
+   `--color-*`. Tailwind resuelve `@theme inline` reescribiendo cada utilidad
+   generada (`.text-ink`, `.bg-p1`...) para que apunte directo a `--raw-*`;
+   pero una regla que yo escriba a mano no pasa por esa reescritura, y
+   `--color-ink` es una propiedad heredada que se congela en el valor de
+   `:root` la primera vez que se usa — no seria reactiva al tema ni a la
+   superficie si se referencia aqui. */
 html {
-  background: var(--color-paper);
+  background: var(--raw-doc);
 }
 
 body {
-  background: var(--color-paper);
-  color: var(--color-ink);
+  background: var(--raw-doc);
+  color: var(--raw-ink);
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   line-height: 1.5;
@@ -46,6 +105,113 @@ body {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
+}
+
+/* ---------------------------------------------------------------------
+   Texturas (docs/BRAND.md §7): SVG en linea, sin archivos de imagen.
+   Cada una es una mascara (forma en negro sobre transparente) para que el
+   color siga siendo un token de tema/superficie y no quede horneado en el
+   SVG. El grano y la trama van a 2px de trazo minimo: el fino se lo come
+   la compresion del video (prueba en fotograma exportado, no solo en el
+   navegador).
+   --------------------------------------------------------------------- */
+:root {
+  --textura-grano: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='7'%3E%3Crect x='1' y='1' width='2' height='2' fill='black'/%3E%3Crect x='4' y='4' width='2' height='2' fill='black'/%3E%3Crect x='4' y='0' width='2' height='2' fill='black' fill-opacity='.6'/%3E%3C/svg%3E");
+  --textura-rejilla: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect x='0' y='0' width='2' height='2' fill='black'/%3E%3C/svg%3E");
+
+  --trama-p1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M-2 8L8 -2M0 10L10 0' stroke='black' stroke-width='2'/%3E%3C/svg%3E");
+  --trama-p2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Ccircle cx='2' cy='2' r='1.6' fill='black'/%3E%3Ccircle cx='6' cy='6' r='1.6' fill='black'/%3E%3C/svg%3E");
+  --trama-p3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M-2 8L8 -2M0 10L10 0M-2 0L8 10M0 -2L10 8' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E");
+  --trama-p4: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='8'%3E%3Crect x='1' y='0' width='2' height='8' fill='black'/%3E%3C/svg%3E");
+
+  --tinta-sello: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect x='2' y='2' width='36' height='36' fill='black'/%3E%3Ccircle cx='2' cy='10' r='3' fill='white'/%3E%3Ccircle cx='38' cy='6' r='2.5' fill='white'/%3E%3Ccircle cx='34' cy='38' r='3.5' fill='white'/%3E%3Ccircle cx='4' cy='32' r='2' fill='white'/%3E%3Ccircle cx='20' cy='2' r='2' fill='white'/%3E%3Ccircle cx='16' cy='38' r='2' fill='white'/%3E%3Crect x='6' y='6' width='3' height='3' fill='white'/%3E%3Crect x='30' y='28' width='3' height='3' fill='white'/%3E%3C/svg%3E");
+  --franjas-precaucion: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M-4 16L16 -4M0 20L20 0' stroke='black' stroke-width='6'/%3E%3C/svg%3E");
+}
+
+.trama-p1,
+.trama-p2,
+.trama-p3,
+.trama-p4,
+.textura-grano,
+.textura-rejilla,
+.tinta-sello,
+.franjas-precaucion {
+  mask-repeat: repeat;
+  -webkit-mask-repeat: repeat;
+}
+
+/* El tamano de mosaico va explicito en px por textura: "contain" escala el
+   SVG al tamano del CONTENEDOR antes de repetir, asi que en un bloque ancho
+   o alto termina agrandando el mosaico a un puñado de manchas en vez de una
+   trama fina y pareja. */
+.trama-p1 {
+  background-color: var(--raw-p1);
+  mask-image: var(--trama-p1);
+  -webkit-mask-image: var(--trama-p1);
+  mask-size: 8px 8px;
+  -webkit-mask-size: 8px 8px;
+}
+.trama-p2 {
+  background-color: var(--raw-p2);
+  mask-image: var(--trama-p2);
+  -webkit-mask-image: var(--trama-p2);
+  mask-size: 8px 8px;
+  -webkit-mask-size: 8px 8px;
+}
+.trama-p3 {
+  background-color: var(--raw-p3);
+  mask-image: var(--trama-p3);
+  -webkit-mask-image: var(--trama-p3);
+  mask-size: 8px 8px;
+  -webkit-mask-size: 8px 8px;
+}
+.trama-p4 {
+  background-color: var(--raw-p4);
+  mask-image: var(--trama-p4);
+  -webkit-mask-image: var(--trama-p4);
+  mask-size: 6px 8px;
+  -webkit-mask-size: 6px 8px;
+}
+
+/* Grano de papel: superficie `doc`, 4-6% de opacidad sobre `ink`. */
+.textura-grano {
+  background-color: var(--raw-ink);
+  opacity: 0.05;
+  mask-image: var(--textura-grano);
+  -webkit-mask-image: var(--textura-grano);
+  mask-size: 7px 7px;
+  -webkit-mask-size: 7px 7px;
+}
+
+/* Rejilla de puntos: superficie `chain`, `on-chain` al 10%. */
+.textura-rejilla {
+  background-color: var(--raw-on-chain);
+  opacity: 0.1;
+  mask-image: var(--textura-rejilla);
+  -webkit-mask-image: var(--textura-rejilla);
+  mask-size: 8px 8px;
+  -webkit-mask-size: 8px 8px;
+}
+
+/* Tinta de sello: relleno con desgaste, como un sello de goma real. Una sola
+   pieza a lo largo de todo el chip, no un mosaico. */
+.tinta-sello {
+  background-color: var(--raw-stamp);
+  mask-image: var(--tinta-sello);
+  -webkit-mask-image: var(--tinta-sello);
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+}
+
+/* Franjas de precaucion: exclusivas del sello de simulado. */
+.franjas-precaucion {
+  background-color: var(--raw-caution);
+  mask-image: var(--franjas-precaucion);
+  -webkit-mask-image: var(--franjas-precaucion);
+  mask-size: 16px 16px;
+  -webkit-mask-size: 16px 16px;
 }
 
 /* El snap: la linea se tensa una sola vez, sin rebote, bajo 400ms. */
