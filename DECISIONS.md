@@ -6,6 +6,37 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-21 · Orquestación de agentes
+
+### D-034 · Roles de agentes con nombre propio, y Product Manager como gatekeeper único de merges
+Desde D1 el proyecto ya coordinaba varios agentes en paralelo a mano
+(`STATUS.md` § Organización de agentes: un coordinador principal más
+agentes por rama/worktree en D1–D2 y D3–D4). Eso funcionó hasta cuatro
+agentes simultáneos, pero dependía de que el coordinador recordara a mano
+quién tocaba qué archivo, y no le daba a la persona un punto de
+conversación fijo para pedir trabajo nuevo ni una manera de quedarse al
+tanto de qué hace cada agente sin leer cada worktree.
+
+Se formalizan los roles como subagentes con nombre en `.claude/agents/`,
+mapeados 1 a 1 sobre las seis áreas ya definidas en `CLAUDE.md` — no un
+organigrama nuevo. CEO enmarca cada pedido nuevo contra el plan y es el
+único contacto estratégico del orquestador; CTO, CMO, COO y Design Lead
+dirigen sus áreas; blockchain-engineer, frontend-engineer, infra-engineer,
+storyteller, ux-designer y creative-director ejecutan. Product Manager es
+un rol nuevo, no una renombrada: institucionaliza al "coordinador" —sabe
+qué agente trabaja dónde, aprueba y hace los merges a `main`, y es la
+única escritura permitida de `STATUS.md`, `TASKS.md` y `DECISIONS.md`— y
+es a quien cualquier agente pregunta ante un conflicto de archivos o para
+confirmar si algo ya se está trabajando en otra rama, en vez de asumir o
+sobrescribir.
+**Descartado:** seguir coordinando a mano sin roles nombrados, que
+funcionaba pero no daba trazabilidad ni un punto de contacto fijo; y
+diseñar un organigrama de startup completo con áreas de producto o
+crecimiento que este proyecto no tiene (`CLAUDE.md` ya prohíbe paneles de
+administración, roles y complejidad que no se vea en el video) — cada rol
+nuevo tiene que mapear a una de las seis áreas o a la función de
+integración, sin excepción.
+
 ## 2026-09-20 · Diseño en código
 
 *(D-032 y D-033 se registraron como D-029 y D-030 en `feat/design-sistema-visual`,

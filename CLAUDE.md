@@ -44,6 +44,45 @@ los alcances no se cruzan.
 | `demo` | Datos de prueba, guion, grabación | El video corre de punta a punta sin cortes falsos |
 | `infra` | Repo, CI, entorno, despliegue | `main` construye y despliega |
 
+## Orquestación de agentes
+
+La sesión principal de Claude Code (el "orquestador") es la única interfaz
+de la persona. No hace trabajo de área directamente: prioriza y reparte.
+
+**CEO** (`.claude/agents/ceo.md`) es el único punto de contacto
+estratégico del orquestador. Todo pedido nuevo pasa primero por él para
+enmarcarlo contra `docs/SCOPE-PLAN.md` y los límites duros de arriba,
+antes de activar cualquier área.
+
+CEO delega en cuatro líderes, uno por grupo de áreas:
+
+| Líder | Área(s) que dirige | Especialistas a cargo |
+|---|---|---|
+| CTO | `contracts`, `web`, `infra` | blockchain-engineer, frontend-engineer, infra-engineer |
+| CMO | `demo` y narrativa de envío | storyteller |
+| COO | `docs` y disciplina de proceso (calendario D0–D10, riesgos de `STATUS.md`) | — |
+| Design Lead | `design` | ux-designer, creative-director |
+
+**Product Manager** (`.claude/agents/product-manager.md`) cruza todo lo
+anterior: sabe qué agente está tocando qué archivos, aprueba y hace los
+merges a `main`, y es la única escritura permitida de `STATUS.md`,
+`TASKS.md` y `DECISIONS.md` (ver "Git" abajo). Cualquier agente que
+detecte un posible choque de archivos, o que necesite confirmar si algo
+ya se está trabajando en otra rama, le pregunta a Product Manager antes
+de tocar nada — nunca asume ni sobrescribe.
+
+El trabajo en paralelo sigue la regla de "Áreas": solo cuando los alcances
+no se cruzan, y Product Manager es quien lo confirma antes de dar luz
+verde, igual que ya se hizo a mano en D1–D4 (ver `STATUS.md` §
+Organización de agentes). Cada especialista que escribe código o assets
+trabaja en su propio worktree.
+
+La persona se mantiene al tanto por reportes cortos de CEO y de Product
+Manager al cerrar cada bloque, no solo al final.
+
+Definiciones completas de cada rol, con su alcance y lo que no hace, en
+`.claude/agents/`.
+
 ## Git
 
 `main` siempre desplegable. El trabajo va en ramas `feat/<área>-<slug>`.

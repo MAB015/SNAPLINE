@@ -189,6 +189,13 @@ Cada agente trabaja únicamente en su worktree; ninguno cambia ramas en el
 checkout de otro. El coordinador integra una tarea por commit junto con su
 tracking. Solo el coordinador modifica STATUS, TASKS y DECISIONS.
 
+**Formalizado el 2026-09-21 (D-034):** este patrón ya no se coordina solo a
+mano. Los roles tienen nombre y definición propia en `.claude/agents/`, con
+CEO como único contacto estratégico del orquestador y Product Manager como
+el rol que hereda exactamente lo que decía el párrafo anterior — mapa de
+quién trabaja dónde, dueño único de esta escritura, y gatekeeper de merges
+a `main`. Ver `CLAUDE.md` § Orquestación de agentes.
+
 ## `design` — 🟡 D3 parcial: base en código, falta portar a Acta Viva
 
 **Hecho:** dirección visual revisada de Acta a **Acta Viva** (D-029) y
