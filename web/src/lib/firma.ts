@@ -118,18 +118,8 @@ const AGREEMENT_TYPEHASH = keccak256(
  * la cadena, sin una tabla nueva en Supabase (limite duro del proyecto).
  */
 export function calcularStructHash(agreement: Agreement): Hex {
-  const participantsHash = keccak256(
-    encodePacked(
-      agreement.participants.map(() => "address" as const),
-      agreement.participants,
-    ),
-  );
-  const bpsHash = keccak256(
-    encodePacked(
-      agreement.bps.map(() => "uint16" as const),
-      agreement.bps,
-    ),
-  );
+  const participantsHash = keccak256(encodePacked(["address[]"], [agreement.participants]));
+  const bpsHash = keccak256(encodePacked(["uint16[]"], [agreement.bps]));
   return keccak256(
     encodeAbiParameters(
       [{ type: "bytes32" }, { type: "bytes32" }, { type: "bytes32" }, { type: "bytes32" }, { type: "bytes32" }],
