@@ -1,6 +1,6 @@
 # Estado del proyecto — SNAPLINE
 
-**Última actualización:** 2026-09-20 · **Bloque cerrado:** D2 · Contratos, firmas y despliegue
+**Última actualización:** 2026-09-20 · **Bloque cerrado:** D2 · Contratos, firmas y despliegue · **D3 en curso:** parcial, falta portar a Acta Viva
 **Cierre del hackathon:** 1 de octubre de 2026 · **Días restantes de trabajo:** 10
 
 Este archivo se actualiza en el mismo commit que el trabajo que describe.
@@ -12,10 +12,10 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 | Área | Estado | Siguiente |
 |---|---|---|
 | `docs` | ✅ Listo | Solo mantenimiento del tracking |
-| `infra` | 🟡 CI validado | Fondeo de testnet; Next.js en D4 |
+| `infra` | 🟡 CI validado | Fondeo de testnet; viem/wagmi en D4 |
 | `contracts` | ✅ D2 desplegado | D5 · despliegue del pool desde la web |
-| `design` | 🟡 Dirección revisada (Acta Viva) | D3 · sistema en código, dos temas |
-| `web` | ⬜ Sin empezar | D4 · Privy y creación de acuerdo |
+| `design` | 🟡 D3 parcial | Portar tokens/componentes a Acta Viva |
+| `web` | 🟡 Andamiaje | D4 · Privy y creación de acuerdo |
 | `demo` | 🟡 Guion escrito | D8 · datos y ensayos |
 
 ---
@@ -43,7 +43,8 @@ Validado localmente y en GitHub: formato y tests pasan en Linux en la
 [ejecución 35537664699](https://github.com/MAB015/SNAPLINE/actions/runs/35537664699)
 del commit 9d96b48. Rama publicada en origin/feat/contracts-split-pool.
 
-**Falta:** fondeo de las cuatro cuentas de testnet y andamiaje de Next.js (D4).
+**Falta:** fondeo de las cuatro cuentas de testnet. El andamiaje de Next.js
+se adelantó a D3 y lo hizo `design`; falta añadirle viem/wagmi en D4.
 
 **Nota:** el CI no se añade hasta que haya algo que construir. Un `main` con
 CI en rojo incumple la regla de "siempre desplegable".
@@ -175,7 +176,7 @@ coordinador terminó la integración. En los tests recuperados se corrigieron
 aritmética uint16 y una expectativa de revert que interceptaba un getter.
 Despliegue pendiente de configuración externa.
 
-## `design` — 🟡 Dirección fijada
+## `design` — 🟡 D3 parcial: base en código, falta portar a Acta Viva
 
 **Hecho:** dirección visual revisada de Acta a **Acta Viva** (D-029) y
 documentada en `docs/BRAND.md`: narrativa papel → cadena, temas claro y
@@ -183,26 +184,51 @@ oscuro, cuatro colores de participante con trama (contraste AA medido),
 texturas, hash vivo, inventario de movimiento con GSAP y el anillo 3D del
 pool en caja de un día (D-030).
 
-**Falta:** tokens en código para los dos temas, texturas, identicon, hash
-vivo, componentes base (tabla de reparto, barra segmentada, estado de firma,
-sello de simulado) y maqueta estática de `/acuerdo/[id]` en D3; snap 2D en
-D5; anillo 3D en D7.
+**Hecho en código** (rama `feat/design-sistema-visual`, escrita antes de que
+existiera la revisión a Acta Viva): andamiaje de Next.js 16 con App Router,
+TypeScript y Tailwind 4, adelantado de D4 (D-032); tokens de Tailwind en
+`web/src/app/globals.css` — seis colores, las tres familias de `docs/BRAND.md`
+y la escala cerrada de 12 a 56, con las escalas de radio y sombra anuladas
+(D-033); cuatro componentes en `web/src/components/`: tabla de reparto con
+filetes visibles y cifras en mono tabular, barra segmentada, estado de
+firma —por fila y del acuerdo completo— y sello de simulado. Maqueta de
+`/acuerdo/[id]` con los datos de `docs/DEMO-SCRIPT.md`, marcada en pantalla
+como maqueta. `next build` y `eslint` pasan; las dos pantallas revisadas en
+el navegador a 800px y a 375px. El snap de la línea está implementado —380ms,
+una vez, sin rebote, y anulado con `prefers-reduced-motion`— y se ve con
+`?firmado=1`. No hay tests automáticos de interfaz: la comprobación es visual.
+
+**Desactualizado frente a Acta Viva.** Lo construido sigue la dirección
+anterior ("Acta"): un solo acento rojo (`stamp`, visible solo en las marcas de
+la línea y en el estado del acuerdo firmado), sin tema oscuro y sin color ni
+trama por participante — la tabla y la barra son monocromas. Antes de dar D3
+por cerrado hay que portarlo a la especificación vigente.
+
+**Falta:** tema oscuro con interruptor; color y trama por participante en la
+barra y en la tabla; texturas en SVG en línea (grano, rejilla, cuatro tramas,
+tinta de sello, franjas de precaución), revisadas en un fotograma exportado;
+identicon 5×5 desde la dirección; componente de hash vivo (hover, copiar,
+enlace al explorador, código de barras del hash de términos); maqueta de
+`/acuerdo/[id]` en los dos temas y en los dos estados (papel y sellado en
+cadena). El pulido y el sello en el resto de superficies siguen en D7.
 
 **Riesgo:** D3 creció con las texturas, el identicon y el segundo tema, y D7
 suma el anillo. El orden de corte está en `TASKS.md`: primero cae el stretch
 de D8, luego el anillo. El snap 2D no se corta.
 
-**Bloqueado por:** nada, pero se hace en D3 después de congelar contratos.
+**Bloqueado por:** nada.
 
-## `web` — ⬜ Sin empezar
+## `web` — 🟡 Solo el andamiaje
 
-**Hecho:** nada. Rutas y responsabilidades definidas en
-`docs/ARCHITECTURE.md` §3.
+**Hecho:** andamiaje de Next.js 16 con App Router, TypeScript y Tailwind 4,
+adelantado de D4 para poder escribir el sistema visual en su sitio definitivo
+(D-029). Dos rutas dibujadas y sin lógica: `/` y `/acuerdo/[id]`. Rutas y
+responsabilidades definidas en `docs/ARCHITECTURE.md` §3.
 
-**Falta:** todo.
+**Falta:** todo lo que toca datos o cadena. viem/wagmi, Privy, Supabase y las
+cuatro pantallas restantes.
 
-**Bloqueado por:** necesita el ABI de los contratos (D2) y los componentes de
-diseño (D3). No empieza antes de D4.
+**Bloqueado por:** nada. Empieza en D4 con Privy.
 
 ## `demo` — 🟡 Guion escrito
 

@@ -51,8 +51,11 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 
 ## D3 · Diseño — martes 23
 
-- [ ] `design` — tokens en código: tipografías, escala, paleta por superficie,
-      filetes; temas claro y oscuro con interruptor (D-029)
+- [x] `infra` — andamiaje de Next.js App Router con Tailwind, adelantado de
+      D4 (D-032)
+- [x] `design` — tokens en código: tipografías, escala, filetes (D-033).
+      **Pendiente de portar:** paleta por superficie con los dos temas y el
+      interruptor claro/oscuro, sin los que exige Acta Viva
 - [ ] `design` — texturas en SVG en línea: grano, rejilla, cuatro tramas,
       tinta de sello, franjas de precaución. Revisarlas en un fotograma
       exportado, no solo en el navegador
@@ -60,16 +63,22 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
       participante
 - [ ] `design` — componente de hash vivo: hover, copiar, enlace al explorador;
       código de barras del hash de términos
-- [ ] `design` — componente de tabla de reparto
-- [ ] `design` — componente de barra segmentada con tramas de participante
-- [ ] `design` — componente de estado de firma: pendiente, firmado, desplegado
-- [ ] `design` — componente de sello de simulado con franjas
-- [ ] `design` — maqueta estática de `/acuerdo/[id]` con datos falsos, en los
-      dos temas y en los dos estados (papel y sellado en cadena)
+- [x] `design` — componente de tabla de reparto (monocromo; falta color/trama
+      por participante)
+- [x] `design` — componente de barra segmentada (monocromo; falta color/trama
+      por participante)
+- [x] `design` — componente de estado de firma
+- [x] `design` — componente de sello de simulado
+- [x] `design` — maqueta estática de `/acuerdo/[id]` con datos falsos (un solo
+      tema y un solo estado; falta el segundo tema y el estado sellado)
 
 ## D4 · Web, identidad y borrador — miércoles 24
 
-- [ ] `infra` — andamiaje de Next.js App Router con Tailwind y viem/wagmi
+- [x] `infra` — andamiaje de Next.js App Router con Tailwind *(adelantado a D3,
+      ver D-032)*
+- [ ] `infra` — añadir viem/wagmi al andamiaje. Sobrescribir `blockExplorers`
+      de la cadena 133: el que trae viem (`testnet-explorer.hsk.xyz`) no
+      resuelve; el bueno es el de `deployments/hashkey-testnet.json`
 - [ ] `web` — Privy: entrada por correo con wallet embebida y conexión de
       wallet externa
 - [ ] `web` — goteo de gas: la cuenta de despliegue envía un mínimo de HSK a

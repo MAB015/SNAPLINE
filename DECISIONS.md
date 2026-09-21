@@ -6,6 +6,30 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-20 · Diseño en código
+
+*(D-032 y D-033 se registraron como D-029 y D-030 en `feat/design-sistema-visual`,
+números que ya ocupaba Acta Viva en `main`. Se renumeran al integrar la rama;
+el contenido no cambia.)*
+
+### D-033 · Los tokens borran las escalas de radio y sombra de Tailwind
+`docs/BRAND.md` prohíbe esquinas redondeadas y sombras. En `@theme` se anulan
+las dos escalas (`--radius-*` y `--shadow-*`), así que `rounded-lg` o `shadow-md`
+dejan de existir como clases. La regla dura deja de depender de que nadie se
+despiste.
+**Descartado:** confiar en la revisión. Es la clase de detalle que se cuela a
+las dos de la mañana del día de grabar.
+
+### D-032 · El andamiaje de Next.js se adelanta de D4 a D3
+D3 pide el sistema visual "en código" y la maqueta de `/acuerdo/[id]`, pero el
+andamiaje de Next.js estaba agendado en D4. Se adelanta el andamiaje mínimo
+—App Router, TypeScript y Tailwind 4, nada más— para que los componentes nazcan
+en su sitio definitivo. Privy, viem/wagmi y Supabase siguen intactos en D4: lo
+que se adelanta es el marco, no la integración.
+**Descartado:** maquetar en un HTML suelto y portarlo en D4. Respetaba el plan
+al pie de la letra a cambio de reescribir el marcado una vez, y una reescritura
+a ocho días del cierre es más riesgo que la desviación.
+
 ## 2026-09-20 · Diseño
 
 ### D-030 · GSAP para el movimiento 2D y `@react-three/fiber` para el anillo
