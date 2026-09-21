@@ -482,6 +482,24 @@ real de D5/D6 sigue en curso: falta el click real en la UI a través de
 Privy, que retoma el orquestador desde el checkout principal
 (`F:\Projects\SNAPLINE-AI`, rama `main`) ahora que el fix está integrado.
 
+**Segundo bug bloqueante encontrado y arreglado en la misma corrida real de
+D5/D6 (2026-09-21).** El RPC público de HSKChain Testnet no manda
+`Access-Control-Allow-Origin`, así que cualquier `fetch` JSON-RPC hecho
+directo desde el navegador (Privy/wagmi vía `usePublicClient()`) se
+bloqueaba por CORS — el mismo click real en la UI que retomaba el punto
+anterior topaba con esto de inmediato. Arreglado (worktree
+`agent-a3df3cf7dd07d021f`, commit `45533ec`): `web/src/app/api/rpc/route.ts`
+(nuevo) es un proxy same-origin que reenvía el POST server-to-server, sin
+restricción de CORS — mismo patrón que `web/src/app/api/goteo/route.ts`.
+`wagmiConfig` (`web/src/lib/wagmi.ts`) apunta su `transport` a `/api/rpc` en
+vez de al RPC externo directo; `RPC_URL` y
+`hashkeyTestnet.rpcUrls.default.http` quedan intactos porque `api/goteo/route.ts`
+corre server-side y no tiene el problema. Verificado de forma independiente
+por Product Manager antes de mergear: `next build`/`eslint` en verde sobre
+la rama, con `/api/rpc` registrado junto al resto de las rutas; diff de dos
+archivos; sin cruce con ningún otro worktree activo. La corrida real de
+D5/D6 sigue en curso, ahora con ambos fixes integrados en `main`.
+
 **Hecho en D6** (worktree `agent-a374d5e4199c337c3`, rama
 `worktree-agent-a374d5e4199c337c3`, commit `e9f0551`, integrada en
 `7049ffe`): `web/src/lib/token.ts` (nuevo) trae el ABI mínimo de `MockUSDT`
