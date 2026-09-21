@@ -88,6 +88,37 @@ en GSAP salga claramente más cara que con alguna de estas, se evalúa como
 caso concreto en ese momento y se declara en `DECISIONS.md` — mismo criterio
 que se usó con Foundry.
 
+### Pruebas de usabilidad con usuarios simulados y mesas de trabajo CMO+UX
+CMO (marketing) y Design Lead (UX) reunidos, simulando usuarios sintéticos,
+corriendo pruebas de usabilidad formales y armando mesas de trabajo para
+poner en común hallazgos y mejoras.
+**Por qué no está en el MVP:** es un proceso de equipo que necesita gente y
+tiempo para investigar antes de construir — no rinde en un hackathon de una
+persona con tres frentes ya corriendo en paralelo. El plan ya tiene un
+mecanismo liviano equivalente, presupuestado para D8: `ux-designer` con
+mandato diario de correctitud contra `docs/BRAND.md`, la skill
+`web-design-guidelines` (foco, teclado, áreas de toque), y la auditoría
+`ethskills.com/qa/SKILL.md` antes de grabar. Simular personas no agrega
+cobertura que esas tres capas no den. Además, CMO no tiene mandato de UX en
+`CLAUDE.md` — su alcance es narrativa y envío (`docs/PITCH.md`,
+`docs/DEMO-SCRIPT.md`, Devfolio); cualquier versión futura de esto no
+debería incluirlo salvo que cambie su mandato. Es una práctica válida si el
+proyecto crece después del hackathon y hay más gente y tiempo disponible.
+
+### Curaduría de inspiración visual externa (awwwards.com y similares)
+Que el equipo de diseño revise awwwards.com y sitios similares para
+inspirarse.
+**Por qué no está en el MVP:** el sistema visual del proyecto (Acta Viva,
+D-029) ya está definido y cerrado desde D3 — no hay una tarea concreta de
+`TASKS.md` que necesite inspiración externa nueva. Ningún especialista de
+diseño tiene navegador o herramienta de búsqueda web en su definición de
+herramientas; solo el orquestador puede navegar, así que ejecutarlo hoy
+consume tiempo del orquestador, no "del equipo". Es la misma categoría que
+las librerías de animación de la entrada anterior: ambición estética abierta
+sin caso concreto detrás. Si en el trabajo real de D7 aparece una necesidad
+puntual de referencia visual para algo concreto (por ejemplo, el anillo 3D),
+eso se busca puntualmente en ese momento, no como ejercicio separado ahora.
+
 ---
 
 ## Horizonte 2 — Para un piloto real con una agencia
