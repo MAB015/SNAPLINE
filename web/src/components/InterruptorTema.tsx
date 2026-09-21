@@ -34,8 +34,12 @@ function leerPreferenciaOscuraServidor() {
  * en `<html>`, que es de otra rama. Por defecto sigue `prefers-color-scheme`
  * (via `useSyncExternalStore`, para no desincronizar el primer render del
  * servidor) y el interruptor lo anula.
+ *
+ * Cada pantalla que lo monta tiene su propio estado: no hay tema compartido
+ * entre / y /acuerdo/[id] (eso pediria guardar preferencia en `layout.tsx` o
+ * en almacenamiento del navegador, y no hace falta para lo que se pidio).
  */
-export function TemaAcuerdo({ children }: { children: ReactNode }) {
+export function ProveedorTema({ children }: { children: ReactNode }) {
   const prefiereOscuro = useSyncExternalStore(
     suscribirsePreferenciaOscura,
     leerPreferenciaOscuraCliente,
@@ -61,7 +65,7 @@ export function TemaAcuerdo({ children }: { children: ReactNode }) {
   );
 }
 
-/** Boton del interruptor. Tiene que montarse dentro de `TemaAcuerdo`. */
+/** Boton del interruptor. Tiene que montarse dentro de `ProveedorTema`. */
 export function InterruptorTema() {
   const contexto = useContext(TemaContext);
   if (!contexto) return null;

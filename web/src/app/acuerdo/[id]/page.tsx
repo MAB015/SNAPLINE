@@ -2,7 +2,7 @@ import { BarraSegmentada } from "@/components/BarraSegmentada";
 import { CodigoBarras } from "@/components/CodigoBarras";
 import { EstadoAcuerdo } from "@/components/EstadoFirma";
 import { HashVivo } from "@/components/HashVivo";
-import { InterruptorTema, TemaAcuerdo } from "@/components/InterruptorTema";
+import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
 import { TablaReparto } from "@/components/TablaReparto";
 import {
   ACUERDO_DE_MUESTRA,
@@ -43,7 +43,7 @@ export default async function PaginaAcuerdo({
   const completo = todasFirmadas(participantes);
 
   return (
-    <TemaAcuerdo>
+    <ProveedorTema>
       <main className="mx-auto w-full max-w-3xl px-6 py-16">
         <div className="mb-12 flex items-start justify-between gap-4">
           <p className="mono border-rule text-ink-60 border px-3 py-2 text-xs tracking-wide uppercase">
@@ -119,6 +119,6 @@ export default async function PaginaAcuerdo({
           </button>
         </section>
       </main>
-    </TemaAcuerdo>
+    </ProveedorTema>
   );
 }

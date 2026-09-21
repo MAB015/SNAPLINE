@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
 import { SelloSimulado } from "@/components/SelloSimulado";
 import {
   ACUERDO_DE_MUESTRA,
@@ -41,35 +42,40 @@ function FilaAcuerdo({ acuerdo }: { acuerdo: Acuerdo }) {
 
 export default function Inicio() {
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-16">
-      <p className="mono text-ink-60 text-xs tracking-wide uppercase">
-        HSKChain Testnet
-      </p>
-      <h1 className="font-serif mt-2 text-3xl leading-tight">SNAPLINE</h1>
-      <p className="mt-4 max-w-prose text-sm">
-        Acuerdos de reparto de ingresos por proyecto. El grupo define los
-        porcentajes, todos firman, y en el momento de la firma se despliega el
-        pool de cobro.
-      </p>
+    <ProveedorTema>
+      <main className="mx-auto w-full max-w-3xl px-6 py-16">
+        <div className="mb-12 flex items-start justify-between gap-4">
+          <p className="mono text-ink-60 text-xs tracking-wide uppercase">
+            HSKChain Testnet
+          </p>
+          <InterruptorTema />
+        </div>
+        <h1 className="font-serif text-3xl leading-tight">SNAPLINE</h1>
+        <p className="mt-4 max-w-prose text-sm">
+          Acuerdos de reparto de ingresos por proyecto. El grupo define los
+          porcentajes, todos firman, y en el momento de la firma se despliega el
+          pool de cobro.
+        </p>
 
-      <p className="mono text-ink-60 mt-12 text-xs tracking-wide uppercase">
-        Sistema visual · D3
-      </p>
-      <ul className="border-ink mt-3 border-t">
-        <FilaAcuerdo acuerdo={ACUERDO_DE_MUESTRA} />
-        <FilaAcuerdo acuerdo={OTRO_ACUERDO_DE_MUESTRA} />
-      </ul>
+        <p className="mono text-ink-60 mt-12 text-xs tracking-wide uppercase">
+          Sistema visual · D3
+        </p>
+        <ul className="border-ink mt-3 border-t">
+          <FilaAcuerdo acuerdo={ACUERDO_DE_MUESTRA} />
+          <FilaAcuerdo acuerdo={OTRO_ACUERDO_DE_MUESTRA} />
+        </ul>
 
-      <p className="mono text-ink-60 mt-12 text-xs tracking-wide uppercase">
-        Sello de simulado
-      </p>
-      <p className="text-ink-60 mt-2 max-w-prose text-xs">
-        Va en toda superficie donde el dinero no se mueve de verdad: la salida a
-        pesos de D7 y el faucet de MockUSDT.
-      </p>
-      <div className="mt-3">
-        <SelloSimulado detalle="La salida a pesos no existe: no hay proveedor, no hay transferencia bancaria y el comprobante es de mentira." />
-      </div>
-    </main>
+        <p className="mono text-ink-60 mt-12 text-xs tracking-wide uppercase">
+          Sello de simulado
+        </p>
+        <p className="text-ink-60 mt-2 max-w-prose text-xs">
+          Va en toda superficie donde el dinero no se mueve de verdad: la
+          salida a pesos de D7 y el faucet de MockUSDT.
+        </p>
+        <div className="mt-3">
+          <SelloSimulado detalle="La salida a pesos no existe: no hay proveedor, no hay transferencia bancaria y el comprobante es de mentira." />
+        </div>
+      </main>
+    </ProveedorTema>
   );
 }
