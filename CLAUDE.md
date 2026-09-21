@@ -83,6 +83,25 @@ Manager al cerrar cada bloque, no solo al final.
 Definiciones completas de cada rol, con su alcance y lo que no hace, en
 `.claude/agents/`.
 
+### Elección de modelo por tarea
+
+El modelo por defecto para cualquier agente es **Sonnet 5**. Quien active un
+agente (el orquestador, o un líder activando a su especialista) puede pedir
+otro modelo, pero solo cuando la tarea lo justifica — no por defecto:
+
+- **Opus 5**, solo para tareas puntuales que de verdad necesiten más
+  capacidad de razonamiento (por ejemplo, un diagnóstico difícil, una
+  decisión de arquitectura con muchas piezas cruzadas, revisar un hallazgo
+  de seguridad ambiguo). Es más caro en tokens, así que se pide para ese
+  encargo específico, no para todo el bloque ni por las dudas.
+- **Un modelo menor a Sonnet 5** (Haiku 4.5), para tareas chicas y de bajo
+  riesgo donde no hace falta tanta capacidad — lectura simple, un chequeo
+  puntual, una tarea mecánica y acotada — para no gastar de más.
+
+Ante la duda, Sonnet 5 por defecto. Escalar u bajar de modelo es una
+decisión de costo/beneficio igual que cualquier otra de la regla de
+simplicidad: se justifica por la tarea real, no por si "puede servir".
+
 ## Git
 
 `main` siempre desplegable. El trabajo va en ramas `feat/<área>-<slug>`.
