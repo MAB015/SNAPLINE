@@ -6,6 +6,43 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-21 · Pantalla de carga, fuera de plan
+
+### D-038 · Pantalla de carga de marca, encargo directo de CEO fuera de `TASKS.md`
+CEO aprobó con el usuario, a mitad del plan y sin pasar por `TASKS.md`, una
+pantalla de carga de marca (barra 0→100%) al abrir "/": es lo primero que
+ve cada toma del video de demo. Dirigida por Design Lead a
+`creative-director` (rama `worktree-agent-a539e9c93480da821`, commit
+`10b367e`, mergeada a `main` en `0406214`). Autocontenida en
+`PantallaCarga.tsx`, montada solo desde `web/src/app/page.tsx`; no tocó
+`layout.tsx`, mismo patrón de aislamiento que el interruptor de tema
+(D-034).
+
+Reutiliza el timeline GSAP ya existente (`gsap.matchMedia`, `power3.out`) y
+declara una duración de 1.4s como segunda excepción al límite de <400ms de
+`docs/BRAND.md` §10 — misma lógica que la excepción ya aceptada para el
+snap papel→cadena. Copia neutra ("iniciando" + %): no insinúa una operación
+real (conexión, verificación, carga de datos) que no está pasando, nota de
+honestidad de CEO. `sessionStorage` evita repetir la intro dentro de la
+misma sesión de SPA; `prefers-reduced-motion` salta directo al contenido.
+
+Verificado por Product Manager antes de mergear, no solo el reporte de
+Design Lead: diff acotado a los dos archivos declarados, confirmado con
+`git merge-tree` que no había conflicto contra `main`, y sin cruce con
+ningún alcance activo de `TASKS.md` (D6/D7 no tocan `/` ni esos archivos);
+`npm run lint` y `npm run build` corridos de forma independiente sobre la
+rama y de nuevo sobre `main` ya mergeado (`0406214`), los dos en verde.
+
+**Pendiente, no bloqueante:** falta la revisión visual en navegador a
+375px/800px en los dos temas — ni Design Lead ni Product Manager tienen
+herramienta de navegador en su rol. Anotado como riesgo en `STATUS.md`;
+alguien con esa herramienta debe confirmarlo antes de grabar (D8/D9).
+
+**Descartado:** no aplica — la decisión abierta era solo de alcance
+(agregar la pantalla o no), y esa la tomó CEO con el usuario fuera de este
+registro; aquí solo se documenta cómo se ejecutó y se verificó la
+integración.
+
 ## 2026-09-21 · D5, web y snap
 
 ### D-037 · `calcularStructHash` empaqueta arrays completos, no elementos sueltos

@@ -113,6 +113,13 @@ ensayos de punta a punta, así que no hace falta duplicarla antes. No
 bloquea avanzar a D6. `NEXT_PUBLIC_PRIVY_APP_ID` ya está puesto en
 `web/.env.local`; ver la tarea correspondiente en D8.
 
+## Fuera de plan · Pantalla de carga de marca (D-038)
+
+- [x] `design` — pantalla de carga de marca al abrir "/" (barra 0→100% con
+      GSAP, `PantallaCarga.tsx`), encargo directo de CEO aprobado con el
+      usuario a mitad del plan, sin paso previo por este archivo. Merge y
+      registro por Product Manager. Ver D-038 en `DECISIONS.md`.
+
 ## D6 · Web, cobro y retiro — viernes 26
 
 - [ ] `web` — `/pagar/[dir]`: link público, sin sesión requerida
