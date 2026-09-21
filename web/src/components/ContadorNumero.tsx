@@ -60,7 +60,7 @@ export function ContadorNumero({
 
   return (
     <span ref={ref} className={className}>
-      {formatear(valor)}
+      {formatear(0)}
     </span>
   );
 }
