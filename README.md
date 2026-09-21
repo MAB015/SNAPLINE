@@ -1,5 +1,7 @@
 # SNAPLINE
 
+![SNAPLINE — acuerdos de reparto de ingresos por proyecto](docs/assets/snapline-banner.png)
+
 **Acuerdos de reparto de ingresos por proyecto, para equipos distribuidos.**
 
 Un grupo define quién se queda con qué porcentaje y bajo qué términos. Todos

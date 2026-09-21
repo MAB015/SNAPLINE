@@ -1,0 +1,11 @@
+<svg width="560" height="140" viewBox="0 0 560 140" xmlns="http://www.w3.org/2000/svg">
+  <!-- marca: la línea y el corte del snap. Nada de cuerda ni tiza dibujadas. -->
+  <g stroke="#14120E" stroke-width="3">
+    <line x1="30" y1="70" x2="76" y2="70"/>
+    <line x1="94" y1="70" x2="140" y2="70"/>
+  </g>
+  <line x1="85" y1="50" x2="85" y2="90" stroke="#B3261E" stroke-width="4"/>
+
+  <!-- wordmark -->
+  <text x="170" y="90" font-family="Instrument Serif, Georgia, serif" font-size="64" fill="#14120E">SNAPLINE</text>
+</svg>

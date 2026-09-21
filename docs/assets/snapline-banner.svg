@@ -1,0 +1,108 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- grano de papel: trama de puntos dispersos, tileable (mas liviano que feTurbulence) -->
+    <pattern id="grain" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2"  cy="4"  r="0.3" fill="#14120E"/>
+      <circle cx="9"  cy="2"  r="0.25" fill="#14120E"/>
+      <circle cx="16" cy="6"  r="0.3" fill="#14120E"/>
+      <circle cx="21" cy="1"  r="0.25" fill="#14120E"/>
+      <circle cx="5"  cy="11" r="0.25" fill="#14120E"/>
+      <circle cx="13" cy="14" r="0.3" fill="#14120E"/>
+      <circle cx="19" cy="12" r="0.25" fill="#14120E"/>
+      <circle cx="3"  cy="19" r="0.25" fill="#14120E"/>
+      <circle cx="11" cy="21" r="0.3" fill="#14120E"/>
+      <circle cx="18" cy="20" r="0.25" fill="#14120E"/>
+    </pattern>
+
+    <!-- rejilla de puntos de la superficie cadena -->
+    <pattern id="chainGrid" width="8" height="8" patternUnits="userSpaceOnUse">
+      <rect width="8" height="8" fill="#14120E"/>
+      <circle cx="1" cy="1" r="1" fill="#EDE9DF" opacity="0.12"/>
+    </pattern>
+
+    <!-- tramas de participante: color pleno + trama en doc -->
+    <pattern id="p1tex" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="10" height="10" fill="#2743C9"/>
+      <line x1="0" y1="0" x2="0" y2="10" stroke="#FAF8F3" stroke-width="2"/>
+    </pattern>
+    <pattern id="p2tex" width="10" height="10" patternUnits="userSpaceOnUse">
+      <rect width="10" height="10" fill="#16774B"/>
+      <circle cx="5" cy="5" r="1.6" fill="#FAF8F3"/>
+    </pattern>
+    <pattern id="p3tex" width="10" height="10" patternUnits="userSpaceOnUse">
+      <rect width="10" height="10" fill="#6E3BC8"/>
+      <line x1="0" y1="0" x2="10" y2="10" stroke="#FAF8F3" stroke-width="1.4"/>
+      <line x1="10" y1="0" x2="0" y2="10" stroke="#FAF8F3" stroke-width="1.4"/>
+    </pattern>
+    <pattern id="p4tex" width="10" height="10" patternUnits="userSpaceOnUse">
+      <rect width="10" height="10" fill="#AD5414"/>
+      <line x1="3" y1="0" x2="3" y2="10" stroke="#FAF8F3" stroke-width="2"/>
+    </pattern>
+  </defs>
+
+  <!-- superficie doc -->
+  <rect x="0" y="0" width="1200" height="630" fill="#FAF8F3"/>
+  <rect x="0" y="0" width="1200" height="630" fill="url(#grain)" opacity="0.5"/>
+
+  <!-- masthead -->
+  <text x="60" y="112" font-family="Instrument Serif, Georgia, serif" font-size="72" fill="#14120E">SNAPLINE</text>
+  <text x="1140" y="70" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="12" letter-spacing="2" fill="#14120E" opacity="0.6">ACTA VIVA</text>
+  <line x1="60" y1="146" x2="1140" y2="146" stroke="#14120E" stroke-opacity="0.18" stroke-width="1"/>
+
+  <text x="60" y="176" font-family="IBM Plex Sans, sans-serif" font-size="14" letter-spacing="1.5" fill="#14120E" opacity="0.6">ACUERDOS DE REPARTO DE INGRESOS POR PROYECTO</text>
+  <text x="60" y="204" font-family="IBM Plex Mono, monospace" font-size="16" fill="#14120E">firma &#8594; snap &#8594; pool &#183; HSKChain Testnet</text>
+
+  <!-- barra segmentada: Mariana 40, Julian 25, Sofia 20, Andres 15 -->
+  <!-- x0=60 x1=1140 ancho=1080 -->
+  <g>
+    <rect x="60"  y="260" width="432" height="44" fill="url(#p1tex)"/>
+    <rect x="492" y="260" width="270" height="44" fill="url(#p2tex)"/>
+    <rect x="762" y="260" width="216" height="44" fill="url(#p3tex)"/>
+    <rect x="978" y="260" width="162" height="44" fill="url(#p4tex)"/>
+  </g>
+
+  <!-- marcas de corte -->
+  <g stroke="#B3261E" stroke-width="2">
+    <line x1="60"   y1="252" x2="60"   y2="312"/>
+    <line x1="492"  y1="252" x2="492"  y2="312"/>
+    <line x1="762"  y1="252" x2="762"  y2="312"/>
+    <line x1="978"  y1="252" x2="978"  y2="312"/>
+    <line x1="1140" y1="252" x2="1140" y2="312"/>
+  </g>
+
+  <!-- porcentajes -->
+  <g font-family="IBM Plex Mono, monospace" font-size="20" fill="#14120E" text-anchor="middle">
+    <text x="276"  y="336">40.00%</text>
+    <text x="627"  y="336">25.00%</text>
+    <text x="870"  y="336">20.00%</text>
+    <text x="1059" y="336">15.00%</text>
+  </g>
+  <!-- nombres -->
+  <g font-family="IBM Plex Mono, monospace" font-size="14" fill="#14120E" opacity="0.6" text-anchor="middle">
+    <text x="276"  y="358">Mariana</text>
+    <text x="627"  y="358">Juli&#225;n</text>
+    <text x="870"  y="358">Sof&#237;a</text>
+    <text x="1059" y="358">Andr&#233;s</text>
+  </g>
+
+  <!-- el snap: cruce papel -> cadena -->
+  <rect x="60" y="400" width="1080" height="90" fill="url(#chainGrid)"/>
+  <line x1="60" y1="400" x2="1140" y2="400" stroke="#14120E" stroke-opacity="0.18" stroke-width="1"/>
+
+  <text x="86" y="437" font-family="IBM Plex Mono, monospace" font-size="15" letter-spacing="1" fill="#EDE9DF">POOL DESPLEGADO</text>
+  <text x="86" y="461" font-family="IBM Plex Mono, monospace" font-size="13" fill="#EDE9DF" opacity="0.7">0x4F2A&#8230;9C31 &#183; saldo cero &#183; bloque #128041</text>
+
+  <g font-family="IBM Plex Mono, monospace" font-size="12" fill="#EDE9DF" text-anchor="end">
+    <text x="1114" y="437">HSKChain Testnet</text>
+    <text x="1114" y="455" opacity="0.6">&#9679; bloque confirmado</text>
+  </g>
+
+  <!-- sello -->
+  <g transform="rotate(-6 1074 555)">
+    <rect x="1014" y="530" width="120" height="50" fill="none" stroke="#B3261E" stroke-width="2"/>
+    <text x="1074" y="561" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="700" font-size="20" letter-spacing="2" fill="#B3261E">SNAP</text>
+  </g>
+
+  <!-- pie -->
+  <text x="60" y="600" font-family="IBM Plex Mono, monospace" font-size="13" fill="#14120E" opacity="0.5">EAG Global Buildathon &#183; cierre 1 de octubre de 2026</text>
+</svg>
