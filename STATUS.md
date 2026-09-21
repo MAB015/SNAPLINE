@@ -1,6 +1,6 @@
 # Estado del proyecto — SNAPLINE
 
-**Última actualización:** 2026-09-21 · **Bloque cerrado:** D5 (parcial) · firma EIP-712, despliegue del pool y snap 2D con GSAP integrados a main; prueba end-to-end contra testnet real todavía pendiente
+**Última actualización:** 2026-09-21 · **Bloque cerrado:** D5 · firma EIP-712, despliegue del pool y snap 2D con GSAP en main, código verificado por tipos/build/criptografía; verificación conductual real diferida a propósito a D8 (decisión del usuario)
 **Cierre del hackathon:** 1 de octubre de 2026 · **Días restantes de trabajo:** 10
 
 Este archivo se actualiza en el mismo commit que el trabajo que describe.
@@ -15,7 +15,7 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 | `infra` | 🟡 D4 casi listo | Fondeo de testnet; Vercel en D9–D10 |
 | `contracts` | ✅ D2 desplegado | Consumido desde D5 web; sin tareas propias hasta D8 |
 | `design` | ✅ D5 listo, snap con GSAP | D7 · anillo 3D y pulido |
-| `web` | 🟡 D5 integrado, sin probar en vivo | D5 · corrida end-to-end contra testnet real antes de cerrar; luego D6 |
+| `web` | ✅ D5 código listo, corrida real en D8 | D6 · `/pagar/[dir]` y `/pool/[dir]` |
 | `demo` | 🟡 Guion escrito | D8 · datos y ensayos |
 
 ---
@@ -171,6 +171,16 @@ agentes (`feat/contracts-implementation`, `feat/contracts-tests`,
 entregados y fusionados a `main`. En los tests recuperados se corrigieron
 aritmética uint16 y una expectativa de revert que interceptaba un getter.
 
+**`feat/contracts-tests` descartada el 2026-09-21, confirmado por
+blockchain-engineer.** Único commit (`60e021e`) sobre `SplitPoolFactory.t.sol`:
+mismos 24 tests que ya están en `main`, misma cobertura de
+`THREAT-MODEL.md` §6. Corrida contra los contratos actuales de `main` da
+22/24 — los 2 que fallan tienen bugs de orden de evaluación en el propio
+archivo de test (llamada externa encadenada con `vm.expectRevert`/dentro de
+`assertEq`), ya resueltos en la versión que sí se integró. Nada para
+rescatar. Rama y worktree (`F:/Projects/SNAPLINE-AI-agents/tests`)
+eliminados con autorización del usuario.
+
 **Generación D3-porte + D4 (diseño y plataforma web), cerrada.** Se
 plantearon dos ramas en worktrees preparados bajo
 `F:/Projects/SNAPLINE-AI-agents/` (`design` → `feat/design-porte-acta-viva`,
@@ -303,7 +313,7 @@ sigue en `TASKS.md`: primero cae el stretch de D8, luego el anillo.
 
 **Bloqueado por:** nada.
 
-## `web` — 🟡 D5 integrado, sin correr contra testnet real
+## `web` — ✅ D5 código listo, corrida real diferida a D8
 
 **Hecho:** andamiaje de Next.js 16 con App Router, TypeScript y Tailwind 4,
 adelantado de D4 a D3 (D-032). En D4 (rama `feat/web-identidad-borrador`,
@@ -358,26 +368,29 @@ Product Manager al mergear, cambio mínimo de una línea de import y una de
 JSX.
 
 **Validación:** `next build` y `eslint` pasan sobre las dos ramas ya
-integradas y combinadas (verificado 2026-09-21). Sin
-`DEPLOYER_PRIVATE_KEY` en `web/.env.local` el goteo responde 500, sin tumbar
-el resto de la app — falta ponerlo, ver sección `infra`.
+integradas y combinadas (verificado 2026-09-21). `NEXT_PUBLIC_PRIVY_APP_ID`
+ya está puesto en `web/.env.local` (el usuario lo proveyó); un smoke check
+con `next dev` contra `/acuerdo/[id]` confirmó que el SSR ya no cae en el
+fallback "Falta NEXT_PUBLIC_PRIVY_APP_ID" sino en el estado normal de carga
+— la variable está bien cableada. `DEPLOYER_PRIVATE_KEY` sigue sin estar en
+ese `.env.local`: sin ella el goteo responde 500, sin tumbar el resto de la
+app (gap conocido desde D4, ver sección `infra`); si la última firma de la
+corrida real de D8 la completa una wallet embebida sin HSK, esto podría
+bloquear el `createPool` final por falta de gas, no solo el goteo — a
+confirmar cuando se arme esa corrida.
 
-**Falta, y es lo único que bloquea cerrar D5 del todo:** el criterio de
-terminado de D5 en `docs/SCOPE-PLAN.md` es "tres sesiones distintas firman y
-el pool aparece en el explorador" — **eso no está verificado todavía**, solo
-tipos/build/criptografía y una revisión de código con triple cruce. Hace
-falta correr el flujo real contra HSKChain Testnet: dos wallets firmando, la
-última disparando `createPool`, y una recarga a mitad de la confirmación
-para probar la protección anti-doble-despliegue. El checkout de `main` ya
-tiene un `web/.env.local` (gitignorado) con Supabase configurado, pero
-`NEXT_PUBLIC_PRIVY_APP_ID` sigue vacío ("Privy pendiente" en el propio
-archivo) — sin eso la pantalla se sirve en su modo degradado y no hay
-wallet con la que firmar. No se puede correr esa prueba sin decidir de
-dónde sale ese valor. `/pagar/[dir]` y `/pool/[dir]` (D6); salida a pesos
-(D7) siguen sin empezar.
+**Diferido a propósito, no bloqueante:** el criterio de terminado de D5 en
+`docs/SCOPE-PLAN.md` —"tres sesiones distintas firman y el pool aparece en
+el explorador"— **sigue sin verificarse de forma conductual**, solo por
+tipos, build y criptografía (`structHash` con oráculo independiente,
+D-037, y una revisión de código con triple cruce). El usuario decidió
+avanzar igual a D6 y correr esa verificación real más adelante, junto con
+los ensayos de punta a punta de D8, que ya la exigían de todos modos —no
+duplica trabajo. Ver `TASKS.md` D8. `/pagar/[dir]` y `/pool/[dir]` (D6);
+salida a pesos (D7) siguen sin empezar.
 
-**Bloqueado por:** `NEXT_PUBLIC_PRIVY_APP_ID` para la corrida end-to-end de
-D5. El resto de D5 (código) está en `main`.
+**Bloqueado por:** nada para seguir a D6. La verificación conductual de D5
+queda anotada como tarea de D8, no como bloqueo de `web`.
 
 ## `demo` — 🟡 Guion escrito
 
@@ -397,7 +410,7 @@ edición.
 |---|---|
 | Privy consume más tiempo del previsto | Corte a las 3 horas en D4: se cae a wallet externa y la embebida pasa a stretch de D8 |
 | El despliegue multi-firma (D5) se atrasa | Es el día crítico. Si se cae, se sacrifica D7 completo (pulido y animación) |
-| El código de D5 (firma, despliegue, snap) está integrado a `main` pero nunca se corrió contra HSKChain Testnet real | Falta `NEXT_PUBLIC_PRIVY_APP_ID` en `web/.env.local` (Supabase ya está configurado ahí). Sin ella no hay wallet con la que probar dos firmas reales, la última disparando `createPool`, ni la recarga a mitad de camino. `docs/SCOPE-PLAN.md` no da D5 por cerrado sin esa corrida |
+| El código de D5 (firma, despliegue, snap) está integrado a `main` pero la verificación conductual real (tres sesiones, Privy, pool en el explorador) queda diferida a D8 por decisión del usuario | `NEXT_PUBLIC_PRIVY_APP_ID` ya está puesto en `web/.env.local`; falta correr la prueba, prevista junto con los ensayos de punta a punta de D8 (ver `TASKS.md`). Si la última firma la completa una wallet embebida sin HSK, revisar si hace falta `DEPLOYER_PRIVATE_KEY` para esa corrida, no solo para el goteo |
 | El faucet de HSKChain Testnet falla el día de grabar | MockUSDT tiene faucet propio. Para el gas: reservar HSK de testnet con anticipación en D2 |
 | El stretch de pago en pesos se come tiempo del ensayo | Solo se toca si D1–D7 cerraron a tiempo. Corte a las 6 horas en D8 |
 | Las wallets embebidas se crean sin gas y no pueden retirar | Goteo de HSK implementado (`web/src/app/api/goteo/route.ts`), pendiente de `DEPLOYER_PRIVATE_KEY` en `web/.env.local` para probarlo de punta a punta. Privy con HSKChain Testnet aún sin probar en el navegador |

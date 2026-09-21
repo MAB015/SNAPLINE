@@ -103,16 +103,15 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
       *(sello de tinta del cruce conectado en `AcuerdoCliente.tsx` al mergear)*
 - [x] `design` — scramble de hashes y contador de montos con GSAP
 
-**Código de las ocho tareas de arriba está en `main`, pero D5 no se da por
-cerrado del todo:** falta la corrida real contra HSKChain Testnet que pide
-`docs/SCOPE-PLAN.md` como criterio de terminado —dos wallets firmando, la
-última desplegando el pool, y una recarga a mitad de la confirmación—.
-Bloqueada por `NEXT_PUBLIC_PRIVY_APP_ID`, ver `STATUS.md` § `web` y §
-Riesgos abiertos.
-
-- [ ] `web` — correr el flujo end-to-end de D5 contra HSKChain Testnet real
-      (dos firmas, despliegue del pool, recarga a mitad de camino) en cuanto
-      exista `NEXT_PUBLIC_PRIVY_APP_ID`; recién ahí D5 queda cerrado del todo
+**Código de las ocho tareas de arriba está en `main`, verificado por tipos,
+build y criptografía (`structHash` con oráculo independiente, D-037).** La
+verificación conductual real —login por Privy, tres sesiones firmando, la
+última disparando `createPool`, el pool visible en el explorador, y una
+recarga a mitad de la confirmación— queda **deferida a propósito hasta D8**,
+decisión del usuario: `docs/SCOPE-PLAN.md` ya la exige ahí como parte de los
+ensayos de punta a punta, así que no hace falta duplicarla antes. No
+bloquea avanzar a D6. `NEXT_PUBLIC_PRIVY_APP_ID` ya está puesto en
+`web/.env.local`; ver la tarea correspondiente en D8.
 
 ## D6 · Web, cobro y retiro — viernes 26
 
@@ -139,6 +138,11 @@ Riesgos abiertos.
 - [ ] `demo` — cargar los datos de `docs/DEMO-SCRIPT.md`
 - [ ] `demo` — pre-crear y fondear las cuentas del demo, incluidas las dos
       wallets embebidas, para que sus direcciones existan antes de grabar
+- [ ] `web` — correr el flujo end-to-end de D5 contra HSKChain Testnet real:
+      login por Privy en tres sesiones, firma EIP-712, la última disparando
+      `createPool`, el pool visible en el explorador, y una recarga a mitad
+      de la confirmación para confirmar que no hay doble despliegue
+      *(diferido a propósito desde D5, decisión del usuario — ver `STATUS.md`)*
 - [ ] `web` — pasar `ethskills.com/qa/SKILL.md` contra la app antes de grabar
 - [ ] `demo` — tres ensayos de punta a punta
 - [ ] `demo` — borrar el acuerdo de prueba para grabar limpio
