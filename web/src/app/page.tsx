@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
+import { PantallaCarga } from "@/components/PantallaCarga";
 import { SelloSimulado } from "@/components/SelloSimulado";
 import {
   ACUERDO_DE_MUESTRA,
@@ -43,6 +44,11 @@ function FilaAcuerdo({ acuerdo }: { acuerdo: Acuerdo }) {
 export default function Inicio() {
   return (
     <ProveedorTema>
+      {/* Autocontenida (docs D-034: nada de esto va en layout.tsx, es UI
+          local a la pantalla de entrada). Se monta dentro de `ProveedorTema`
+          para heredar `data-theme` y los tokens `bg-doc`/`text-ink`
+          correctos si el interruptor de tema ya se anulo en esta sesion. */}
+      <PantallaCarga />
       <main className="mx-auto w-full max-w-3xl px-6 py-16">
         <div className="mb-12 flex items-start justify-between gap-4">
           <p className="mono text-ink-60 text-xs tracking-wide uppercase">
