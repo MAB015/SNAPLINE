@@ -53,40 +53,42 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 
 - [x] `infra` — andamiaje de Next.js App Router con Tailwind, adelantado de
       D4 (D-032)
-- [x] `design` — tokens en código: tipografías, escala, filetes (D-033).
-      **Pendiente de portar:** paleta por superficie con los dos temas y el
-      interruptor claro/oscuro, sin los que exige Acta Viva
-- [ ] `design` — texturas en SVG en línea: grano, rejilla, cuatro tramas,
-      tinta de sello, franjas de precaución. Revisarlas en un fotograma
-      exportado, no solo en el navegador
-- [ ] `design` — identicon 5×5 desde la dirección, en el color del
-      participante
-- [ ] `design` — componente de hash vivo: hover, copiar, enlace al explorador;
-      código de barras del hash de términos
-- [x] `design` — componente de tabla de reparto (monocromo; falta color/trama
-      por participante)
-- [x] `design` — componente de barra segmentada (monocromo; falta color/trama
-      por participante)
+- [x] `design` — tokens en código: tipografías, escala, filetes (D-033),
+      portados a Acta Viva con paleta por superficie y los dos temas (D-034)
+- [x] `design` — texturas en SVG en línea: grano, rejilla, cuatro tramas,
+      tinta de sello, franjas de precaución, como máscaras CSS (D-034)
+- [x] `design` — identicon 5×5 desde la dirección, en el color del
+      participante (`Identicon.tsx`, sin librería)
+- [x] `design` — componente de hash vivo: hover, copiar, enlace al explorador
+      (`HashVivo.tsx`); código de barras del hash de términos
+      (`CodigoBarras.tsx`)
+- [x] `design` — componente de tabla de reparto, con color/trama e identicon
+      por participante
+- [x] `design` — componente de barra segmentada, con trama por participante
 - [x] `design` — componente de estado de firma
 - [x] `design` — componente de sello de simulado
-- [x] `design` — maqueta estática de `/acuerdo/[id]` con datos falsos (un solo
-      tema y un solo estado; falta el segundo tema y el estado sellado)
+- [x] `design` — maqueta estática de `/acuerdo/[id]` en los dos temas
+      (interruptor local a la pantalla, D-034) y en los dos estados (papel y
+      sellado en cadena, con superficie `chain` propia)
 
 ## D4 · Web, identidad y borrador — miércoles 24
 
 - [x] `infra` — andamiaje de Next.js App Router con Tailwind *(adelantado a D3,
       ver D-032)*
-- [ ] `infra` — añadir viem/wagmi al andamiaje. Sobrescribir `blockExplorers`
-      de la cadena 133: el que trae viem (`testnet-explorer.hsk.xyz`) no
-      resuelve; el bueno es el de `deployments/hashkey-testnet.json`
-- [ ] `web` — Privy: entrada por correo con wallet embebida y conexión de
-      wallet externa
-- [ ] `web` — goteo de gas: la cuenta de despliegue envía un mínimo de HSK a
-      cada wallet embebida recién creada, o no puede retirar nunca
-- [ ] `web` — `/nuevo`: participantes, bps con validación de 10000, términos
+- [x] `infra` — añadir viem/wagmi al andamiaje. `blockExplorers` de la cadena
+      133 redefinido en `web/src/lib/wagmi.ts` con el explorador correcto
+- [x] `web` — Privy: entrada por correo con wallet embebida y conexión de
+      wallet externa (`web/src/lib/privy.ts`, `web/src/lib/providers.tsx`)
+- [x] `web` — goteo de gas: `web/src/app/api/goteo/route.ts`, idempotente por
+      saldo cero, se dispara desde `Providers` al conectar. **Falta:**
+      `DEPLOYER_PRIVATE_KEY` en `web/.env.local` (hoy solo documentada en
+      `.env.example`; sin ella el goteo responde 500 y no bloquea el resto)
+- [x] `web` — `/nuevo`: participantes, bps con validación de suma exacta
+      10000, términos, vista previa con los componentes de D3
 - [x] `infra` — Supabase: tablas `drafts` y `signatures` *(hecho el 20/09,
       adelantado desde D4: no dependía del ABI ni del diseño)*
-- [ ] `web` — guardar el borrador y generar el link para compartir
+- [x] `web` — guardar el borrador y generar el link para compartir
+      (`web/src/lib/supabase.ts`, `guardarBorrador`)
 
 ## D5 · Web, firma y snap — jueves 25
 
