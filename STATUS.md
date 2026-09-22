@@ -820,6 +820,7 @@ edición.
 | La guía de submission de Cali aparece tarde y exige algo no previsto | Conseguirla cuanto antes. Está en `TASKS.md` como bloqueada por información externa |
 | La wallet embebida de Privy puede colgar el botón tras firmar (hang no determinista, sin fix de código propio posible) | Mitigado con timeout + fallback por saldo en `/pagar` y `/acuerdo/[id]` (D-043). Pendiente el mismo patrón en `/pool/[dir]` (retiro) |
 | Worktrees de `agent-*` arrancando desde un `main` desactualizado (pasó dos veces el 2026-09-22) | Sin mitigación de proceso todavía — a revisar cómo CTO/orquestador crean los worktrees nuevos |
+| La rama de sesión del orquestador (worktree separado del checkout donde vive `main` real) puede quedar varios commits sin mergear mientras `main` avanza en paralelo; el 2026-09-22 esto hizo que dos ramas asignaran D-043 a decisiones distintas (Privy en `main`, Lenis en la rama de sesión), detectado recién al ir a mergear — ver el merge `0a4eb90` que renumeró Lenis a D-044 | Sin mitigación automática todavía. Antes de asignar el próximo número de decisión, Product Manager revisa si hay una rama de sesión activa sin mergear con un número mayor pendiente — no es infalible, pero reduce el riesgo |
 
 ## Contexto del evento
 
