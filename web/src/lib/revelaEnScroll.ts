@@ -36,14 +36,28 @@ export function animarRevelaEnScroll(contenedor: HTMLElement): () => void {
   });
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
-    gsap.set(hijos, { opacity: 0, y: 16 });
+    // 28px de desplazamiento (antes 16px) y 0.12s de stagger (antes 0.08s):
+    // ajuste de magnitud para el layout de ancho completo de Fase A
+    // (docs/DECISIONS.md D-044), no un cambio de mecanismo. Con la grilla de
+    // "Verificado en cadena" en `lg:grid-cols-4`, las tarjetas quedan una al
+    // lado de la otra en vez de apiladas en una columna angosta de 768px: un
+    // desplazamiento de 16px se leía casi como un simple fundido a esa
+    // distancia visual, y un stagger de 0.08s entre cuatro tarjetas en la
+    // misma fila (0.24s de punta a punta) pasaba casi desapercibido al barrer
+    // la vista horizontalmente. 28px es el tope del rango evaluado (24-28px)
+    // por ser el mayor desplazamiento que sigue leyéndose como una entrada
+    // corta y no como un deslizamiento largo. `duration` (0.38s) y `ease`
+    // quedan sin cambios: es la duración POR PIEZA la que tiene que quedar
+    // bajo 400ms (docs/BRAND.md §10 regla 3), no la ventana total del
+    // stagger, y ese número ya cumplía antes de este ajuste.
+    gsap.set(hijos, { opacity: 0, y: 28 });
 
     const tween = gsap.to(hijos, {
       opacity: 1,
       y: 0,
       duration: 0.38,
       ease: "power3.out",
-      stagger: 0.08,
+      stagger: 0.12,
       scrollTrigger: {
         trigger: contenedor,
         start: "top 85%",

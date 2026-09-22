@@ -7,6 +7,7 @@ import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
 import { PantallaCarga } from "@/components/PantallaCarga";
 import { RevelaEnScrollDiv, RevelaEnScrollUl } from "@/components/RevelaEnScroll";
 import { TarjetaMetrica } from "@/components/TarjetaMetrica";
+import { tokenParticipante } from "@/lib/acuerdo";
 import { FACTORY_ADDRESS } from "@/lib/firma";
 import { MOCK_USDT_ADDRESS } from "@/lib/token";
 
@@ -102,9 +103,22 @@ export default function Inicio() {
             Para quién es
           </h2>
           <RevelaEnScrollUl className="border-ink mt-3 border-t">
-            {CASOS_DE_USO.map((caso) => (
+            {/* Marcador de color de participante (no filete: docs/BRAND.md
+                §12 fija los filetes en color `rule`, así que el acento va en
+                un chip aparte, no en el borde). Reusa `trama-${token}` tal
+                cual `BarraSegmentada.tsx` la aplica en su leyenda — mismo
+                color + trama ya auditados (docs/BRAND.md §7), sin inventar
+                un token nuevo. Asigna por orden en la lista, igual que
+                `tokenParticipante` ya hace con los participantes reales. */}
+            {CASOS_DE_USO.map((caso, i) => (
               <li key={caso.titulo} className="border-b border-rule py-4">
-                <p className="text-sm">{caso.titulo}</p>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`trama-${tokenParticipante(i)} h-2 w-2 shrink-0`}
+                    aria-hidden="true"
+                  />
+                  <p className="text-sm">{caso.titulo}</p>
+                </div>
                 <p className="text-ink-60 mt-1 max-w-prose text-sm">{caso.detalle}</p>
               </li>
             ))}
