@@ -1,6 +1,6 @@
 # Tareas — SNAPLINE
 
-**Última actualización:** 2026-09-21
+**Última actualización:** 2026-09-22
 
 Cada tarea lleva su área. Una tarea terminada es un commit. El plan por día
 que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
@@ -242,6 +242,11 @@ tarea de arriba, sin tocar).
 - [ ] `demo` — tres ensayos de punta a punta
 - [ ] `demo` — borrar el acuerdo de prueba para grabar limpio
 - [ ] `web` — arreglar solo lo que se rompa en los ensayos
+      *(2026-09-22: ya se arregló un bug bloqueante encontrado antes de los
+      ensayos formales, durante la corrida conductual en vivo de D8 —hang
+      no determinista de Privy post-firma en `/pagar` y `/acuerdo/[id]`,
+      mitigado con timeout + fallback por saldo, ver D-043. Pendiente el
+      mismo patrón en `/pool/[dir]` (retiro), sin tocar todavía)*
 - [ ] **Stretch** `web` — pago de entrada en pesos simulado *(solo si D1–D7
       cerraron a tiempo; corte a las 6 horas. Si el anillo 3D se desbordó de
       D7, ese hueco es del anillo y este stretch se cae)*

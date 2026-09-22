@@ -6,6 +6,73 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-22 · Mitigación del hang no determinista de Privy post-firma
+
+### D-043 · Timeout más fallback por saldo, sin fix "limpio" posible
+Bug real, distinto de los tres de CORS de D-041: con los proxies ya en su
+lugar y el modal de Privy abriendo bien, `writeContractAsync` (que por
+debajo llama `Embedded1193Provider.request({ method: "eth_sendTransaction"
+})` de la wallet embebida) a veces nunca resuelve su promesa en el
+navegador — ni siquiera para entregar el `hash` — aunque la transacción se
+firme y confirme en cadena real. Reportado a CTO durante la corrida
+conductual en vivo del orquestador en `/pagar` y `/acuerdo/[id]`: el botón
+quedaba colgado mientras un `eth_call` manual a `balanceOf`/`verificarCadena`
+mostraba que la tx ya había pasado. Es comportamiento conocido de
+`@privy-io/react-auth` en la comunidad (dos reportes externos con el mismo
+síntoma), y no es reproducible fuera del navegador: la misma llamada, con
+el mismo transporte y el mismo cliente `viem`/`@wagmi/core`, resuelve en
+menos de un segundo desde Node. La sospecha más plausible es una condición
+de carrera de `useSyncPrivyWallets` (`@privy-io/wagmi`), fuera del control
+de esta app — el SDK es cerrado, así que no hay fix de código propio que
+corrija la causa.
+
+Mitigación en `web/src/lib/recibo.ts` (nuevo): dos casos distintos.
+**Caso 1** (ya existía de una pasada anterior, ver la primera entrada de
+`STATUS.md` § `web` sobre este bug): `esperarRecibo`/`EsperaReciboTimeoutError`
+reemplaza `publicClient.waitForTransactionReceipt` por un polling propio de
+`getTransactionReceipt` con timeout de 120s, sin pasar por el mecanismo
+interno de "observe"/dedup de `viem` que puede quedar huérfano. **Caso 2**
+(nuevo en esta pasada, el más grave: sin `hash` no hay nada que esperar):
+`conTimeout` envuelve `writeContractAsync` con un timeout de 20s; si se
+agota, `esperarCondicion` hace polling de `balanceOf` (`pagar`/`mintear`) o
+`verificarCadena` (`createPool`) contra el saldo previo durante otros 25s.
+Si el saldo cambió, éxito degradado ("confirmado por saldo, no se pudo
+recuperar el hash exacto"); si no, error real y honesto en vez de un cuelgue
+infinito. Aplicado en `mintear()`/`pagar()` de
+`web/src/app/pagar/[dir]/PagarCliente.tsx` y en `intentarDesplegar()`/el
+efecto de resumen de `web/src/app/acuerdo/[id]/AcuerdoCliente.tsx`.
+
+Verificado en vivo por el orquestador contra el dev server del worktree del
+fix, con una identidad de prueba real vía Privy (correo, OTP real): mint y
+pago dispararon el timeout (bug reproducido) y el fallback detectó el saldo
+real en ambos casos, cada uno confirmado de forma independiente con
+`eth_call` directo a `balanceOf` contra la wallet y el pool reales. También
+se reprodujo el caso de fallo genuino (tx que nunca se envía, nonce sin
+avanzar): mostró el error honesto en vez de colgarse.
+
+**Excluido a propósito de esta pasada:** `web/src/app/pool/[dir]/PoolCliente.tsx`
+(retiro) — mismo patrón de bug muy probablemente presente ahí también, pero
+no se tocó en escritura; queda para una segunda pasada aparte.
+
+**Nota de proceso:** el worktree que terminó cerrando esta tarea
+(`agent-a8080241421fa3e54`, commit `3f5bc32`) no es el que `STATUS.md` había
+registrado como asignado (`agent-ae7d6eb5fed5ef349`, rama
+`feat/web-fix-pagar-hang`) — ese quedó con una versión anterior e
+incompleta del mismo fix (solo el caso 1, sin `conTimeout`/`esperarCondicion`)
+sin commitear. Ambos worktrees partieron de un `main` desactualizado
+(`482aeb8`/`7b08028` según el caso, no el `main` vigente al momento de
+cerrar), segunda vez que pasa en el mismo día — ver `STATUS.md` para el
+aviso a CTO como riesgo de proceso. El worktree viejo queda con cambios sin
+commitear que ya no hacen falta: a descartar en una limpieza, no a mergear.
+
+**Descartado:** perseguir la causa exacta dentro de `wagmi`/Privy (fuera del
+control de esta app, SDK cerrado) o cambiar de proveedor de wallet embebida
+a diez días del cierre — ninguna de las dos es una opción real para el
+plazo del buildathon. También se descartó subir el timeout único de
+`waitForTransactionReceipt` sin más: no resuelve el caso 2 (sin `hash`, no
+hay nada que esperar) y solo tapa el síntoma del caso 1 sin dar una salida
+honesta cuando de verdad no hay forma de confirmar.
+
 ## 2026-09-22 · Gitignorar `web/AGENTS.md` y `web/CLAUDE.md`
 
 ### D-042 · `web/AGENTS.md` y `web/CLAUDE.md` van a `.gitignore`, no son contenido del repo

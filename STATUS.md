@@ -1,6 +1,6 @@
 # Estado del proyecto — SNAPLINE
 
-**Última actualización:** 2026-09-22 · **Bloque cerrado:** D6 · `/pagar/[dir]` y `/pool/[dir]` en main, código verificado por build/eslint y lectura de cadena real contra un pool de prueba manual; verificación conductual real diferida a propósito a D8 junto con la de D5 (decisión del usuario). En curso: D7 `design` (peso visual de `/` con referencia Sharplink.com, tarjetas y fix de parpadeo mergeados en `9849a5b`) y la corrida conductual en vivo de D5/D6/Privy desde el checkout principal.
+**Última actualización:** 2026-09-22 · **Bloque cerrado:** D6 · `/pagar/[dir]` y `/pool/[dir]` en main, código verificado por build/eslint y lectura de cadena real contra un pool de prueba manual; verificación conductual real diferida a propósito a D8 junto con la de D5 (decisión del usuario). En curso: D7 `design` (peso visual de `/` con referencia Sharplink.com, tarjetas y fix de parpadeo mergeados en `9849a5b`). Cerrado en esta pasada: mitigación del hang no determinista de Privy post-firma en `/pagar` y `/acuerdo/[id]` (D-043).
 **Cierre del hackathon:** 1 de octubre de 2026 · **Días restantes de trabajo:** 10
 
 Este archivo se actualiza en el mismo commit que el trabajo que describe.
@@ -688,6 +688,60 @@ simulado en el resto de superficies, anillo 3D, recibo de transacción,
 tema oscuro). Las verificaciones conductuales de D5, D6 y D7 quedan
 anotadas como tareas de D8, no como bloqueo de `web`.
 
+**Bug bloqueante encontrado y arreglado durante la corrida conductual en
+vivo de D8 (2026-09-22): hang no determinista de Privy post-firma.**
+Con los tres fixes de CORS de D-041 ya integrados y el modal de Privy
+abriendo bien, el orquestador encontró en `/pagar` y `/acuerdo/[id]` que
+`writeContractAsync`/`waitForTransactionReceipt` a veces nunca resolvían su
+promesa en el navegador — el botón quedaba colgado para siempre — aunque la
+transacción ya estuviera confirmada en cadena real. Comportamiento conocido
+de `@privy-io/react-auth` (wallet embebida), no reproducible fuera del
+navegador, sin fix de código propio posible (SDK cerrado). Ver D-043 en
+`DECISIONS.md` para la causa completa y las dos alternativas descartadas.
+
+Mitigación en `web/src/lib/recibo.ts` (nuevo): timeout más fallback de
+lectura de saldo/estado en cadena en vez de esperar indefinidamente, en dos
+capas — `esperarRecibo` (con `hash`) y `conTimeout`/`esperarCondicion` (sin
+`hash`, el caso más grave). Aplicado en `mintear()`/`pagar()` de
+`web/src/app/pagar/[dir]/PagarCliente.tsx` y en `intentarDesplegar()`/el
+efecto de resumen de `web/src/app/acuerdo/[id]/AcuerdoCliente.tsx`.
+`web/src/app/pool/[dir]/PoolCliente.tsx` (retiro) queda fuera de esta
+pasada, sin tocar.
+
+**Verificado en vivo por el orquestador**, no solo por el reporte de quien
+construyó: logueado con una identidad de prueba real vía Privy (correo,
+código OTP real) contra el dev server del worktree del fix. Mint y pago
+dispararon el timeout (bug reproducido en vivo) y el fallback detectó el
+saldo real después en ambos casos — cada uno confirmado de forma
+independiente con `eth_call` a `balanceOf` contra la wallet y el pool
+reales. También se reprodujo el caso de fallo genuino (tx que nunca se
+envía, nonce sin avanzar): mostró el error honesto en vez de colgarse.
+
+**Validado por Product Manager antes de mergear:** `next build`/`eslint`
+corridos de forma independiente, en verde, con las nueve rutas esperadas
+generadas; `git merge-tree` contra el `main` real sin conflictos; diff
+acotado a `web/src/lib/recibo.ts` (nuevo), `PagarCliente.tsx` y
+`AcuerdoCliente.tsx`, sin tocar `PoolCliente.tsx` ni ningún archivo de otra
+área. Mergeado en `7e1e552` (sobre el fix de commit `3f5bc32`).
+
+**Nota de proceso, para CTO:** el worktree asignado originalmente a esta
+tarea (`agent-ae7d6eb5fed5ef349`, rama `feat/web-fix-pagar-hang`) partió de
+un `main` desactualizado (`7b08028`) y quedó con una versión incompleta del
+fix sin commitear — el cierre real vino de otro worktree
+(`agent-a8080241421fa3e54`) que también había partido de un `main` viejo
+(`482aeb8`, anterior incluso a D-041) pero alcanzó a completar el trabajo
+completo antes de mergear. Es la segunda vez en el mismo día que un
+worktree nuevo arranca desde un `main` desactualizado — vale la pena
+revisar cómo se crean los worktrees de `agent-*` para que partan del
+`main` vigente. El worktree viejo (`agent-ae7d6eb5fed5ef349`) quedó con
+cambios sin commitear que ya no hacen falta (versión superada, sin el caso
+2 de `conTimeout`/`esperarCondicion`): a descartar en una limpieza, no a
+mergear — no se tocó desde aquí.
+
+**Sigue pendiente, no bloqueante:** `PoolCliente.tsx` (retiro) probablemente
+tiene el mismo patrón de bug, sin confirmar ni tocado. Entra como tarea
+aparte. Ver `TASKS.md` D8.
+
 ## `demo` — 🟡 Guion escrito
 
 **Hecho:** guion plano por plano y datos de la demo fijados en
@@ -711,6 +765,8 @@ edición.
 | El stretch de pago en pesos se come tiempo del ensayo | Solo se toca si D1–D7 cerraron a tiempo. Corte a las 6 horas en D8 |
 | Las wallets embebidas se crean sin gas y no pueden retirar | Goteo de HSK verificado de punta a punta contra la testnet real el 2026-09-21 (`curl`, recibo confirmado, idempotencia). El bloqueo de CORS del cliente embebido de Privy para gastar ese gas está resuelto (D-041) |
 | La guía de submission de Cali aparece tarde y exige algo no previsto | Conseguirla cuanto antes. Está en `TASKS.md` como bloqueada por información externa |
+| La wallet embebida de Privy puede colgar el botón tras firmar (hang no determinista, sin fix de código propio posible) | Mitigado con timeout + fallback por saldo en `/pagar` y `/acuerdo/[id]` (D-043). Pendiente el mismo patrón en `/pool/[dir]` (retiro) |
+| Worktrees de `agent-*` arrancando desde un `main` desactualizado (pasó dos veces el 2026-09-22) | Sin mitigación de proceso todavía — a revisar cómo CTO/orquestador crean los worktrees nuevos |
 
 ## Contexto del evento
 
