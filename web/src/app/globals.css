@@ -232,6 +232,10 @@ body {
 @media (prefers-reduced-motion: no-preference) {
   .revela-en-scroll > * {
     opacity: 0;
-    transform: translateY(16px);
+    /* 28px, no 16px: tiene que calzar exacto con el `gsap.set` inicial de
+       `animarRevelaEnScroll` (web/src/lib/revelaEnScroll.ts) -- un mismatch
+       entre este estado de reposo y el que fija GSAP reproduce el mismo
+       parpadeo que ya se corrigió una vez (D5, ContadorNumero). */
+    transform: translateY(28px);
   }
 }
