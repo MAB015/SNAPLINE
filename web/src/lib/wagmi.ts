@@ -34,9 +34,18 @@ export const hashkeyTestnet = defineChain({
   testnet: true,
 });
 
+/**
+ * El RPC público no manda `Access-Control-Allow-Origin`: un `fetch` directo
+ * desde el navegador (Privy/wagmi, todo lo que use `usePublicClient()`) se
+ * bloquea por CORS. `wagmiConfig` corre en el cliente, así que su transport
+ * apunta al proxy same-origin (`web/src/app/api/rpc/route.ts`) en vez de a
+ * `RPC_URL` directo. `RPC_URL` y `hashkeyTestnet.rpcUrls.default.http` se
+ * dejan intactos: los sigue usando `web/src/app/api/goteo/route.ts`
+ * server-side, donde no hay problema de CORS.
+ */
 export const wagmiConfig = createConfig({
   chains: [hashkeyTestnet],
   transports: {
-    [hashkeyTestnet.id]: http(RPC_URL),
+    [hashkeyTestnet.id]: http("/api/rpc"),
   },
 });

@@ -14,8 +14,8 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 | `docs` | ✅ Listo | Solo mantenimiento del tracking |
 | `infra` | 🟡 D4 casi listo | Cuentas del demo ya fondeadas; Vercel en D9–D10 |
 | `contracts` | ✅ D2 desplegado | Consumido desde D5 web; sin tareas propias hasta D8 |
-| `design` | ✅ D5 listo, snap con GSAP | D7 · anillo 3D y pulido |
-| `web` | ✅ D6 código listo, corrida real en D8 | D7 · salida a pesos y pulido |
+| `design` | ✅ D5 listo, landing D-039 cerrada | D7 · anillo 3D y pulido |
+| `web` | ✅ D7 (parte web) código listo, corrida real en D8 | D7 · pulido de `design` (anillo 3D, sello, tema oscuro) |
 | `demo` | 🟡 Guion escrito | D8 · datos y ensayos |
 
 ---
@@ -390,9 +390,31 @@ merge; Product Manager repitió ambos sobre `main` ya combinado, en verde.
 Sin entrada nueva en `DECISIONS.md`: son correcciones puntuales de
 accesibilidad, no una decisión de arquitectura o alcance.
 
+**Fuera de plan, landing completa en "/" (D-039), mergeada en dos etapas:**
+`web/src/app/page.tsx` reemplaza la vitrina de componentes de D3 por hero,
+casos de uso en texto con filetes, bloque de confianza en superficie `chain`
+(tres direcciones con hash vivo y cifras exactas de auditoría) y un único
+CTA "Crear tu acuerdo" → `/nuevo`. Componentes nuevos: `ContadorTests.tsx`
+(envuelve `ContadorNumero` porque `page.tsx` es de servidor y no puede
+pasarle una función como prop a un componente de cliente) y
+`EjemploBarraHero.tsx`. Construida por Design Lead/creative-director (rama
+`feat/design-landing-acta-viva`): primer commit `1c55134` con el hero sin
+autoplay (`tensada` fijo en `false`), segundo commit `12432ac` cableando el
+autoplay — temporizador de 350ms al montar en vez de
+`IntersectionObserver` (el hero siempre está en el viewport ni bien carga),
+y `BarraSegmentada` ya resuelve `prefers-reduced-motion` internamente con
+`gsap.matchMedia`, así que `EjemploBarraHero` solo evita la espera
+artificial (retraso 0) cuando reduced motion está activo. D-039 cierra sin
+salvedades. Verificado por Product Manager antes de mergear, no solo por el
+reporte del especialista: `next build`/`eslint` en verde sobre la rama
+completa, `git status` confirmó que el segundo commit tocó un solo archivo,
+`git merge-tree` contra el `main` ya integrado con CORS y D7-web sin
+conflictos, y `lint`/`build` repetidos sobre `main` ya combinado. Ver D-039
+en `DECISIONS.md`.
+
 **Bloqueado por:** nada.
 
-## `web` — ✅ D6 código listo, corrida real diferida a D8
+## `web` — ✅ D7 (parte web) código listo, corrida real diferida a D8
 
 **Hecho:** andamiaje de Next.js 16 con App Router, TypeScript y Tailwind 4,
 adelantado de D4 a D3 (D-032). En D4 (rama `feat/web-identidad-borrador`,
@@ -467,6 +489,47 @@ avanzar igual a D6 y correr esa verificación real más adelante, junto con
 los ensayos de punta a punta de D8, que ya la exigían de todos modos —no
 duplica trabajo. Ver `TASKS.md` D8.
 
+**Bug bloqueante encontrado y arreglado durante la corrida real de D5/D6
+(2026-09-21, adelantada antes de D7 con luz verde de CEO — ver `TASKS.md`).**
+`guardarBorrador` en `web/src/lib/supabase.ts` encadenaba
+`.insert({...}).select("id").single()`, que Postgres traduce a `INSERT ...
+RETURNING id`. La tabla `drafts` tiene política de `insert` para `anon` pero
+a propósito no tiene política de `select` (D-031, se lee solo por
+`get_draft`), y Postgres exige esa política inexistente para el
+`RETURNING`, así que todo guardado de borrador fallaba con "new row
+violates row-level security policy for table drafts". El orquestador
+reprodujo la causa exacta con SQL directo contra el proyecto Supabase real
+(`snapline`, `qevrbssusazpeeuhhgxk`), con `set local role anon`, antes de
+mandarlo a arreglar. Arreglado por frontend-engineer (worktree
+`agent-a2585982a4427b4de`, commit `8578c7e`): el `id` se genera en el
+cliente con `crypto.randomUUID()` y se inserta explícito, sin encadenar
+`.select()` — sin `RETURNING` no hace falta política de lectura, y D-031
+no cambia. No toca `guardarFirma` (confirmado sin el mismo patrón),
+migraciones ni políticas RLS. Verificado de forma independiente por Product
+Manager antes de mergear: `next build`/`eslint` en verde sobre la rama,
+diff de un solo archivo, `git merge-tree` limpio contra `main`. La corrida
+real de D5/D6 sigue en curso: falta el click real en la UI a través de
+Privy, que retoma el orquestador desde el checkout principal
+(`F:\Projects\SNAPLINE-AI`, rama `main`) ahora que el fix está integrado.
+
+**Segundo bug bloqueante encontrado y arreglado en la misma corrida real de
+D5/D6 (2026-09-21).** El RPC público de HSKChain Testnet no manda
+`Access-Control-Allow-Origin`, así que cualquier `fetch` JSON-RPC hecho
+directo desde el navegador (Privy/wagmi vía `usePublicClient()`) se
+bloqueaba por CORS — el mismo click real en la UI que retomaba el punto
+anterior topaba con esto de inmediato. Arreglado (worktree
+`agent-a3df3cf7dd07d021f`, commit `45533ec`): `web/src/app/api/rpc/route.ts`
+(nuevo) es un proxy same-origin que reenvía el POST server-to-server, sin
+restricción de CORS — mismo patrón que `web/src/app/api/goteo/route.ts`.
+`wagmiConfig` (`web/src/lib/wagmi.ts`) apunta su `transport` a `/api/rpc` en
+vez de al RPC externo directo; `RPC_URL` y
+`hashkeyTestnet.rpcUrls.default.http` quedan intactos porque `api/goteo/route.ts`
+corre server-side y no tiene el problema. Verificado de forma independiente
+por Product Manager antes de mergear: `next build`/`eslint` en verde sobre
+la rama, con `/api/rpc` registrado junto al resto de las rutas; diff de dos
+archivos; sin cruce con ningún otro worktree activo. La corrida real de
+D5/D6 sigue en curso, ahora con ambos fixes integrados en `main`.
+
 **Hecho en D6** (worktree `agent-a374d5e4199c337c3`, rama
 `worktree-agent-a374d5e4199c337c3`, commit `e9f0551`, integrada en
 `7049ffe`): `web/src/lib/token.ts` (nuevo) trae el ABI mínimo de `MockUSDT`
@@ -504,8 +567,29 @@ wallet de navegador vía Privy — falta `NEXT_PUBLIC_PRIVY_APP_ID` en el
 worktree donde se construyó D6. Verificación conductual diferida a D8,
 junto con la de D5. Ver `TASKS.md` D8.
 
-**Bloqueado por:** nada para seguir a D7. Las verificaciones conductuales
-de D5 y D6 quedan anotadas como tareas de D8, no como bloqueo de `web`.
+**Hecho en D7** (worktree `agent-abec8784811189666`, commit `4907ecf`):
+interfaz `OffRampProvider` (`quote`/`execute`/`status`) y `MockOffRamp` como
+única implementación del MVP (`web/src/lib/offramp/`), con tasa COP/USD y
+comisión de 150 bps declaradas como ilustrativas en el código. Ruta nueva
+`/retiro-cop/[dir]` (`page.tsx` + `RetiroCopCliente.tsx`): cotiza la parte
+liberable del participante, muestra comisión y neto en pesos, pide una
+cuenta destino simulada y emite un comprobante marcado como simulado en
+tres lugares — el tipo (`simulado: true`), la nota del comprobante y
+`SelloSimulado` en pantalla desde el primer frame. No toca `wagmi.ts`,
+`pool.ts` ni `token.ts`; reusa `leerCifrasPool` para la parte liberable.
+
+**Validado por Product Manager antes de mergear:** `next build`/`eslint` en
+verde sobre la rama, con `/retiro-cop/[dir]` registrado; `git merge-tree`
+contra `main` sin conflictos; sin cruce con ningún otro worktree activo.
+
+**Diferido a propósito, no bloqueante:** sin verificación conductual real
+contra una wallet de navegador vía Privy — mismo motivo que D5/D6, entra en
+los ensayos de D8.
+
+**Bloqueado por:** nada para seguir con el resto de D7 (`design`: sello de
+simulado en el resto de superficies, anillo 3D, recibo de transacción,
+tema oscuro). Las verificaciones conductuales de D5, D6 y D7 quedan
+anotadas como tareas de D8, no como bloqueo de `web`.
 
 ## `demo` — 🟡 Guion escrito
 

@@ -157,11 +157,12 @@ de la misma mesa vive en el brief de landing de D-039, abajo.
       tests + fuzzing ya documentados en `STATUS.md`). Sin inventar ninguna
       métrica de uso real. **Entregado directo a CEO/orquestador para
       relayar a Design Lead — no vive como archivo en el repo.**
-- [ ] `design` — Design Lead: construir `web/src/app/page.tsx` y los
+- [x] `design` — Design Lead: construir `web/src/app/page.tsx` y los
       componentes nuevos que haga falta con el brief de CMO ya cerrado,
       muy visual según `docs/BRAND.md` (Acta Viva), CTA claro "Crear tu
       acuerdo" → `/nuevo`. No toca ni duplica `PantallaCarga.tsx` (D-038,
-      ya montada en esa misma pantalla).
+      ya montada en esa misma pantalla). Incluye el autoplay de la barra del
+      hero, cableado por creative-director en un segundo commit.
 
 Orden de ejecución secuencial, confirmado por CEO: CMO primero (brief
 cerrado), Design Lead después (implementación). No compite con el arreglo
@@ -190,8 +191,8 @@ diferida a D8 junto con la de D5, mismo motivo: falta
 
 ## D7 · Salida a pesos y pulido — sábado 27
 
-- [ ] `web` — interfaz `OffRampProvider` y `MockOffRamp`
-- [ ] `web` — `/retiro-cop/[dir]`: cotización, comisión, neto, comprobante
+- [x] `web` — interfaz `OffRampProvider` y `MockOffRamp`
+- [x] `web` — `/retiro-cop/[dir]`: cotización, comisión, neto, comprobante
 - [ ] `design` — sello de simulado en todas las superficies del mock
 - [ ] `design` — anillo 3D del pool con `@react-three/fiber`: segmentos por
       bps, material toon, clic con panel de participante, snap en
