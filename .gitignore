@@ -31,3 +31,6 @@ npm-debug.log*
 # generados
 web/src/lib/generated/
 coverage/
+
+# notas locales, nunca se suben (pueden tener datos personales como correos)
+local-notes/

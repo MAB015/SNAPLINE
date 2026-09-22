@@ -12,7 +12,7 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 | Área | Estado | Siguiente |
 |---|---|---|
 | `docs` | ✅ Listo | Solo mantenimiento del tracking |
-| `infra` | 🟡 D4 casi listo | Fondeo de testnet; Vercel en D9–D10 |
+| `infra` | 🟡 D4 casi listo | Cuentas del demo ya fondeadas; Vercel en D9–D10 |
 | `contracts` | ✅ D2 desplegado | Consumido desde D5 web; sin tareas propias hasta D8 |
 | `design` | ✅ D5 listo, snap con GSAP | D7 · anillo 3D y pulido |
 | `web` | ✅ D6 código listo, corrida real en D8 | D7 · salida a pesos y pulido |
@@ -59,16 +59,26 @@ listar borradores ajenos, y sin `update` ni `delete` para nadie. Migración
 versionada en `supabase/migrations/`. Ver D-031. Ya en uso: `/nuevo` guarda
 bordadores ahí.
 
-**Falta:** fondeo de las cuatro cuentas de testnet; `DEPLOYER_PRIVATE_KEY` en
-`web/.env.local` (documentada en `.env.example`, sin valor puesto — sin ella
-el goteo de gas responde 500 pero no bloquea el resto de la app); proyecto de
-Vercel y primer despliegue, bloqueado en `TASKS.md` hasta D9–D10.
+**Fondeo de las cuatro cuentas del demo**, cerrado el 2026-09-21: las cuatro
+direcciones de `docs/DEMO-SCRIPT.md` (Mariana y Julián con wallets externas,
+Sofía y Andrés con wallets embebidas creadas por login de Privy) ya existen y
+tienen 0,01 HSK cada una vía `/api/goteo`, confirmado en cadena con
+`eth_getBalance`. Direcciones, roles y bps documentados en
+[`docs/DEMO-ACCOUNTS.md`](docs/DEMO-ACCOUNTS.md); los correos reales detrás de
+los alias quedan fuera del repo a propósito, en `local-notes/` (sin
+versionar). Cierra las tareas de D2 y D8 sobre reserva y fondeo de cuentas —
+ver `TASKS.md`.
+
+**Falta:** `DEPLOYER_PRIVATE_KEY` en `web/.env.local` (documentada en
+`.env.example`, sin valor puesto — sin ella el goteo de gas responde 500 pero
+no bloquea el resto de la app); proyecto de Vercel y primer despliegue,
+bloqueado en `TASKS.md` hasta D9–D10.
 
 **Nota:** el CI no se añade hasta que haya algo que construir. Un `main` con
 CI en rojo incumple la regla de "siempre desplegable".
 
-**Bloqueado por:** faltan las cuatro direcciones públicas y fondos de testnet.
-Remoto configurado: https://github.com/MAB015/SNAPLINE.git.
+**Bloqueado por:** nada en este momento. Remoto configurado:
+https://github.com/MAB015/SNAPLINE.git.
 
 ## `contracts` — 🟡 D2 local validado
 
@@ -113,11 +123,9 @@ tres verificadas en el explorador con solc 0.8.24, optimizador a 200 runs;
 decimales; llamar a `initialize` sobre la implementación revierte con
 `AlreadyInitialized` (`0x0dc149f0`), así que el clon de referencia está quemado
 y nadie puede secuestrarlo. Coste real del despliegue: 0,00195 HSK a 1,001
-gwei. Quedan 0,098 HSK para el goteo de gas de D4.
-
-**Falta:** reservar HSK para las cuatro cuentas del demo. Esa tarea sigue
-bloqueada porque las cuatro direcciones todavía no existen: dos son wallets
-embebidas que Privy crea en D4.
+gwei. Del saldo de la cuenta de despliegue, 0,04 HSK ya se gastaron el
+2026-09-21 fondeando las cuatro cuentas del demo con 0,01 HSK cada una (ver
+`infra`); quedan ~0,058 HSK para el goteo de gas del resto del proyecto.
 
 **Cambio de red autorizado:** HSKChain Testnet, chainId 133, HSK de prueba para gas y MockUSDT para pagos (D-026). Configuración pública y referencias de red actualizadas; contracts/.env local e ignorado preparado. RPC y API del explorador responden. Fuentes ya verificadas.
 
