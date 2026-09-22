@@ -6,6 +6,7 @@ import { useAccount, usePublicClient, useWriteContract } from "wagmi";
 import { isAddress, type Address, type Hex } from "viem";
 import { HashVivo } from "@/components/HashVivo";
 import { PRIVY_APP_ID } from "@/lib/privy";
+import { conTimeout, EnvioTimeoutError, esperarCondicion, esperarRecibo, EsperaReciboTimeoutError } from "@/lib/recibo";
 import { MOCK_USDT_ADDRESS, MOCK_USDT_SYMBOL, mockUsdtAbi, montoAUnidades, unidadesAMonto } from "@/lib/token";
 
 /** Monto fijo del faucet de demo: alcanza para un par de pagos de prueba sin
@@ -60,11 +61,17 @@ function Contenido({ pool }: { pool: Address }) {
 
   const [minteando, setMinteando] = useState(false);
   const [errorMint, setErrorMint] = useState<string | null>(null);
+  // Timeout de esperarRecibo con la tx ya enviada (caso 1, con hash) o de
+  // writeContractAsync sin llegar a resolver (caso 2, confirmado solo por
+  // saldo — "sin-hash"): ninguno de los dos es un error real, ver
+  // web/src/lib/recibo.ts.
+  const [mintIndeterminado, setMintIndeterminado] = useState<Hex | "sin-hash" | null>(null);
 
   const [monto, setMonto] = useState("");
   const [pagando, setPagando] = useState(false);
   const [errorPago, setErrorPago] = useState<string | null>(null);
   const [pagoConfirmado, setPagoConfirmado] = useState<Hex | null>(null);
+  const [pagoIndeterminado, setPagoIndeterminado] = useState<Hex | "sin-hash" | null>(null);
 
   const refrescarBalance = useCallback(async () => {
     if (!publicClient || !address) return;
@@ -104,17 +111,64 @@ function Contenido({ pool }: { pool: Address }) {
     if (!address || !publicClient) return;
     setMinteando(true);
     setErrorMint(null);
+    setMintIndeterminado(null);
+    // Saldo previo al intento: es la referencia para el fallback del caso 2
+    // más abajo (writeContractAsync que nunca resuelve, ni con hash).
+    const saldoAntes = balance;
     try {
-      const hash = await writeContractAsync({
-        address: MOCK_USDT_ADDRESS,
-        abi: mockUsdtAbi,
-        functionName: "mint",
-        args: [address, montoAUnidades(MONTO_FAUCET)],
-      });
-      await publicClient.waitForTransactionReceipt({ hash });
+      let hash: Hex;
+      try {
+        // `conTimeout` en vez de esperar `writeContractAsync` a secas: caso 2
+        // de D6, la promesa de `Embedded1193Provider.request()` (Privy) a
+        // veces nunca resuelve — ni con el hash — aunque la tx ya haya sido
+        // enviada. Ver el porqué en web/src/lib/recibo.ts.
+        hash = await conTimeout(
+          writeContractAsync({
+            address: MOCK_USDT_ADDRESS,
+            abi: mockUsdtAbi,
+            functionName: "mint",
+            args: [address, montoAUnidades(MONTO_FAUCET)],
+          }),
+          20_000,
+        );
+      } catch (e) {
+        if (!(e instanceof EnvioTimeoutError)) throw e;
+        // Sin hash no hay recibo que esperar: la única forma de saber si la
+        // tx pasó es mirar si el saldo se movió.
+        const subio = await esperarCondicion(
+          async () => {
+            const actual = await publicClient.readContract({
+              address: MOCK_USDT_ADDRESS,
+              abi: mockUsdtAbi,
+              functionName: "balanceOf",
+              args: [address],
+            });
+            return saldoAntes === null || actual > saldoAntes ? true : null;
+          },
+          { timeoutMs: 25_000 },
+        );
+        if (!subio) {
+          throw new Error("No se pudo confirmar la transacción, revisá tu wallet o intentá de nuevo.");
+        }
+        setMintIndeterminado("sin-hash");
+        await refrescarBalance();
+        return;
+      }
+      // `esperarRecibo` en vez de `publicClient.waitForTransactionReceipt`:
+      // ver el porqué en web/src/lib/recibo.ts (caso 1 de D6, botón que
+      // nunca vuelve a su estado normal pese a que el recibo ya está en
+      // cadena).
+      await esperarRecibo(publicClient, hash);
       await refrescarBalance();
     } catch (e) {
-      setErrorMint(e instanceof Error ? e.message : "No se pudo mintear mUSDT");
+      if (e instanceof EsperaReciboTimeoutError) {
+        // La tx se envió y probablemente ya confirmó — solo dejamos de
+        // esperarla nosotros. No es un error real: se muestra degradado.
+        setMintIndeterminado(e.hash);
+        await refrescarBalance();
+      } else {
+        setErrorMint(e instanceof Error ? e.message : "No se pudo mintear mUSDT");
+      }
     } finally {
       setMinteando(false);
     }
@@ -123,6 +177,7 @@ function Contenido({ pool }: { pool: Address }) {
   async function pagar() {
     if (!address || !publicClient) return;
     setPagoConfirmado(null);
+    setPagoIndeterminado(null);
     setErrorPago(null);
 
     let unidades: bigint;
@@ -138,22 +193,70 @@ function Contenido({ pool }: { pool: Address }) {
     }
 
     setPagando(true);
-    try {
-      // Sin `approve` de por medio: `SplitPool.sol` no tiene función de
-      // depósito, los tokens llegan por transferencia directa (`receive()`
-      // solo cubre el nativo). Ver contracts/src/SplitPool.sol.
-      const hash = await writeContractAsync({
+    // Saldo del pool previo al intento: referencia para el fallback del
+    // caso 2 (writeContractAsync que nunca resuelve, ni con hash).
+    const saldoPoolAntes = await publicClient
+      .readContract({
         address: MOCK_USDT_ADDRESS,
         abi: mockUsdtAbi,
-        functionName: "transfer",
-        args: [pool, unidades],
-      });
-      await publicClient.waitForTransactionReceipt({ hash });
+        functionName: "balanceOf",
+        args: [pool],
+      })
+      .catch(() => null);
+    try {
+      let hash: Hex;
+      try {
+        // `conTimeout`: mismo caso 2 de D6 que en mintear() — ver el porqué
+        // en web/src/lib/recibo.ts.
+        hash = await conTimeout(
+          // Sin `approve` de por medio: `SplitPool.sol` no tiene función de
+          // depósito, los tokens llegan por transferencia directa
+          // (`receive()` solo cubre el nativo). Ver contracts/src/SplitPool.sol.
+          writeContractAsync({
+            address: MOCK_USDT_ADDRESS,
+            abi: mockUsdtAbi,
+            functionName: "transfer",
+            args: [pool, unidades],
+          }),
+          20_000,
+        );
+      } catch (e) {
+        if (!(e instanceof EnvioTimeoutError)) throw e;
+        const subio = await esperarCondicion(
+          async () => {
+            const actual = await publicClient.readContract({
+              address: MOCK_USDT_ADDRESS,
+              abi: mockUsdtAbi,
+              functionName: "balanceOf",
+              args: [pool],
+            });
+            return saldoPoolAntes === null || actual > saldoPoolAntes ? true : null;
+          },
+          { timeoutMs: 25_000 },
+        );
+        if (!subio) {
+          throw new Error("No se pudo confirmar la transacción, revisá tu wallet o intentá de nuevo.");
+        }
+        setPagoIndeterminado("sin-hash");
+        setMonto("");
+        await refrescarBalance();
+        return;
+      }
+      await esperarRecibo(publicClient, hash);
       setPagoConfirmado(hash);
       setMonto("");
       await refrescarBalance();
     } catch (e) {
-      setErrorPago(e instanceof Error ? e.message : "No se pudo pagar");
+      if (e instanceof EsperaReciboTimeoutError) {
+        // Igual que en mintear(): la tx se envió, solo dejamos de esperarla.
+        // Se muestra el mismo comprobante que un pago confirmado, pero con
+        // aviso de que no se pudo verificar automáticamente.
+        setPagoIndeterminado(e.hash);
+        setMonto("");
+        await refrescarBalance();
+      } else {
+        setErrorPago(e instanceof Error ? e.message : "No se pudo pagar");
+      }
     } finally {
       setPagando(false);
     }
@@ -226,6 +329,18 @@ function Contenido({ pool }: { pool: Address }) {
           {errorMint ? (
             <p className="mono mt-2 border border-caution px-4 py-3 text-xs text-caution">{errorMint}</p>
           ) : null}
+          {mintIndeterminado ? (
+            <p className="mono mt-2 border border-caution px-4 py-3 text-xs text-caution">
+              {mintIndeterminado === "sin-hash" ? (
+                "Confirmado por saldo, no se pudo recuperar el hash exacto — revisá el explorador."
+              ) : (
+                <>
+                  No pudimos confirmar automáticamente, pero la transacción se envió. Hash:{" "}
+                  <HashVivo valor={mintIndeterminado} />
+                </>
+              )}
+            </p>
+          ) : null}
           <button
             type="button"
             className="mono mt-3 border border-ink px-6 py-3 text-xs uppercase tracking-wide disabled:cursor-not-allowed disabled:border-rule disabled:text-ink-60"
@@ -266,6 +381,29 @@ function Contenido({ pool }: { pool: Address }) {
             <div className="mt-1">
               <HashVivo valor={pagoConfirmado} superficie="chain" />
             </div>
+          </div>
+        ) : null}
+
+        {pagoIndeterminado ? (
+          <div
+            data-surface="chain"
+            className="bg-chain text-on-chain mt-4 px-4 py-3"
+          >
+            {pagoIndeterminado === "sin-hash" ? (
+              <p className="mono text-xs uppercase tracking-wide">
+                Confirmado por saldo, no se pudo recuperar el hash exacto — revisá el explorador.
+              </p>
+            ) : (
+              <>
+                <p className="mono text-xs uppercase tracking-wide">
+                  No pudimos confirmar automáticamente, pero la transacción se envió. Revisá el
+                  explorador:
+                </p>
+                <div className="mt-1">
+                  <HashVivo valor={pagoIndeterminado} superficie="chain" />
+                </div>
+              </>
+            )}
           </div>
         ) : null}
 

@@ -25,6 +25,7 @@ import {
   type Agreement,
 } from "@/lib/firma";
 import { PRIVY_APP_ID } from "@/lib/privy";
+import { conTimeout, EnvioTimeoutError, esperarCondicion, esperarRecibo, EsperaReciboTimeoutError } from "@/lib/recibo";
 import {
   guardarFirma,
   obtenerBorrador,
@@ -49,7 +50,11 @@ type EstadoPool =
   | { tipo: "sin-desplegar" }
   | { tipo: "desplegando" }
   | { tipo: "desplegado"; direccion: Address }
-  | { tipo: "error"; mensaje: string };
+  // `hash` es opcional: solo viene cuando el error es en realidad un timeout
+  // de esperarRecibo con la tx ya enviada (ver web/src/lib/recibo.ts) — la
+  // sondeo periódica de más abajo igual va a actualizar el estado solo si
+  // confirma, esto es para no dejar a quien mira sin el hash mientras tanto.
+  | { tipo: "error"; mensaje: string; hash?: Hex };
 
 /**
  * Sin `NEXT_PUBLIC_PRIVY_APP_ID` no hay `PrivyProvider` (`web/src/lib/providers.tsx`)
@@ -167,7 +172,9 @@ function Contenido({ id }: { id: string }) {
       if (cancelado) return;
       setEstadoPool({ tipo: "desplegando" });
       try {
-        await publicClient.waitForTransactionReceipt({ hash: pendiente as Hex });
+        // `esperarRecibo` en vez de `publicClient.waitForTransactionReceipt`:
+        // ver el porqué en web/src/lib/recibo.ts (D6).
+        await esperarRecibo(publicClient, pendiente as Hex);
       } catch {
         // Revirtio o no se pudo esperar: el chequeo de abajo dice la verdad.
       }
@@ -231,22 +238,45 @@ function Contenido({ id }: { id: string }) {
       setEstadoPool({ tipo: "desplegando" });
 
       try {
-        const hash = await writeContractAsync({
-          address: FACTORY_ADDRESS,
-          abi: splitPoolFactoryAbi,
-          functionName: "createPool",
-          args: [
-            {
-              participants: agreement.participants,
-              bps: agreement.bps,
-              termsHash: agreement.termsHash,
-              salt: agreement.salt,
-            },
-            firmasOrdenadas as Hex[],
-          ],
-        });
+        let hash: Hex;
+        try {
+          // `conTimeout`: caso 2 de D6, `writeContractAsync` a veces nunca
+          // resuelve — ni con el hash — aunque la tx ya se haya enviado. Ver
+          // el porqué en web/src/lib/recibo.ts.
+          hash = await conTimeout(
+            writeContractAsync({
+              address: FACTORY_ADDRESS,
+              abi: splitPoolFactoryAbi,
+              functionName: "createPool",
+              args: [
+                {
+                  participants: agreement.participants,
+                  bps: agreement.bps,
+                  termsHash: agreement.termsHash,
+                  salt: agreement.salt,
+                },
+                firmasOrdenadas as Hex[],
+              ],
+            }),
+            20_000,
+          );
+        } catch (e) {
+          if (!(e instanceof EnvioTimeoutError)) throw e;
+          // Sin hash no hay recibo que esperar: `verificarCadena` ya es la
+          // fuente de verdad de si el pool se desplegó (lee `consumed` +
+          // busca el evento), la reutilizamos como condición de sondeo.
+          const direccion = await esperarCondicion(() => verificarCadena(), { timeoutMs: 25_000 });
+          if (!direccion) {
+            throw new Error("No se pudo confirmar la transacción, revisá tu wallet o intentá de nuevo.");
+          }
+          sessionStorage.removeItem(clave);
+          setEstadoPool({ tipo: "desplegado", direccion });
+          return;
+        }
         sessionStorage.setItem(clave, hash);
-        await publicClient.waitForTransactionReceipt({ hash });
+        // `esperarRecibo` en vez de `publicClient.waitForTransactionReceipt`:
+        // ver el porqué en web/src/lib/recibo.ts (caso 1 de D6).
+        await esperarRecibo(publicClient, hash);
         const direccion = await buscarPoolDesplegado(publicClient, structHash);
         sessionStorage.removeItem(clave);
         setEstadoPool(
@@ -266,6 +296,16 @@ function Contenido({ id }: { id: string }) {
         const direccion = await verificarCadena().catch(() => null);
         if (direccion) {
           setEstadoPool({ tipo: "desplegado", direccion });
+        } else if (e instanceof EsperaReciboTimeoutError) {
+          // La tx se envió, solo dejamos de esperarla nosotros — el sondeo
+          // periódico (INTERVALO_SONDEO_MS) va a levantar el pool solo si
+          // confirma. Mientras tanto, mostramos el hash en vez de un error
+          // genérico sin nada que revisar.
+          setEstadoPool({
+            tipo: "error",
+            mensaje: "No pudimos confirmar automáticamente, pero la transacción se envió. Revisá el explorador:",
+            hash: e.hash,
+          });
         } else {
           setEstadoPool({
             tipo: "error",
@@ -440,6 +480,11 @@ function Contenido({ id }: { id: string }) {
               <div>
                 <p className="mono border border-caution px-4 py-3 text-xs text-caution">
                   {estadoPool.mensaje}
+                  {estadoPool.hash ? (
+                    <span className="mt-2 block">
+                      <HashVivo valor={estadoPool.hash} />
+                    </span>
+                  ) : null}
                 </p>
                 <button
                   type="button"
