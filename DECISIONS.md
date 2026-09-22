@@ -8,7 +8,7 @@ nueva que la revierte.
 
 ## 2026-09-22 · Lenis para la landing: todavía no hay caso concreto
 
-### D-043 · Lenis sigue afuera de `/`, incluso reevaluado para el pivote de layout de Fase A
+### D-044 · Lenis sigue afuera de `/`, incluso reevaluado para el pivote de layout de Fase A
 El usuario pidió explícitamente que CEO reevaluara Lenis (scroll suave)
 específicamente para la landing, en el marco del pivote hacia un layout de
 ancho completo/más inmersivo que Design Lead está por arrancar ("Fase A";
