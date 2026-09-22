@@ -281,8 +281,11 @@ del anillo.
 
 ## 14. La pantalla principal
 
-`/acuerdo/[id]` es la pieza que más se va a mirar en el demo. Se trata como
-una portada de documento que se vuelve contrato:
+`/acuerdo/[id]` es la pieza que más se va a mirar en el demo, y comparte
+maquetación con el resto de las pantallas de documento y formulario del
+producto (`/nuevo`, `/pagar/[dir]`, `/pool/[dir]`, `/retiro-cop/[dir]`):
+una sola columna de lectura, `max-w-3xl` (~672px), centrada con margen a
+los lados. Se trata como una portada de documento que se vuelve contrato:
 
 1. Encabezado: nombre del proyecto en Instrument Serif grande, y debajo, en
    mono pequeña, el identificador del acuerdo, la fecha y el indicador de
@@ -299,6 +302,18 @@ dirección del pool y el recibo de la transacción de despliegue.
 
 Sin barra lateral. Sin tarjetas flotantes. Sin secciones plegadas. El
 documento se lee de arriba abajo.
+
+**La excepción es la landing (`/`).** Desde la Fase A del pivote de layout
+(D-045), la portada de entrada corre a ancho completo real, sin cap de
+columna — ni `max-w-3xl` ni un `max-w-7xl` intermedio: es la puerta del
+producto, no un documento que se firma, y el usuario pidió explícitamente
+que no se viera "acotada, en la mitad". El `<h1>` y la grilla de
+"Verificado en cadena" se estiran a todo el viewport en monitores anchos;
+los párrafos largos siguen protegidos por `max-w-prose` para no perder
+legibilidad, y la sección de superficie `chain` sangra a todo el ancho de
+la pantalla como un bloque aparte del resto del contenido. Ninguna otra
+pantalla adopta este ancho completo: en cuanto el flujo pasa a crear,
+firmar, pagar o retirar, vuelve a la columna angosta de arriba.
 
 ## 15. El sello de simulado
 
