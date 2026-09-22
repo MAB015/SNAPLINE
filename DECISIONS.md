@@ -6,6 +6,56 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-21 · Tercer fix de CORS, cierre del paso final de D5
+
+### D-041 · `addRpcUrlOverrideToChain` para que el cliente embebido de Privy hable con el proxy `/api/rpc`
+El proxy same-origin `/api/rpc` (commit `97a06ec`) resolvió las lecturas que
+pasan por `wagmiConfig.transports`, pero el cliente interno de Privy para
+operaciones de la wallet embebida (nonce, estimación de gas, broadcast) no
+lee `wagmiConfig`: lee la cadena que se le pasa en
+`PrivyClientConfig.defaultChain`/`supportedChains`, que seguía apuntando al
+RPC externo sin `Access-Control-Allow-Origin`. Era el mismo bloqueo de CORS
+de antes, ahora en el paso final de la corrida real de D5/D6: el modal de
+Privy "Approve transaction" ni llegaba a abrirse al disparar `createPool`.
+
+Arreglado por CTO (worktree `agent-a7c2e6741788a6cd8`, commit `8dfcfce`):
+`addRpcUrlOverrideToChain`, función oficial de `@privy-io/react-auth` (ver
+docs.privy.io/basics/react/advanced/configuring-evm-networks), agrega una
+entrada `rpcUrls.privyWalletOverride` sobre `hashkeyTestnet` que el cliente
+de Privy prioriza por encima de `rpcUrls.default`, sin reemplazarlo. Se
+exporta como `hashkeyTestnetParaPrivy`, un objeto aparte, en vez de mutar
+`hashkeyTestnet` — ese objeto lo siguen usando intactos
+`web/src/app/api/rpc/route.ts` y `web/src/app/api/goteo/route.ts`
+(server-side, sin problema de CORS, necesitan la URL externa real y no hay
+`window.location` ahí para resolver una ruta relativa).
+
+Verificado por Product Manager antes de mergear: `next build`/`eslint` en
+verde; diff acotado a `web/src/lib/wagmi.ts` y `web/src/lib/privy.ts`, sin
+tocar las dos rutas de API; `git merge-tree` contra `main` sin conflictos.
+Verificación conductual real, hecha por CEO directo en el navegador contra
+el dev server del worktree del fix: con el acuerdo
+`5a58a173-e81d-41f9-a961-efe927b0c386` (tres firmas ya puestas), el
+firmante P3 (`0x40a7a99D17F1020CcEf27a793C0A19D32e466875`) disparó
+`createPool` — el modal real de Privy "Approve transaction" apareció por
+primera vez. Pool desplegado en
+`0x4D434ab58bb4128FF656DaAD33C38D58eC88B7a5`, confirmado con RPC directo:
+`eth_getCode` devuelve bytecode de clon EIP-1167 (45 bytes) apuntando a la
+implementación `0x88ceD9e8…FE7F`; `eth_getTransactionCount` de P3 pasó de
+`0x0` a `0x1`. `/api/goteo` probado por separado con `curl` contra la
+testnet real: goteo con recibo confirmado, idempotencia y rechazo de
+dirección inválida, todo en verde.
+
+**Pendiente, no bloqueante:** la recarga a mitad de la confirmación
+(anti-doble-despliegue) y la corrida real completa de D6 (`/pagar`/`/pool`
+con wallet de navegador: faucet, pago, retiro) no se corrieron en esta
+sesión — el click-through cubrió el paso final de D5, no D6 completo. Ver
+`TASKS.md` D8 y `STATUS.md` § `web`.
+
+**Descartado:** duplicar `hashkeyTestnet` con `defineChain` y una URL
+distinta a mano — `addRpcUrlOverrideToChain` es la API oficial para este
+caso exacto y evita mantener dos objetos de cadena en paralelo que podrían
+divergir.
+
 ## 2026-09-21 · Mesa estratégica: diseño excepcional y tracción creíble
 
 ### D-040 · Piloto sin nombrar en el pitch: perfil target, no un contacto inventado

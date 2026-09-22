@@ -1,5 +1,5 @@
 import type { PrivyClientConfig } from "@privy-io/react-auth";
-import { hashkeyTestnet } from "./wagmi";
+import { hashkeyTestnetParaPrivy } from "./wagmi";
 
 export const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID ?? "";
 
@@ -16,8 +16,8 @@ export const privyConfig: PrivyClientConfig = {
       createOnLogin: "users-without-wallets",
     },
   },
-  defaultChain: hashkeyTestnet,
-  supportedChains: [hashkeyTestnet],
+  defaultChain: hashkeyTestnetParaPrivy,
+  supportedChains: [hashkeyTestnetParaPrivy],
   appearance: {
     walletChainType: "ethereum-only",
   },

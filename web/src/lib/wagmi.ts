@@ -1,6 +1,7 @@
 import { defineChain } from "viem";
 import { http } from "wagmi";
 import { createConfig } from "@privy-io/wagmi";
+import { addRpcUrlOverrideToChain } from "@privy-io/react-auth";
 
 /**
  * Valores de `deployments/hashkey-testnet.json` (raíz del repo). Se copian
@@ -49,3 +50,25 @@ export const wagmiConfig = createConfig({
     [hashkeyTestnet.id]: http("/api/rpc"),
   },
 });
+
+/**
+ * `wagmiConfig` de arriba resuelve el CORS porque su `transport` pasa por el
+ * proxy (`http("/api/rpc")`). Pero el cliente interno de Privy para wallets
+ * embebidas (el que arma el modal "Approve transaction" y consulta saldo) no
+ * lee `wagmiConfig`: lee el objeto de cadena que se le pasa en
+ * `defaultChain`/`supportedChains` de `PrivyClientConfig`, y si ahí ve
+ * `RPC_URL` (el externo, sin CORS) se traba igual que antes de existir el
+ * proxy.
+ *
+ * `addRpcUrlOverrideToChain` es la función que expone `@privy-io/react-auth`
+ * para esto (docs.privy.io/basics/react/advanced/configuring-evm-networks):
+ * agrega una entrada `rpcUrls.privyWalletOverride` que el cliente de Privy
+ * prioriza por encima de `rpcUrls.default` — no reemplaza `default`, así que
+ * no hace falta duplicar `hashkeyTestnet` a mano con `defineChain`. Se deja
+ * como export aparte, en vez de mutar `hashkeyTestnet`, porque ese objeto lo
+ * siguen usando intactos `web/src/app/api/goteo/route.ts` y
+ * `web/src/app/api/rpc/route.ts` (ambos server-side, sin problema de CORS,
+ * necesitan la URL externa real y no `/api/rpc` — no hay `window.location`
+ * de referencia ahí para resolver una ruta relativa).
+ */
+export const hashkeyTestnetParaPrivy = addRpcUrlOverrideToChain(hashkeyTestnet, "/api/rpc");
