@@ -448,6 +448,11 @@ nuevo) y contratos verificados (`HashVivo`). `TarjetaMetrica` queda aislada
 para reusarse en `/pool/[dir]` cuando ese archivo se libere (en espera de
 CTO, que hoy lo tiene tomado por la investigación de Privy).
 
+**Lenis reevaluado para `/`, a pedido explícito del usuario**, con este
+mismo pivote de layout de Fase A como disparador: CEO concluyó que sigue
+prematuro, la condición de reapertura de `docs/ROADMAP.md` todavía no se
+cumple. Detalle completo en D-043, `DECISIONS.md`.
+
 El segundo commit (`54d9c40`) corrige un bug real encontrado por Design
 Lead en su propia verificación visual antes de pedir el merge: parpadeo
 "aparece completo → desaparece → reaparece al hacer scroll" en la lista de
