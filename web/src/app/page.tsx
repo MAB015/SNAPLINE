@@ -127,7 +127,13 @@ export default function Inicio() {
               Verificado en cadena
             </h2>
 
-            <RevelaEnScrollDiv className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {/* `lg:grid-cols-4`: en ancho completo real (sin cap de 1280px),
+                dos columnas dejarian cada tarjeta de cifra unica demasiado
+                ancha y vacia. A 4 columnas las dos tarjetas de una sola
+                cifra ocupan una columna cada una y la de contratos (que
+                lleva una lista, no una cifra) sigue en `sm:col-span-2`, asi
+                que 1+1+2 completa la fila entera en vez de dejarla suelta. */}
+            <RevelaEnScrollDiv className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <TarjetaMetrica etiqueta="Auditoría">
                 <p className="mono text-2xl">
                   <ContadorTests valor={40} />
