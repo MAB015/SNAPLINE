@@ -37,6 +37,14 @@ Queda pendiente, a cargo de Design Lead, actualizar `docs/BRAND.md` para
 reflejar ancho completo como metáfora vigente antes de que otra pantalla
 se construya asumiendo la columna angosta vieja.
 
+**Cerrada 2026-09-22.** Design Lead actualizó `docs/BRAND.md` §14 en
+`19928b1`: documenta `max-w-3xl` como plantilla compartida de las
+pantallas de documento/formulario (`/acuerdo/[id]`, `/nuevo`,
+`/pagar/[dir]`, `/pool/[dir]`, `/retiro-cop/[dir]`) y agrega `/` como
+excepción explícita de ancho completo, sin tocar las reglas duras de
+§12. `docs/BRAND.md` queda alineado con el código; no hay pendiente
+abierto de Fase A.
+
 ---
 
 ## 2026-09-22 · Lenis para la landing: todavía no hay caso concreto

@@ -520,11 +520,13 @@ parpadeo de D5) y la lista "Para quién es" suma un marcador de color por
 participante (`trama-${tokenParticipante(i)}`, mismo patrón que la leyenda
 de `BarraSegmentada.tsx`, sin token nuevo).
 
-Esto es un cambio de dirección respecto de la columna angosta que fijaba
-`docs/BRAND.md` hasta ahora; el documento todavía no está actualizado para
-reflejar la metáfora de ancho completo. Queda pendiente para Design Lead
-en un paso aparte — no lo reescribo yo por no tener el criterio completo
-de sistema visual que sí tiene Design Lead.
+Esto fue un cambio de dirección respecto de la columna angosta que fijaba
+`docs/BRAND.md` hasta ese momento. **Cerrado en `19928b1`:** Design Lead
+actualizó `docs/BRAND.md` §14 — documenta `max-w-3xl` como plantilla
+compartida de las pantallas de documento/formulario y agrega `/` como
+excepción explícita de ancho completo (D-045), sin tocar §12. Verificado
+por Product Manager (diff acotado a `docs/BRAND.md`, fast-forward limpio
+sobre `main`) y mergeado. No queda pendiente abierto de Fase A.
 
 **Verificado por Product Manager antes de mergear:** `eslint`/`next build`
 en verde sobre la punta de la rama (nueve rutas esperadas), y de nuevo
