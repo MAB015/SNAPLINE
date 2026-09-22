@@ -294,6 +294,26 @@ de STATUS/TASKS/DECISIONS de esa rama duplicaban exactamente lo ya
 integrado a `main` por otra vía (D-038), así que no hubo nada que
 reconciliar ahí.
 
+**Generación D8 (mitigación de hang post-firma), EN CURSO (2026-09-22).** Un
+único worktree (`agent-ae7d6eb5fed5ef349`, rama `feat/web-fix-pagar-hang`,
+`HEAD` en `7b08028` al arrancar —mismo commit que el merge-base con `main`,
+sin commits propios todavía—), dirigido por CTO a `frontend-engineer`, para
+cerrar el bug reportado a CTO en la corrida conductual en vivo de más abajo
+("Corrida conductual en vivo"): la UI no confirma visualmente pago/despliegue
+aunque la transacción sí se completa en cadena. Alcance de esta pasada:
+`esperarRecibo` (nuevo, `web/src/lib/recibo.ts`) aplicado a
+`web/src/app/pagar/[dir]/PagarCliente.tsx` y
+`web/src/app/acuerdo/[id]/AcuerdoCliente.tsx` — timeout más fallback de
+lectura de recibo tras la firma/pago, en vez de depender solo del evento del
+wallet. Confirmado sin cruce con ningún otro worktree activo a esta fecha:
+ninguna rama viva (`feat/web-firma-eip712`, `feat/web-privy-integracion` ni
+los `worktree-agent-*` en pie) toca esos archivos. **Excluido de esta
+pasada:** `web/src/app/pool/[dir]/PoolCliente.tsx` — sigue bloqueado porque
+el orquestador está retirando en vivo desde esa pantalla ahora mismo (ver
+"Corrida conductual en vivo" abajo); entra en una segunda pasada cuando esa
+corrida libere el archivo. **Falta antes de revisar para mergear:** limpiar
+logs de debug y comitear — el diff actual está sin trackear en el worktree.
+
 ## `design` — ✅ D5 listo, snap con GSAP
 
 **Hecho:** dirección visual revisada de Acta a **Acta Viva** (D-029) y

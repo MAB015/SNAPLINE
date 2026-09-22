@@ -233,6 +233,12 @@ no en este.
 - [ ] `demo` — tres ensayos de punta a punta
 - [ ] `demo` — borrar el acuerdo de prueba para grabar limpio
 - [ ] `web` — arreglar solo lo que se rompa en los ensayos
+      *(EN CURSO, 2026-09-22: mitigación de hang post-firma — sin
+      confirmación visual de pago/despliegue pese a que la tx se completa en
+      cadena. Timeout + fallback de lectura de recibo, `agent-ae7d6eb5fed5ef349`
+      / `feat/web-fix-pagar-hang`, en `PagarCliente.tsx` y
+      `AcuerdoCliente.tsx`; `PoolCliente.tsx` queda para una segunda pasada.
+      Ver `STATUS.md`)*
 - [ ] **Stretch** `web` — pago de entrada en pesos simulado *(solo si D1–D7
       cerraron a tiempo; corte a las 6 horas. Si el anillo 3D se desbordó de
       D7, ese hueco es del anillo y este stretch se cae)*
