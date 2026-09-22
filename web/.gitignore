@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generado por `next dev` (Next 16): bloque de reglas para agentes que
+# escribe node_modules/next/dist/server/lib/generate-agent-files.js;
+# se re-crea solo, no es contenido del repo (ver DECISIONS.md)
+/AGENTS.md
+/CLAUDE.md

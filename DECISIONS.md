@@ -6,7 +6,25 @@ nueva que la revierte.
 
 ---
 
-## 2026-09-21 · Tercer fix de CORS, cierre del paso final de D5
+## 2026-09-22 · Gitignorar `web/AGENTS.md` y `web/CLAUDE.md`
+
+### D-042 · `web/AGENTS.md` y `web/CLAUDE.md` van a `.gitignore`, no son contenido del repo
+Aparecieron sin trackear en un worktree de `web` (`agent-abf58eefef5bc12db`,
+reportado por frontend-engineer durante la mitigación del hang post-firma).
+`web/AGENTS.md` empieza con `<!-- BEGIN:nextjs-agent-rules -->` y dice
+textualmente que el bloque "is written and re-added by `next dev` — verify
+at `node_modules/next/dist/server/lib/generate-agent-files.js`". Es Next 16
+(`web/package.json` tiene `"next": "16.3.5"`) el que los genera solo al
+correr `next dev`/`npm install`; `web/CLAUDE.md` es solo `@AGENTS.md`, una
+referencia interna de esa misma función, sin relación con el `CLAUDE.md` de
+raíz del repo (ese sí trackeado). Confirmado con `git ls-tree -r main` que
+ninguno de los dos estuvo nunca trackeado: no hay contenido real que se
+pierda al ignorarlos. Van a reaparecer en cualquier worktree que corra
+`next dev` de nuevo mientras se use esta versión de Next.
+**Descartado:** no hacer nada y confiar en que cada agente los deje fuera
+del `git add` a mano — ya generó una alerta de un agente que no sabía si
+era ruido de tooling o un archivo real; mejor que `.gitignore` lo resuelva
+una sola vez.
 
 ### D-041 · `addRpcUrlOverrideToChain` para que el cliente embebido de Privy hable con el proxy `/api/rpc`
 El proxy same-origin `/api/rpc` (commit `97a06ec`) resolvió las lecturas que
