@@ -6,6 +6,39 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-22 · Fase A del pivote de layout: ancho completo real en `/`
+
+### D-045 · `/` pasa de columna angosta a ancho completo real; `docs/BRAND.md` queda desactualizado en ese punto
+El usuario pidió explícitamente no ver la landing "acotada, en la mitad".
+Fase A del pivote de layout (mencionada sin commits propios en D-044) se
+cerró en tres commits del worktree `agent-a8c86285bae941d3d`
+(`6b0937a`, `e4b42e4`, `7dd81d1`), mergeados por Product Manager: `page.tsx`
+pierde el cap `max-w-3xl` del `<main>` y de la sección `chain`, sin volver
+a poner `max-w-7xl` como se había evaluado antes — ancho completo real, no
+un cap más generoso. La sección `chain` sangra a todo el viewport con
+`left-1/2`/`-translate-x-1/2`/`w-screen`; la grilla de `TarjetaMetrica`
+pasa de `sm:grid-cols-2` a `lg:grid-cols-4` para no dejar tarjetas de cifra
+única demasiado anchas y vacías en desktop sin el cap de 1280px. En el
+mismo bloque, `InterruptorTema.tsx` pasa de texto a ícono sol/luna (área de
+toque 32×32, foco visible) y su preferencia pasa a persistir en
+`localStorage` vía `useSyncExternalStore`, compartida entre `/` y
+`/acuerdo/[id]` en vez de quedar contenida a cada pantalla como fijaba
+D-034.
+
+Alternativa descartada: `max-w-7xl` como paso intermedio (mencionado en el
+propio código como opción evaluada y rechazada) — seguía siendo un cap,
+no resolvía el pedido de "sin acotar".
+
+Esto es un cambio de dirección visual respecto de la columna centrada que
+`docs/BRAND.md` documentaba hasta ahora. El documento no se actualizó en
+este merge: la persona que mergeó (Product Manager) no tiene criterio de
+sistema visual completo para reescribirlo sin introducir inconsistencias.
+Queda pendiente, a cargo de Design Lead, actualizar `docs/BRAND.md` para
+reflejar ancho completo como metáfora vigente antes de que otra pantalla
+se construya asumiendo la columna angosta vieja.
+
+---
+
 ## 2026-09-22 · Lenis para la landing: todavía no hay caso concreto
 
 ### D-044 · Lenis sigue afuera de `/`, incluso reevaluado para el pivote de layout de Fase A
