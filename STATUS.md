@@ -591,6 +591,29 @@ simulado en el resto de superficies, anillo 3D, recibo de transacción,
 tema oscuro). Las verificaciones conductuales de D5, D6 y D7 quedan
 anotadas como tareas de D8, no como bloqueo de `web`.
 
+**Corrida conductual en vivo, EN CURSO ahora (2026-09-22).** Es la misma
+corrida real de D5/D6 mencionada arriba, adelantada antes de D7 (ver
+`TASKS.md` D8) y ya con los dos bugs bloqueantes de esta sección
+integrados en `main`. La ejecuta el orquestador directamente contra el
+navegador, desde la sesión principal — **no** es un agente con worktree
+ni rama propia, así que no va a aparecer en `git log` ni en el mapa de
+asignaciones mientras esté activa. Se deja esta nota para que cualquier
+agente que revise este archivo sepa que hay actividad en vivo ahora
+mismo, sin necesidad de que termine para quedar registrada.
+
+Reportado por el orquestador (Product Manager no verificó estos pasos de
+forma independiente, a diferencia de los fixes de arriba — quedan como
+reporte de quien los corrió, a confirmar cuando cierre la corrida): las
+tres firmas EIP-712 reales de un acuerdo de prueba, el despliegue real de
+`createPool` (pool en `0x4D434ab58bb4128FF656DaAD33C38D58eC88B7a5`,
+verificado con `eth_getCode`), un mint real de MockUSDT y un pago real de
+100 mUSDT al pool (verificados con `eth_call` a `balanceOf`, aunque la UI
+no llegó a confirmarlos visualmente — bug ya reportado a CTO, sin
+resolver todavía). **Pendiente:** retiro real desde `/pool/[dir]`,
+pausado — el orquestador está coordinando con Product Manager para no
+cruzarse con ningún worktree que toque `PoolCliente.tsx` antes de
+retomarlo.
+
 ## `demo` — 🟡 Guion escrito
 
 **Hecho:** guion plano por plano y datos de la demo fijados en
