@@ -1,6 +1,6 @@
 # Estado del proyecto — SNAPLINE
 
-**Última actualización:** 2026-09-21 · **Bloque cerrado:** D6 · `/pagar/[dir]` y `/pool/[dir]` en main, código verificado por build/eslint y lectura de cadena real contra un pool de prueba manual; verificación conductual real diferida a propósito a D8 junto con la de D5 (decisión del usuario)
+**Última actualización:** 2026-09-22 · **Bloque cerrado:** D6 · `/pagar/[dir]` y `/pool/[dir]` en main, código verificado por build/eslint y lectura de cadena real contra un pool de prueba manual; verificación conductual real diferida a propósito a D8 junto con la de D5 (decisión del usuario). En curso: D7 `design` (peso visual de `/` con referencia Sharplink.com, tarjetas y fix de parpadeo mergeados en `9849a5b`) y la corrida conductual en vivo de D5/D6/Privy desde el checkout principal.
 **Cierre del hackathon:** 1 de octubre de 2026 · **Días restantes de trabajo:** 10
 
 Este archivo se actualiza en el mismo commit que el trabajo que describe.
@@ -407,6 +407,61 @@ completa, `git status` confirmó que el segundo commit tocó un solo archivo,
 `git merge-tree` contra el `main` ya integrado con CORS y D7-web sin
 conflictos, y `lint`/`build` repetidos sobre `main` ya combinado. Ver D-039
 en `DECISIONS.md`.
+
+**Fuera de plan, peso visual de la sección de confianza en "/" con
+referencia Sharplink.com, mergeada en `9849a5b`:** dos commits de
+creative-director sobre el mismo worktree
+(`agent-ab2ab49c168025e3a`/`worktree-agent-ab2ab49c168025e3a`), integrados
+juntos por venir apilados. `caf5e70` reemplaza el bloque de texto corrido
+de "Verificado en cadena" por `TarjetaMetrica.tsx` (nuevo, reusable):
+tarjeta de superficie `chain` con etiqueta chica y contenido libre, sin
+glow ni degradado (`docs/BRAND.md` §12 — el peso lo dan tamaño, contraste y
+espacio, no luz), patrón adaptado de `docs/DESIGN-REFERENCES.md`. Tres
+tarjetas: auditoría (`ContadorTests`), casos de fuzzing (`ContadorFuzz.tsx`,
+nuevo) y contratos verificados (`HashVivo`). `TarjetaMetrica` queda aislada
+para reusarse en `/pool/[dir]` cuando ese archivo se libere (en espera de
+CTO, que hoy lo tiene tomado por la investigación de Privy).
+
+El segundo commit (`54d9c40`) corrige un bug real encontrado por Design
+Lead en su propia verificación visual antes de pedir el merge: parpadeo
+"aparece completo → desaparece → reaparece al hacer scroll" en la lista de
+"Para quién es" y la grilla de "Verificado en cadena" — mismo patrón que el
+bug de `ContadorNumero` en D5. `RevelaEnScrollUl`/`RevelaEnScrollDiv`
+(nuevos, `web/src/components/RevelaEnScroll.tsx`) envuelven ese contenido;
+la clase `revela-en-scroll` (`globals.css`, gateada por
+`prefers-reduced-motion: no-preference`) fija opacidad 0 y desplazamiento
+en los hijos directos desde el primer pintado, antes de que corra el
+`useEffect` de GSAP (`web/src/lib/revelaEnScroll.ts`), para que el reveal
+nazca ya oculto en vez de aparecer y recién después esconderse.
+`HashVivo.tsx` suma el prop opcional `dispararEnVista` (default `false`,
+sin cambio de comportamiento en ningún uso existente — `AcuerdoCliente.tsx`,
+`PagarCliente.tsx`, `PoolCliente.tsx` siguen disparando al montar) para que
+el scramble del hash dispare al entrar en viewport en vez de al montar,
+porque esos hashes quedan bajo el pliegue. Con `prefers-reduced-motion:
+reduce` la regla CSS no aplica y GSAP resuelve la misma preferencia en JS,
+así que el contenido nunca pasa por un estado oculto.
+
+**Verificado en el navegador, no solo por el reporte de Design
+Lead/creative-director:** el orquestador confirmó que la regla mediaquery
+está realmente en la hoja de estilos servida (`document.styleSheets`) antes
+de cualquier JS, con el texto exacto de la regla. Product Manager repitió
+`next build`/`eslint` de forma independiente tres veces —sobre la parte ya
+commiteada del worktree, sobre el fix ya commiteado, y de nuevo sobre
+`main` ya combinado (`9849a5b`)— las tres en verde, con las nueve rutas
+esperadas generadas. `git merge-tree` confirmó sin conflictos contra el
+`main` real vigente (`7b08028`, que ya tenía el proxy de Privy de D-041)
+antes de integrar.
+
+**Nota de proceso:** el fix llegó al worktree sin commitear, mismo patrón
+que D6, pero a diferencia de esa vez no había una sesión propia de
+creative-director a la que devolverle el pedido de "commiteá antes de
+mergear" dentro de esta corrida — el pedido llegó ya empaquetado como
+encargo de cierre para Product Manager, sin otra sesión activa a mano. Se
+commiteó como Product Manager (`54d9c40`) en vez de dejarlo sin cerrar,
+desviación puntual del patrón de D6 que queda anotada aquí; para el
+próximo bloque, seguir prefiriendo que cada especialista commitee su
+propio trabajo cuando haya una sesión activa a la que pedírselo.
+
 
 **Bloqueado por:** nada.
 
