@@ -62,7 +62,19 @@ export default function Inicio() {
           para heredar `data-theme` y los tokens `bg-doc`/`text-ink`
           correctos si el interruptor de tema ya se anulo en esta sesion. */}
       <PantallaCarga />
-      <main className="mx-auto w-full max-w-3xl px-6 py-16">
+      {/* Sin cap de ancho (antes `max-w-3xl`, luego se evaluó `max-w-7xl`):
+          se optó por ancho completo real porque el usuario lo pidió
+          explícitamente ("no quiero que se vea acotado, en la mitad"). El
+          `<h1>` y la grilla de la sección "Verificado en cadena" van a
+          estirarse a todo el viewport en monitores ultra-wide (2560px+) —
+          es la consecuencia esperada de esta decisión, no un descuido. Los
+          párrafos largos siguen protegidos por `max-w-prose` donde ya se
+          usaba, así que la legibilidad del texto no se pierde aunque el
+          contenedor raíz ya no tenga límite. `overflow-x-hidden` evita que
+          el sangrado de la sección `chain` de abajo (`w-screen` +
+          `left-1/2` + `-translate-x-1/2`) fuerce scroll horizontal por
+          redondeos de `100vw` vs. la barra de scroll. */}
+      <main className="mx-auto w-full overflow-x-hidden px-6 py-16 sm:px-8 lg:px-16">
         <div className="mb-12 flex items-start justify-between gap-4">
           <p className="mono text-ink-60 text-xs tracking-wide uppercase">
             HSKChain Testnet
@@ -99,12 +111,18 @@ export default function Inicio() {
           </RevelaEnScrollUl>
         </section>
 
+        {/* Sangra a todo el ancho del viewport (truco del contenedor
+            centrado: `left-1/2` + `-translate-x-1/2` + `w-screen` recentran
+            un bloque de ancho de pantalla completo dentro de un padre
+            centrado). El contenido interno ya no vuelve a capearse a
+            `max-w-7xl` como en el intento anterior — sigue el mismo criterio
+            de ancho completo real del `<main>` de arriba. */}
         <section
           data-surface="chain"
-          className="bg-chain text-on-chain relative mt-16 overflow-hidden border border-transparent px-6 py-8"
+          className="bg-chain text-on-chain relative left-1/2 mt-16 w-screen -translate-x-1/2 overflow-hidden border border-transparent"
         >
           <div className="textura-rejilla pointer-events-none absolute inset-0" aria-hidden="true" />
-          <div className="relative">
+          <div className="relative px-6 py-8 sm:px-8 lg:px-16">
             <h2 className="mono text-xs tracking-wide uppercase opacity-80">
               Verificado en cadena
             </h2>
