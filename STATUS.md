@@ -12,7 +12,7 @@ Este archivo se actualiza en el mismo commit que el trabajo que describe.
 | Área | Estado | Siguiente |
 |---|---|---|
 | `docs` | ✅ Listo | Solo mantenimiento del tracking |
-| `infra` | 🟡 D4 casi listo | Fondeo de testnet; Vercel en D9–D10 |
+| `infra` | 🟡 D4 casi listo | Cuentas del demo ya fondeadas; Vercel en D9–D10 |
 | `contracts` | ✅ D2 desplegado | Consumido desde D5 web; sin tareas propias hasta D8 |
 | `design` | ✅ D5 listo, landing D-039 cerrada | D7 · anillo 3D y pulido |
 | `web` | ✅ D7 (parte web) código listo, corrida real en D8 | D7 · pulido de `design` (anillo 3D, sello, tema oscuro) |
@@ -59,20 +59,28 @@ listar borradores ajenos, y sin `update` ni `delete` para nadie. Migración
 versionada en `supabase/migrations/`. Ver D-031. Ya en uso: `/nuevo` guarda
 bordadores ahí.
 
-**Falta:** verificar el fondeo de las cuatro cuentas de testnet; proyecto de
-Vercel y primer despliegue, bloqueado en `TASKS.md` hasta D9–D10.
-`DEPLOYER_PRIVATE_KEY` y `NEXT_PUBLIC_PRIVY_APP_ID` están presentes y no
-vacías en `web/.env.local` del checkout principal, comprobado sin exponer
-valores el 2026-09-21. Esto corrige el estado anterior: no demuestra que el
-goteo haya funcionado ni que las cuatro cuentas estén fondeadas — el goteo
-sí se verificó de forma independiente, ver más abajo en la sección `web` y
-D-041 en `DECISIONS.md`.
+**Fondeo de las cuatro cuentas del demo**, cerrado el 2026-09-21: las cuatro
+direcciones de `docs/DEMO-SCRIPT.md` (Mariana y Julián con wallets externas,
+Sofía y Andrés con wallets embebidas creadas por login de Privy) ya existen y
+tienen 0,01 HSK cada una vía `/api/goteo`, confirmado en cadena con
+`eth_getBalance`. Direcciones, roles y bps documentados en
+[`docs/DEMO-ACCOUNTS.md`](docs/DEMO-ACCOUNTS.md); los correos reales detrás de
+los alias quedan fuera del repo a propósito, en `local-notes/` (sin
+versionar). Cierra las tareas de D2 y D8 sobre reserva y fondeo de cuentas —
+ver `TASKS.md`. `DEPLOYER_PRIVATE_KEY` y `NEXT_PUBLIC_PRIVY_APP_ID` están
+presentes y no vacías en `web/.env.local` del checkout principal, comprobado
+sin exponer valores el 2026-09-21 (rama `main`, en paralelo al fondeo) — el
+goteo también se verificó de forma independiente, ver más abajo en la
+sección `web` y D-041 en `DECISIONS.md`.
+
+**Falta:** proyecto de Vercel y primer despliegue, bloqueado en `TASKS.md`
+hasta D9–D10.
 
 **Nota:** el CI no se añade hasta que haya algo que construir. Un `main` con
 CI en rojo incumple la regla de "siempre desplegable".
 
-**Bloqueado por:** faltan las cuatro direcciones públicas y fondos de testnet.
-Remoto configurado: https://github.com/MAB015/SNAPLINE.git.
+**Bloqueado por:** nada en este momento. Remoto configurado:
+https://github.com/MAB015/SNAPLINE.git.
 
 ## `contracts` — 🟡 D2 local validado
 
@@ -117,11 +125,9 @@ tres verificadas en el explorador con solc 0.8.24, optimizador a 200 runs;
 decimales; llamar a `initialize` sobre la implementación revierte con
 `AlreadyInitialized` (`0x0dc149f0`), así que el clon de referencia está quemado
 y nadie puede secuestrarlo. Coste real del despliegue: 0,00195 HSK a 1,001
-gwei. Quedan 0,098 HSK para el goteo de gas de D4.
-
-**Falta:** reservar HSK para las cuatro cuentas del demo. Esa tarea sigue
-bloqueada porque las cuatro direcciones todavía no existen: dos son wallets
-embebidas que Privy crea en D4.
+gwei. Del saldo de la cuenta de despliegue, 0,04 HSK ya se gastaron el
+2026-09-21 fondeando las cuatro cuentas del demo con 0,01 HSK cada una (ver
+`infra`); quedan ~0,058 HSK para el goteo de gas del resto del proyecto.
 
 **Cambio de red autorizado:** HSKChain Testnet, chainId 133, HSK de prueba para gas y MockUSDT para pagos (D-026). Configuración pública y referencias de red actualizadas; contracts/.env local e ignorado preparado. RPC y API del explorador responden. Fuentes ya verificadas.
 
@@ -290,6 +296,26 @@ de STATUS/TASKS/DECISIONS de esa rama duplicaban exactamente lo ya
 integrado a `main` por otra vía (D-038), así que no hubo nada que
 reconciliar ahí.
 
+**Generación D8 (mitigación de hang post-firma), EN CURSO (2026-09-22).** Un
+único worktree (`agent-ae7d6eb5fed5ef349`, rama `feat/web-fix-pagar-hang`,
+`HEAD` en `7b08028` al arrancar —mismo commit que el merge-base con `main`,
+sin commits propios todavía—), dirigido por CTO a `frontend-engineer`, para
+cerrar el bug reportado a CTO en la corrida conductual en vivo de más abajo
+("Corrida conductual en vivo"): la UI no confirma visualmente pago/despliegue
+aunque la transacción sí se completa en cadena. Alcance de esta pasada:
+`esperarRecibo` (nuevo, `web/src/lib/recibo.ts`) aplicado a
+`web/src/app/pagar/[dir]/PagarCliente.tsx` y
+`web/src/app/acuerdo/[id]/AcuerdoCliente.tsx` — timeout más fallback de
+lectura de recibo tras la firma/pago, en vez de depender solo del evento del
+wallet. Confirmado sin cruce con ningún otro worktree activo a esta fecha:
+ninguna rama viva (`feat/web-firma-eip712`, `feat/web-privy-integracion` ni
+los `worktree-agent-*` en pie) toca esos archivos. **Excluido de esta
+pasada:** `web/src/app/pool/[dir]/PoolCliente.tsx` — sigue bloqueado porque
+el orquestador está retirando en vivo desde esa pantalla ahora mismo (ver
+"Corrida conductual en vivo" abajo); entra en una segunda pasada cuando esa
+corrida libere el archivo. **Falta antes de revisar para mergear:** limpiar
+logs de debug y comitear — el diff actual está sin trackear en el worktree.
+
 ## `design` — ✅ D5 listo, snap con GSAP
 
 **Hecho:** dirección visual revisada de Acta a **Acta Viva** (D-029) y
@@ -421,6 +447,11 @@ tarjetas: auditoría (`ContadorTests`), casos de fuzzing (`ContadorFuzz.tsx`,
 nuevo) y contratos verificados (`HashVivo`). `TarjetaMetrica` queda aislada
 para reusarse en `/pool/[dir]` cuando ese archivo se libere (en espera de
 CTO, que hoy lo tiene tomado por la investigación de Privy).
+
+**Lenis reevaluado para `/`, a pedido explícito del usuario**, con este
+mismo pivote de layout de Fase A como disparador: CEO concluyó que sigue
+prematuro, la condición de reapertura de `docs/ROADMAP.md` todavía no se
+cumple. Detalle completo en D-044, `DECISIONS.md`.
 
 El segundo commit (`54d9c40`) corrige un bug real encontrado por Design
 Lead en su propia verificación visual antes de pedir el merge: parpadeo
@@ -741,6 +772,28 @@ mergear — no se tocó desde aquí.
 **Sigue pendiente, no bloqueante:** `PoolCliente.tsx` (retiro) probablemente
 tiene el mismo patrón de bug, sin confirmar ni tocado. Entra como tarea
 aparte. Ver `TASKS.md` D8.
+**Corrida conductual en vivo, EN CURSO ahora (2026-09-22).** Es la misma
+corrida real de D5/D6 mencionada arriba, adelantada antes de D7 (ver
+`TASKS.md` D8) y ya con los dos bugs bloqueantes de esta sección
+integrados en `main`. La ejecuta el orquestador directamente contra el
+navegador, desde la sesión principal — **no** es un agente con worktree
+ni rama propia, así que no va a aparecer en `git log` ni en el mapa de
+asignaciones mientras esté activa. Se deja esta nota para que cualquier
+agente que revise este archivo sepa que hay actividad en vivo ahora
+mismo, sin necesidad de que termine para quedar registrada.
+
+Reportado por el orquestador (Product Manager no verificó estos pasos de
+forma independiente, a diferencia de los fixes de arriba — quedan como
+reporte de quien los corrió, a confirmar cuando cierre la corrida): las
+tres firmas EIP-712 reales de un acuerdo de prueba, el despliegue real de
+`createPool` (pool en `0x4D434ab58bb4128FF656DaAD33C38D58eC88B7a5`,
+verificado con `eth_getCode`), un mint real de MockUSDT y un pago real de
+100 mUSDT al pool (verificados con `eth_call` a `balanceOf`, aunque la UI
+no llegó a confirmarlos visualmente — bug ya reportado a CTO, sin
+resolver todavía). **Pendiente:** retiro real desde `/pool/[dir]`,
+pausado — el orquestador está coordinando con Product Manager para no
+cruzarse con ningún worktree que toque `PoolCliente.tsx` antes de
+retomarlo.
 
 ## `demo` — 🟡 Guion escrito
 

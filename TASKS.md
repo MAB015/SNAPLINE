@@ -45,7 +45,9 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
       direcciones del README
 - [x] `infra` — CI: tests de contratos en cada push (validado en GitHub,
       ejecución 35537664699)
-- [ ] `infra` — reservar HSK de testnet en las cuatro cuentas del demo
+- [x] `infra` — reservar HSK de testnet en las cuatro cuentas del demo
+      (fondeadas el 2026-09-21, 0,01 HSK cada una vía `/api/goteo`; ver
+      `docs/DEMO-ACCOUNTS.md`)
 - [x] `contracts` — leer `ethskills.com/security/SKILL.md` y pasar su lista
       antes de desplegar
 
@@ -205,8 +207,9 @@ diferida a D8 junto con la de D5, mismo motivo: falta
 ## D8 · Congelar y ensayar — domingo 28
 
 - [ ] `demo` — cargar los datos de `docs/DEMO-SCRIPT.md`
-- [ ] `demo` — pre-crear y fondear las cuentas del demo, incluidas las dos
+- [x] `demo` — pre-crear y fondear las cuentas del demo, incluidas las dos
       wallets embebidas, para que sus direcciones existan antes de grabar
+      (hecho el 2026-09-21, direcciones y fondeo en `docs/DEMO-ACCOUNTS.md`)
 - [ ] `web` — correr el flujo end-to-end de D5 contra HSKChain Testnet real:
       login por Privy en tres sesiones, firma EIP-712, la última disparando
       `createPool`, el pool visible en el explorador, y una recarga a mitad

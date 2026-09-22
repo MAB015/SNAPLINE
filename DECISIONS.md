@@ -6,6 +6,55 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-22 · Lenis para la landing: todavía no hay caso concreto
+
+### D-044 · Lenis sigue afuera de `/`, incluso reevaluado para el pivote de layout de Fase A
+El usuario pidió explícitamente que CEO reevaluara Lenis (scroll suave)
+específicamente para la landing, en el marco del pivote hacia un layout de
+ancho completo/más inmersivo que Design Lead está por arrancar ("Fase A";
+el commit `c61ccac` sincronizó su worktree con `main` antes de esa fase,
+pero Fase A todavía no tiene ningún commit propio). `docs/ROADMAP.md` había
+descartado Lenis por resolver un problema de scroll largo que SNAPLINE no
+tiene, pero dejó la puerta abierta a reabrir la discusión "si en el trabajo
+real de D7 aparece una animación puntual que a mano en GSAP salga
+claramente más cara" — mismo criterio que se usó con Foundry.
+
+CEO investigó el caso concreto, no solo releyó el ROADMAP: revisó
+`web/src/app/page.tsx`, `web/src/components/RevelaEnScroll.tsx`,
+`web/src/lib/revelaEnScroll.ts`, `docs/DESIGN-REFERENCES.md` y `STATUS.md`.
+Dos hallazgos sostienen la conclusión. Primero, la landing sigue en
+`max-w-3xl`, columna angosta, cuatro secciones cortas; el pivote de Fase A
+no tiene aún ni brief ni commit, y `docs/DESIGN-REFERENCES.md` se declara a
+sí mismo "research parcial, en curso", con patrones de peso visual
+(tarjetas oscuras con glow, cifras grandes, hero con objeto 3D) pero nada
+de scroll-scrubbing ni pinning. Segundo, el valor real de Lenis aparece
+cuando hay animaciones atadas continuamente a la posición de scroll
+(`ScrollTrigger` con `scrub` y/o `pin`), y todo lo que existe hoy —los
+reveals de `RevelaEnScroll.tsx` y el scramble de `HashVivo.tsx`— dispara
+una vez al entrar en viewport, sin `scrub` ni `pin` en ningún archivo de
+`web/src` (confirmado por grep). Ese patrón funciona igual con scroll
+nativo que con Lenis, así que sumarlo hoy no mejora nada de lo que ya
+existe.
+
+La condición que el propio ROADMAP puso para reabrir la discusión no se
+cumplió todavía, porque la animación puntual que la justificaría (algo
+scroll-scrubbed o pineado) ni existe ni está especificada. Si aparece en el
+trabajo real de Fase A —una sección donde `ScrollTrigger` solo se vea con
+jitter o cueste claramente más de un día hacerlo bien a mano—, ahí sí se
+reevalúa como caso concreto, y quedaría acotado a `/` únicamente: el
+argumento original del ROADMAP sigue aplicando sin cambios a
+`/acuerdo/[id]` y al resto de pantallas de estado/formulario. Costo de
+referencia si el caso llegara a confirmarse: Lenis pesa ~5-6kb gzip y su
+integración con GSAP/ScrollTrigger es de pocas líneas (enganchar
+`lenis.raf` al ticker de GSAP y `ScrollTrigger.update`), así que no sería
+una inversión de varios días.
+
+**Descartado:** no fue agregar Lenis para siempre, fue agregarlo *ahora*.
+Se descarta sumarlo sin una animación scroll-scrubbed o pineada concreta
+que lo justifique — la misma vara que ya fija `docs/ROADMAP.md`, aplicada
+en este momento puntual del pivote de layout.
+
+---
 ## 2026-09-22 · Mitigación del hang no determinista de Privy post-firma
 
 ### D-043 · Timeout más fallback por saldo, sin fix "limpio" posible
