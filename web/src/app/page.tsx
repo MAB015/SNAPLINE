@@ -1,11 +1,22 @@
 import Link from "next/link";
+import { ContadorFuzz } from "@/components/ContadorFuzz";
 import { ContadorTests } from "@/components/ContadorTests";
 import { EjemploBarraHero } from "@/components/EjemploBarraHero";
 import { HashVivo } from "@/components/HashVivo";
 import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
 import { PantallaCarga } from "@/components/PantallaCarga";
+import { TarjetaMetrica } from "@/components/TarjetaMetrica";
 import { FACTORY_ADDRESS } from "@/lib/firma";
 import { MOCK_USDT_ADDRESS } from "@/lib/token";
+
+/**
+ * Dos invariantes de contabilidad × 1000 casos fuzz cada una, más 1000
+ * casos fuzz de firmas EIP-712 (STATUS.md § contracts, "Validación"): la
+ * cifra grande de la tarjeta de fuzzing. Constante literal por el mismo
+ * motivo que `SPLIT_POOL_IMPLEMENTATION_ADDRESS` de abajo: no hay un
+ * artefacto de build que sobreviva a Vercel para leerlo en runtime.
+ */
+const TOTAL_CASOS_FUZZ = 2 * 1000 + 1000;
 
 /**
  * Implementación de referencia de los clones EIP-1167 (deployments/hashkey-
@@ -97,34 +108,47 @@ export default function Inicio() {
               Verificado en cadena
             </h2>
 
-            <ul className="mt-6">
-              {CONTRATOS_VERIFICADOS.map((contrato, i) => (
-                <li
-                  key={contrato.direccion}
-                  className={
-                    i === CONTRATOS_VERIFICADOS.length - 1
-                      ? "py-4"
-                      : "border-on-chain/20 border-b py-4"
-                  }
-                >
-                  <p className="text-sm">{contrato.nombre}</p>
-                  <div className="mt-1">
-                    <HashVivo valor={contrato.direccion} superficie="chain" />
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <TarjetaMetrica etiqueta="Auditoría">
+                <p className="mono text-2xl">
+                  <ContadorTests valor={40} />
+                </p>
+              </TarjetaMetrica>
 
-            <div className="border-on-chain/20 mt-8 max-w-prose border-t pt-8">
-              <h3 className="mono text-xs tracking-wide uppercase opacity-80">
-                Auditoría
-              </h3>
-              <p className="mt-3 text-sm">
-                Los contratos pasan <ContadorTests valor={40} /> sin fallos ni
-                omitidos. Las dos invariantes de contabilidad
+              <TarjetaMetrica etiqueta="Casos fuzz">
+                <p className="mono text-2xl">
+                  <ContadorFuzz valor={TOTAL_CASOS_FUZZ} />
+                </p>
+              </TarjetaMetrica>
+
+              <TarjetaMetrica etiqueta="Contratos verificados" className="sm:col-span-2">
+                <ul>
+                  {CONTRATOS_VERIFICADOS.map((contrato, i) => (
+                    <li
+                      key={contrato.direccion}
+                      className={
+                        i === CONTRATOS_VERIFICADOS.length - 1
+                          ? "py-3"
+                          : "border-on-chain/20 border-b py-3"
+                      }
+                    >
+                      <p className="text-sm">{contrato.nombre}</p>
+                      <div className="mt-1">
+                        <HashVivo valor={contrato.direccion} superficie="chain" />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </TarjetaMetrica>
+            </div>
+
+            <div className="mt-8 max-w-prose">
+              <p className="text-sm">
+                Sin fallos ni omitidos. Las dos invariantes de contabilidad
                 corrieron 1000 casos fuzz cada una, y otros 1000 casos fuzz
-                validaron las firmas EIP-712. El análisis con Slither encontró
-                seis hallazgos sobre el código, ninguno alto ni accionable.
+                validaron las firmas EIP-712 — {TOTAL_CASOS_FUZZ} en total. El
+                análisis con Slither encontró seis hallazgos sobre el código,
+                ninguno alto ni accionable.
               </p>
               <p className="mono text-on-chain/60 mt-3 text-xs">
                 Reporte crudo: contracts/audit/slither-2026-09-20.txt
