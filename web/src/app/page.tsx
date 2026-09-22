@@ -5,6 +5,7 @@ import { EjemploBarraHero } from "@/components/EjemploBarraHero";
 import { HashVivo } from "@/components/HashVivo";
 import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
 import { PantallaCarga } from "@/components/PantallaCarga";
+import { RevelaEnScrollDiv, RevelaEnScrollUl } from "@/components/RevelaEnScroll";
 import { TarjetaMetrica } from "@/components/TarjetaMetrica";
 import { FACTORY_ADDRESS } from "@/lib/firma";
 import { MOCK_USDT_ADDRESS } from "@/lib/token";
@@ -88,14 +89,14 @@ export default function Inicio() {
           <h2 className="text-ink-60 text-xs tracking-wide uppercase">
             Para quién es
           </h2>
-          <ul className="border-ink mt-3 border-t">
+          <RevelaEnScrollUl className="border-ink mt-3 border-t">
             {CASOS_DE_USO.map((caso) => (
               <li key={caso.titulo} className="border-b border-rule py-4">
                 <p className="text-sm">{caso.titulo}</p>
                 <p className="text-ink-60 mt-1 max-w-prose text-sm">{caso.detalle}</p>
               </li>
             ))}
-          </ul>
+          </RevelaEnScrollUl>
         </section>
 
         <section
@@ -108,7 +109,7 @@ export default function Inicio() {
               Verificado en cadena
             </h2>
 
-            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <RevelaEnScrollDiv className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <TarjetaMetrica etiqueta="Auditoría">
                 <p className="mono text-2xl">
                   <ContadorTests valor={40} />
@@ -134,13 +135,17 @@ export default function Inicio() {
                     >
                       <p className="text-sm">{contrato.nombre}</p>
                       <div className="mt-1">
-                        <HashVivo valor={contrato.direccion} superficie="chain" />
+                        <HashVivo
+                          valor={contrato.direccion}
+                          superficie="chain"
+                          dispararEnVista
+                        />
                       </div>
                     </li>
                   ))}
                 </ul>
               </TarjetaMetrica>
-            </div>
+            </RevelaEnScrollDiv>
 
             <div className="mt-8 max-w-prose">
               <p className="text-sm">

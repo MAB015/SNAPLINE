@@ -219,3 +219,19 @@ body {
    `prefers-reduced-motion` en JS. El estado de reposo antes del snap (linea
    en scaleX(0), marcas en opacidad 0) se escribe inline desde ese
    componente, no aqui. */
+
+/* Reveal por scroll (docs/BRAND.md §10, RevelaEnScroll.tsx / revelaEnScroll.ts):
+   el estado de reposo (hijos directos en opacidad 0, desplazados) tiene que
+   existir desde el primer pintado -- server o cliente, antes de que el
+   `useEffect` de GSAP corra -- si no hay un parpadeo de "aparece completo,
+   despues desaparece, despues vuelve a aparecer al hacer scroll" (mismo tipo
+   de bug que ya se encontro y corrigio en ContadorNumero, D5). Gateado por
+   `prefers-reduced-motion` para que, con esa preferencia, el contenido nunca
+   pase por un estado oculto: aparece directo en su posicion final, coherente
+   con como GSAP resuelve la misma preferencia en JS. */
+@media (prefers-reduced-motion: no-preference) {
+  .revela-en-scroll > * {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}

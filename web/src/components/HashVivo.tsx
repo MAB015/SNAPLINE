@@ -3,9 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { abreviarDireccion, urlExplorador } from "@/lib/acuerdo";
 
-gsap.registerPlugin(ScrambleTextPlugin);
+gsap.registerPlugin(ScrambleTextPlugin, ScrollTrigger);
 
 /**
  * Hash vivo (docs/BRAND.md §9): hover despliega el valor completo, clic
@@ -34,10 +35,23 @@ export function HashVivo({
   valor,
   superficie = "doc",
   className = "",
+  dispararEnVista = false,
 }: {
   valor: string;
   superficie?: Superficie;
   className?: string;
+  /**
+   * Por defecto (`false`) el scramble dispara al montar, como siempre —
+   * ningún uso existente (`AcuerdoCliente.tsx`, `PagarCliente.tsx`,
+   * `PoolCliente.tsx`) cambia de comportamiento. En `true`, usa el propio
+   * elemento como `ScrollTrigger` y dispara una sola vez al entrar en
+   * viewport (`once: true`) en vez de al montar: pensado para hashes bajo
+   * el pliegue, como los de "Contratos verificados" en `/`, donde el
+   * scramble-al-montar ya terminaría antes de que el usuario llegue con
+   * scroll (Next monta el componente entero apenas carga la página, no hay
+   * lazy-mount por scroll).
+   */
+  dispararEnVista?: boolean;
 }) {
   const [copiado, setCopiado] = useState(false);
   const colorTexto = TEXTO_POR_SUPERFICIE[superficie];
@@ -65,6 +79,12 @@ export function HashVivo({
           chars: "0123456789abcdef",
           speed: 0.4,
         },
+        // Ver doc del prop `dispararEnVista` arriba: por defecto dispara al
+        // montar (comportamiento existente, sin cambios); con la prop en
+        // `true` espera a que el propio elemento entre en viewport.
+        scrollTrigger: dispararEnVista
+          ? { trigger: el, start: "top 85%", once: true }
+          : undefined,
       });
 
       return () => {
@@ -75,7 +95,7 @@ export function HashVivo({
     return () => {
       mm.revert();
     };
-  }, [abreviado]);
+  }, [abreviado, dispararEnVista]);
 
   async function copiar() {
     try {
