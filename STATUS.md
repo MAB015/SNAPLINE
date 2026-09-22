@@ -493,6 +493,51 @@ desviación puntual del patrón de D6 que queda anotada aquí; para el
 próximo bloque, seguir prefiriendo que cada especialista commitee su
 propio trabajo cuando haya una sesión activa a la que pedírselo.
 
+**Fase A del pivote de layout a ancho completo, cerrada (merge de
+integración en `main`), tres commits del worktree
+`agent-a8c86285bae941d3d`:** cambio de metáfora visual en `/` — de columna
+centrada (`max-w-3xl`) a ancho completo real, a pedido explícito del
+usuario ("no quiero que se vea acotado, en la mitad"). `page.tsx` pierde el
+cap tanto del `<main>` como del contenido de la sección `chain`, sin volver
+a poner `max-w-7xl` como se había evaluado antes; la sección `chain` sangra
+a todo el viewport con el truco `left-1/2`/`-translate-x-1/2`/`w-screen`, y
+el `<main>` suma `overflow-x-hidden` para que el redondeo de `100vw` contra
+la barra de scroll no fuerce scroll horizontal. Los párrafos largos siguen
+protegidos por `max-w-prose` donde ya lo estaban. La grilla de
+`TarjetaMetrica` en "Verificado en cadena" pasa de `sm:grid-cols-2` a
+`lg:grid-cols-4` porque, sin el cap de 1280px, dos columnas dejaban cada
+tarjeta de cifra única demasiado ancha y vacía en desktop.
+
+En el mismo bloque: `InterruptorTema.tsx` pasa de botón de texto a ícono
+sol/luna en línea (área de toque 32×32, foco visible) y la preferencia
+explícita del interruptor pasa a persistir en `localStorage`
+(`snapline:tema`) vía `useSyncExternalStore`, así que ya no queda contenida
+a cada pantalla por separado como fijó D-034 — ahora se comparte entre `/`
+y `/acuerdo/[id]`. Los reveals de scroll se intensifican (desplazamiento de
+16px a 28px, stagger de 0.08s a 0.12s en `revelaEnScroll.ts`, con el mismo
+valor de reposo replicado en `globals.css` para no reintroducir el
+parpadeo de D5) y la lista "Para quién es" suma un marcador de color por
+participante (`trama-${tokenParticipante(i)}`, mismo patrón que la leyenda
+de `BarraSegmentada.tsx`, sin token nuevo).
+
+Esto es un cambio de dirección respecto de la columna angosta que fijaba
+`docs/BRAND.md` hasta ahora; el documento todavía no está actualizado para
+reflejar la metáfora de ancho completo. Queda pendiente para Design Lead
+en un paso aparte — no lo reescribo yo por no tener el criterio completo
+de sistema visual que sí tiene Design Lead.
+
+**Verificado por Product Manager antes de mergear:** `eslint`/`next build`
+en verde sobre la punta de la rama (nueve rutas esperadas), y de nuevo
+sobre `main` ya combinado. Confirmado por lectura directa de código —no
+solo por el reporte recibido— que `InterruptorTema.tsx` usa `localStorage`
+(seis referencias) y que `page.tsx` no tiene `max-w-3xl` ni `max-w-7xl`
+como clase real (las únicas coincidencias son comentarios explicando por
+qué se sacaron). `git merge-tree` contra el `main` vigente sin marcadores
+de conflicto; el único commit de `main` por delante de la base de esta
+rama (`67980a7`) solo tocaba `STATUS.md`, sin cruce de archivos. Sin cruce
+con el frente paralelo de Privy en `PoolCliente.tsx`
+(`feat/web-pool-timeout-fallback`, sin commits propios por encima de
+`main` al momento de este merge).
 
 **Bloqueado por:** nada.
 
