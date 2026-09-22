@@ -1,6 +1,6 @@
 # Estado del proyecto — SNAPLINE
 
-**Última actualización:** 2026-09-21 · **Bloque cerrado:** D6 · `/pagar/[dir]` y `/pool/[dir]` en main, código verificado por build/eslint y lectura de cadena real contra un pool de prueba manual; verificación conductual real diferida a propósito a D8 junto con la de D5 (decisión del usuario)
+**Última actualización:** 2026-09-22 · **Bloque cerrado:** D6 · `/pagar/[dir]` y `/pool/[dir]` en main, código verificado por build/eslint y lectura de cadena real contra un pool de prueba manual; verificación conductual real diferida a propósito a D8 junto con la de D5 (decisión del usuario). En curso: D7 `design` (peso visual de `/` con referencia Sharplink.com, tarjetas y fix de parpadeo mergeados en `9849a5b`) y la corrida conductual en vivo de D5/D6/Privy desde el checkout principal.
 **Cierre del hackathon:** 1 de octubre de 2026 · **Días restantes de trabajo:** 10
 
 Este archivo se actualiza en el mismo commit que el trabajo que describe.
@@ -67,12 +67,14 @@ tienen 0,01 HSK cada una vía `/api/goteo`, confirmado en cadena con
 [`docs/DEMO-ACCOUNTS.md`](docs/DEMO-ACCOUNTS.md); los correos reales detrás de
 los alias quedan fuera del repo a propósito, en `local-notes/` (sin
 versionar). Cierra las tareas de D2 y D8 sobre reserva y fondeo de cuentas —
-ver `TASKS.md`.
+ver `TASKS.md`. `DEPLOYER_PRIVATE_KEY` y `NEXT_PUBLIC_PRIVY_APP_ID` están
+presentes y no vacías en `web/.env.local` del checkout principal, comprobado
+sin exponer valores el 2026-09-21 (rama `main`, en paralelo al fondeo) — el
+goteo también se verificó de forma independiente, ver más abajo en la
+sección `web` y D-041 en `DECISIONS.md`.
 
-**Falta:** `DEPLOYER_PRIVATE_KEY` en `web/.env.local` (documentada en
-`.env.example`, sin valor puesto — sin ella el goteo de gas responde 500 pero
-no bloquea el resto de la app); proyecto de Vercel y primer despliegue,
-bloqueado en `TASKS.md` hasta D9–D10.
+**Falta:** proyecto de Vercel y primer despliegue, bloqueado en `TASKS.md`
+hasta D9–D10.
 
 **Nota:** el CI no se añade hasta que haya algo que construir. Un `main` con
 CI en rojo incumple la regla de "siempre desplegable".
@@ -432,6 +434,61 @@ completa, `git status` confirmó que el segundo commit tocó un solo archivo,
 conflictos, y `lint`/`build` repetidos sobre `main` ya combinado. Ver D-039
 en `DECISIONS.md`.
 
+**Fuera de plan, peso visual de la sección de confianza en "/" con
+referencia Sharplink.com, mergeada en `9849a5b`:** dos commits de
+creative-director sobre el mismo worktree
+(`agent-ab2ab49c168025e3a`/`worktree-agent-ab2ab49c168025e3a`), integrados
+juntos por venir apilados. `caf5e70` reemplaza el bloque de texto corrido
+de "Verificado en cadena" por `TarjetaMetrica.tsx` (nuevo, reusable):
+tarjeta de superficie `chain` con etiqueta chica y contenido libre, sin
+glow ni degradado (`docs/BRAND.md` §12 — el peso lo dan tamaño, contraste y
+espacio, no luz), patrón adaptado de `docs/DESIGN-REFERENCES.md`. Tres
+tarjetas: auditoría (`ContadorTests`), casos de fuzzing (`ContadorFuzz.tsx`,
+nuevo) y contratos verificados (`HashVivo`). `TarjetaMetrica` queda aislada
+para reusarse en `/pool/[dir]` cuando ese archivo se libere (en espera de
+CTO, que hoy lo tiene tomado por la investigación de Privy).
+
+El segundo commit (`54d9c40`) corrige un bug real encontrado por Design
+Lead en su propia verificación visual antes de pedir el merge: parpadeo
+"aparece completo → desaparece → reaparece al hacer scroll" en la lista de
+"Para quién es" y la grilla de "Verificado en cadena" — mismo patrón que el
+bug de `ContadorNumero` en D5. `RevelaEnScrollUl`/`RevelaEnScrollDiv`
+(nuevos, `web/src/components/RevelaEnScroll.tsx`) envuelven ese contenido;
+la clase `revela-en-scroll` (`globals.css`, gateada por
+`prefers-reduced-motion: no-preference`) fija opacidad 0 y desplazamiento
+en los hijos directos desde el primer pintado, antes de que corra el
+`useEffect` de GSAP (`web/src/lib/revelaEnScroll.ts`), para que el reveal
+nazca ya oculto en vez de aparecer y recién después esconderse.
+`HashVivo.tsx` suma el prop opcional `dispararEnVista` (default `false`,
+sin cambio de comportamiento en ningún uso existente — `AcuerdoCliente.tsx`,
+`PagarCliente.tsx`, `PoolCliente.tsx` siguen disparando al montar) para que
+el scramble del hash dispare al entrar en viewport en vez de al montar,
+porque esos hashes quedan bajo el pliegue. Con `prefers-reduced-motion:
+reduce` la regla CSS no aplica y GSAP resuelve la misma preferencia en JS,
+así que el contenido nunca pasa por un estado oculto.
+
+**Verificado en el navegador, no solo por el reporte de Design
+Lead/creative-director:** el orquestador confirmó que la regla mediaquery
+está realmente en la hoja de estilos servida (`document.styleSheets`) antes
+de cualquier JS, con el texto exacto de la regla. Product Manager repitió
+`next build`/`eslint` de forma independiente tres veces —sobre la parte ya
+commiteada del worktree, sobre el fix ya commiteado, y de nuevo sobre
+`main` ya combinado (`9849a5b`)— las tres en verde, con las nueve rutas
+esperadas generadas. `git merge-tree` confirmó sin conflictos contra el
+`main` real vigente (`7b08028`, que ya tenía el proxy de Privy de D-041)
+antes de integrar.
+
+**Nota de proceso:** el fix llegó al worktree sin commitear, mismo patrón
+que D6, pero a diferencia de esa vez no había una sesión propia de
+creative-director a la que devolverle el pedido de "commiteá antes de
+mergear" dentro de esta corrida — el pedido llegó ya empaquetado como
+encargo de cierre para Product Manager, sin otra sesión activa a mano. Se
+commiteó como Product Manager (`54d9c40`) en vez de dejarlo sin cerrar,
+desviación puntual del patrón de D6 que queda anotada aquí; para el
+próximo bloque, seguir prefiriendo que cada especialista commitee su
+propio trabajo cuando haya una sesión activa a la que pedírselo.
+
+
 **Bloqueado por:** nada.
 
 ## `web` — ✅ D7 (parte web) código listo, corrida real diferida a D8
@@ -493,12 +550,12 @@ integradas y combinadas (verificado 2026-09-21). `NEXT_PUBLIC_PRIVY_APP_ID`
 ya está puesto en `web/.env.local` (el usuario lo proveyó); un smoke check
 con `next dev` contra `/acuerdo/[id]` confirmó que el SSR ya no cae en el
 fallback "Falta NEXT_PUBLIC_PRIVY_APP_ID" sino en el estado normal de carga
-— la variable está bien cableada. `DEPLOYER_PRIVATE_KEY` sigue sin estar en
-ese `.env.local`: sin ella el goteo responde 500, sin tumbar el resto de la
-app (gap conocido desde D4, ver sección `infra`); si la última firma de la
-corrida real de D8 la completa una wallet embebida sin HSK, esto podría
-bloquear el `createPool` final por falta de gas, no solo el goteo — a
-confirmar cuando se arme esa corrida.
+— la variable está bien cableada. `DEPLOYER_PRIVATE_KEY` está presente y no
+vacía en ese `.env.local`, verificado por Product Manager el 2026-09-21 sin
+mostrar valores, y confirmado funcional: ver el tercer bug bloqueante más
+abajo, donde el goteo se probó de punta a punta contra la testnet real y el
+`createPool` final de la corrida de D5/D6 se completó con gas pagado por una
+wallet embebida de Privy (D-041).
 
 **Diferido a propósito, no bloqueante:** el criterio de terminado de D5 en
 `docs/SCOPE-PLAN.md` —"tres sesiones distintas firman y el pool aparece en
@@ -549,6 +606,52 @@ por Product Manager antes de mergear: `next build`/`eslint` en verde sobre
 la rama, con `/api/rpc` registrado junto al resto de las rutas; diff de dos
 archivos; sin cruce con ningún otro worktree activo. La corrida real de
 D5/D6 sigue en curso, ahora con ambos fixes integrados en `main`.
+
+**Tercer bug bloqueante encontrado y arreglado en la misma corrida real de
+D5/D6 (2026-09-21).** El proxy same-origin de arriba resolvió las lecturas
+que pasan por `wagmiConfig.transports`, pero el cliente interno de Privy
+para operaciones de la wallet embebida (nonce, estimación de gas, broadcast)
+no lee `wagmiConfig`: lee la cadena pasada a
+`PrivyClientConfig.defaultChain`/`supportedChains`, que seguía apuntando al
+RPC externo sin CORS — el mismo bloqueo de antes, ahora en el paso final de
+`createPool`, que ni llegaba a abrir el modal de Privy. Arreglado (worktree
+`agent-a7c2e6741788a6cd8`, commit `8dfcfce`): `addRpcUrlOverrideToChain`
+(API oficial de `@privy-io/react-auth`, ver
+docs.privy.io/basics/react/advanced/configuring-evm-networks) agrega una
+entrada `rpcUrls.privyWalletOverride` que el cliente de Privy prioriza sobre
+`rpcUrls.default`, sin mutar el objeto `hashkeyTestnet` que usan
+`api/rpc/route.ts` y `api/goteo/route.ts` server-side. Ver D-041 en
+`DECISIONS.md`.
+
+Verificado de forma independiente por Product Manager antes de mergear:
+`next build`/`eslint` en verde sobre la rama; diff acotado a
+`web/src/lib/wagmi.ts` y `web/src/lib/privy.ts`, sin tocar
+`api/rpc/route.ts` ni `api/goteo/route.ts`; `git merge-tree` contra `main`
+sin conflictos. `/api/goteo` probado con `curl` contra la testnet real:
+dirección fresca goteada con recibo confirmado
+(`eth_getTransactionReceipt` con `status: 0x1`, minado en bloque real),
+segunda llamada a la misma dirección no volvió a gotear (idempotencia),
+dirección inválida rechazada con error.
+
+**Con este tercer fix, la corrida real de D5 llegó a su paso final: CEO
+hizo el click-through real en el navegador**, contra el dev server del
+worktree del fix, con el acuerdo
+`5a58a173-e81d-41f9-a961-efe927b0c386` (tres firmas ya puestas): el modal
+real de Privy "Approve transaction" apareció por primera vez (antes ni
+llegaba a mostrarse por el CORS) y el firmante P3
+(`0x40a7a99D17F1020CcEf27a793C0A19D32e466875`) disparó `createPool`. Pool
+desplegado en `0x4D434ab58bb4128FF656DaAD33C38D58eC88B7a5`, verificado de
+forma independiente por RPC directo: `eth_getCode` en esa dirección
+devuelve bytecode real de clon EIP-1167 (45 bytes) apuntando a la
+implementación `0x88ceD9e8…FE7F`; `eth_getTransactionCount` de P3 pasó de
+`0x0` a `0x1`.
+
+**Sigue pendiente, no bloqueante:** la recarga a mitad de la confirmación
+(protección anti-doble-despliegue) y la corrida real completa de D6
+(`/pagar`/`/pool` con wallet de navegador: faucet, pago, retiro) no se
+corrieron en esta sesión — el click-through cubrió el paso final de D5
+(login, firma acumulada, `createPool`), no la corrida completa de D6. Ver
+`TASKS.md` D8.
 
 **Hecho en D6** (worktree `agent-a374d5e4199c337c3`, rama
 `worktree-agent-a374d5e4199c337c3`, commit `e9f0551`, integrada en
@@ -652,10 +755,10 @@ edición.
 |---|---|
 | Privy consume más tiempo del previsto | Corte a las 3 horas en D4: se cae a wallet externa y la embebida pasa a stretch de D8 |
 | El despliegue multi-firma (D5) se atrasa | Es el día crítico. Si se cae, se sacrifica D7 completo (pulido y animación) |
-| El código de D5 (firma, despliegue, snap) y D6 (`/pagar`, `/pool`) está integrado a `main` pero la verificación conductual real (tres sesiones, Privy, pool en el explorador, pago y retiro desde navegador) queda diferida a D8 por decisión del usuario | `NEXT_PUBLIC_PRIVY_APP_ID` ya está puesto en `web/.env.local`; falta correr la prueba, prevista junto con los ensayos de punta a punta de D8 (ver `TASKS.md`). Si la última firma la completa una wallet embebida sin HSK, revisar si hace falta `DEPLOYER_PRIVATE_KEY` para esa corrida, no solo para el goteo |
+| El código de D5 (firma, despliegue, snap) y D6 (`/pagar`, `/pool`) está integrado a `main`; el paso final de D5 (login, firma acumulada y `createPool`) se verificó el 2026-09-21 con wallet real de Privy tras el tercer fix de CORS (D-041) | Pendiente: recarga a mitad de la confirmación (anti-doble-despliegue) y la corrida real completa de D6 (`/pagar`/`/pool` con wallet de navegador) — ver `TASKS.md` D8 |
 | El faucet de HSKChain Testnet falla el día de grabar | MockUSDT tiene faucet propio. Para el gas: reservar HSK de testnet con anticipación en D2 |
 | El stretch de pago en pesos se come tiempo del ensayo | Solo se toca si D1–D7 cerraron a tiempo. Corte a las 6 horas en D8 |
-| Las wallets embebidas se crean sin gas y no pueden retirar | Goteo de HSK implementado (`web/src/app/api/goteo/route.ts`), pendiente de `DEPLOYER_PRIVATE_KEY` en `web/.env.local` para probarlo de punta a punta. Privy con HSKChain Testnet aún sin probar en el navegador |
+| Las wallets embebidas se crean sin gas y no pueden retirar | Goteo de HSK verificado de punta a punta contra la testnet real el 2026-09-21 (`curl`, recibo confirmado, idempotencia). El bloqueo de CORS del cliente embebido de Privy para gastar ese gas está resuelto (D-041) |
 | La guía de submission de Cali aparece tarde y exige algo no previsto | Conseguirla cuanto antes. Está en `TASKS.md` como bloqueada por información externa |
 
 ## Contexto del evento

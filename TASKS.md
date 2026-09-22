@@ -82,9 +82,11 @@ que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
 - [x] `web` — Privy: entrada por correo con wallet embebida y conexión de
       wallet externa (`web/src/lib/privy.ts`, `web/src/lib/providers.tsx`)
 - [x] `web` — goteo de gas: `web/src/app/api/goteo/route.ts`, idempotente por
-      saldo cero, se dispara desde `Providers` al conectar. **Falta:**
-      `DEPLOYER_PRIVATE_KEY` en `web/.env.local` (hoy solo documentada en
-      `.env.example`; sin ella el goteo responde 500 y no bloquea el resto)
+      saldo cero, se dispara desde `Providers` al conectar.
+      `DEPLOYER_PRIVATE_KEY` presente y no vacía en `web/.env.local` del
+      checkout principal; probado con `curl` contra la testnet real el
+      2026-09-21 — goteo, recibo confirmado e idempotencia verificados. Ver
+      `STATUS.md` y D-041
 - [x] `web` — `/nuevo`: participantes, bps con validación de suma exacta
       10000, términos, vista previa con los componentes de D3
 - [x] `infra` — Supabase: tablas `drafts` y `signatures` *(hecho el 20/09,
@@ -212,7 +214,9 @@ diferida a D8 junto con la de D5, mismo motivo: falta
       login por Privy en tres sesiones, firma EIP-712, la última disparando
       `createPool`, el pool visible en el explorador, y una recarga a mitad
       de la confirmación para confirmar que no hay doble despliegue
-      *(diferido a propósito desde D5, decisión del usuario — ver `STATUS.md`)*
+      *(parcial el 2026-09-21: login, firma acumulada y `createPool` con
+      wallet real de Privy, verificados — ver D-041. Falta la recarga a
+      mitad de la confirmación)*
 - [ ] `web` — correr `/pagar/[dir]` y `/pool/[dir]` (D6) con wallet real de
       navegador vía Privy: faucet, pago y retiro, contra el pool real que
       salga del flujo de D5 *(diferido a propósito desde D6, mismo motivo)*
@@ -228,6 +232,14 @@ orquestador directo con herramientas de navegador, mismo patrón que D-038
 El resultado real de la corrida —pasó/falló, qué se encontró— se registra
 en `STATUS.md` en un commit posterior de Product Manager cuando termine,
 no en este.
+
+**Cierre parcial (2026-09-21, Product Manager).** El paso final de D5
+(login acumulado, firma EIP-712, `createPool`) quedó verificado con un
+tercer bug de CORS encontrado y arreglado en el camino — ver D-041 en
+`DECISIONS.md` y la sección `web` de `STATUS.md` para la evidencia
+completa. Sigue sin correr: la recarga a mitad de la confirmación (segunda
+mitad de la primera tarea de arriba) y toda la corrida real de D6 (segunda
+tarea de arriba, sin tocar).
 
 - [ ] `web` — pasar `ethskills.com/qa/SKILL.md` contra la app antes de grabar
 - [ ] `demo` — tres ensayos de punta a punta
