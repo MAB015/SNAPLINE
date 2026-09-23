@@ -3,7 +3,8 @@ import { ContadorFuzz } from "@/components/ContadorFuzz";
 import { ContadorTests } from "@/components/ContadorTests";
 import { EjemploBarraHero } from "@/components/EjemploBarraHero";
 import { HashVivo } from "@/components/HashVivo";
-import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
+import { ProveedorTema } from "@/components/InterruptorTema";
+import { NavBar } from "@/components/NavBar";
 import { PantallaCarga } from "@/components/PantallaCarga";
 import { RevelaEnScrollDiv, RevelaEnScrollUl } from "@/components/RevelaEnScroll";
 import { TarjetaMetrica } from "@/components/TarjetaMetrica";
@@ -63,6 +64,7 @@ export default function Inicio() {
           para heredar `data-theme` y los tokens `bg-doc`/`text-ink`
           correctos si el interruptor de tema ya se anulo en esta sesion. */}
       <PantallaCarga />
+      <NavBar />
       {/* Sin cap de ancho (antes `max-w-3xl`, luego se evaluó `max-w-7xl`):
           se optó por ancho completo real porque el usuario lo pidió
           explícitamente ("no quiero que se vea acotado, en la mitad"). El
@@ -76,12 +78,9 @@ export default function Inicio() {
           `left-1/2` + `-translate-x-1/2`) fuerce scroll horizontal por
           redondeos de `100vw` vs. la barra de scroll. */}
       <main className="mx-auto w-full overflow-x-hidden px-6 py-16 sm:px-8 lg:px-16">
-        <div className="mb-12 flex items-start justify-between gap-4">
-          <p className="mono text-ink-60 text-xs tracking-wide uppercase">
-            HSKChain Testnet
-          </p>
-          <InterruptorTema />
-        </div>
+        <p className="mono text-ink-60 mb-12 text-xs tracking-wide uppercase">
+          HSKChain Testnet
+        </p>
 
         <section>
           <h1 className="font-serif text-2xl leading-tight sm:text-3xl">

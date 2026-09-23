@@ -5,7 +5,8 @@ import { usePrivy, useConnectOrCreateWallet } from "@privy-io/react-auth";
 import { useAccount } from "wagmi";
 import { isAddress, toHex } from "viem";
 import { BarraSegmentada } from "@/components/BarraSegmentada";
-import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
+import { ProveedorTema } from "@/components/InterruptorTema";
+import { NavBar } from "@/components/NavBar";
 import { TablaReparto } from "@/components/TablaReparto";
 import { calcularHashTerminos, sumaBps, type Participante } from "@/lib/acuerdo";
 import { PRIVY_APP_ID } from "@/lib/privy";
@@ -153,11 +154,9 @@ function Formulario() {
   if (link) {
     return (
       <ProveedorTema>
+        <NavBar />
         <main className="mx-auto w-full max-w-3xl px-6 py-16">
-          <div className="mb-12 flex items-start justify-between gap-4">
-            <h1 className="font-serif text-2xl leading-tight sm:text-3xl">Borrador guardado</h1>
-            <InterruptorTema />
-          </div>
+          <h1 className="mb-12 font-serif text-2xl leading-tight sm:text-3xl">Borrador guardado</h1>
           <p className="mt-4 max-w-prose text-sm">
             Compartí este link con los demás participantes para que lo revisen y firmen.
           </p>
@@ -176,11 +175,9 @@ function Formulario() {
 
   return (
     <ProveedorTema>
+      <NavBar />
       <main className="mx-auto w-full max-w-3xl px-6 py-16">
-        <div className="mb-12 flex items-start justify-between gap-4">
-          <h1 className="font-serif text-2xl leading-tight sm:text-3xl">Nuevo acuerdo</h1>
-          <InterruptorTema />
-        </div>
+        <h1 className="mb-12 font-serif text-2xl leading-tight sm:text-3xl">Nuevo acuerdo</h1>
         <p className="mt-4 max-w-prose text-sm">
           Definí el proyecto, los participantes y cómo se reparte. Una vez que todos firmen, el pool de
           cobro se despliega solo.

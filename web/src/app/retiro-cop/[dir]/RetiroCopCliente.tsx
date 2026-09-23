@@ -5,7 +5,8 @@ import { usePrivy, useConnectOrCreateWallet } from "@privy-io/react-auth";
 import { useAccount, usePublicClient } from "wagmi";
 import { isAddress, type Address } from "viem";
 import { HashVivo } from "@/components/HashVivo";
-import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
+import { ProveedorTema } from "@/components/InterruptorTema";
+import { NavBar } from "@/components/NavBar";
 import { SelloSimulado } from "@/components/SelloSimulado";
 import { PRIVY_APP_ID } from "@/lib/privy";
 import { leerCifrasPool } from "@/lib/pool";
@@ -153,16 +154,14 @@ function Contenido({ pool }: { pool: Address }) {
 
   return (
     <ProveedorTema>
+      <NavBar />
       <main className="mx-auto w-full max-w-3xl px-6 py-16">
         {/* docs/DEMO-SCRIPT.md líneas 92-101: el sello está en pantalla desde
             el primer frame, no solo junto al comprobante. */}
         <SelloSimulado detalle="Esto convierte una parte simulada a pesos colombianos con una tasa y una comisión ilustrativas. No mueve dinero real y no habla con ningún banco." />
 
         <header className="border-ink mt-8 border-b pb-6">
-          <div className="flex items-start justify-between gap-4">
-            <h1 className="font-serif text-2xl leading-tight sm:text-3xl">Salir a pesos</h1>
-            <InterruptorTema />
-          </div>
+          <h1 className="font-serif text-2xl leading-tight sm:text-3xl">Salir a pesos</h1>
           <div className="mt-4">
             <p className="mono text-xs uppercase tracking-wide text-ink-60">Dirección del pool</p>
             <div className="mt-1">

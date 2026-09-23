@@ -5,7 +5,8 @@ import { usePrivy, useConnectOrCreateWallet } from "@privy-io/react-auth";
 import { useAccount, usePublicClient, useWriteContract } from "wagmi";
 import { isAddress, type Address, type Hex } from "viem";
 import { HashVivo } from "@/components/HashVivo";
-import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
+import { ProveedorTema } from "@/components/InterruptorTema";
+import { NavBar } from "@/components/NavBar";
 import { PRIVY_APP_ID } from "@/lib/privy";
 import { conTimeout, EnvioTimeoutError, esperarCondicion, esperarRecibo, EsperaReciboTimeoutError } from "@/lib/recibo";
 import { MOCK_USDT_ADDRESS, MOCK_USDT_SYMBOL, mockUsdtAbi, montoAUnidades, unidadesAMonto } from "@/lib/token";
@@ -265,13 +266,11 @@ function Contenido({ pool }: { pool: Address }) {
 
   return (
     <ProveedorTema>
+      <NavBar />
       <main className="mx-auto w-full max-w-3xl px-6 py-16">
-        <div className="flex items-start justify-between gap-4">
-          <p className="mono border-rule text-ink-60 border px-3 py-2 text-xs tracking-wide uppercase">
-            HSKChain Testnet · pago real, link público
-          </p>
-          <InterruptorTema />
-        </div>
+        <p className="mono border-rule text-ink-60 inline-block border px-3 py-2 text-xs tracking-wide uppercase">
+          HSKChain Testnet · pago real, link público
+        </p>
 
         <header className="border-ink mt-8 border-b pb-6">
           <h1 className="font-serif text-2xl leading-tight sm:text-3xl">Pagar</h1>

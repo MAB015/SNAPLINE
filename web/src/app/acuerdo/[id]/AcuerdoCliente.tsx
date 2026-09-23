@@ -8,7 +8,8 @@ import { BarraSegmentada } from "@/components/BarraSegmentada";
 import { CodigoBarras } from "@/components/CodigoBarras";
 import { EstadoAcuerdo } from "@/components/EstadoFirma";
 import { HashVivo } from "@/components/HashVivo";
-import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
+import { ProveedorTema } from "@/components/InterruptorTema";
+import { NavBar } from "@/components/NavBar";
 import { SelloTinta } from "@/components/SelloTinta";
 import { TablaReparto } from "@/components/TablaReparto";
 import { todasFirmadas, type Acuerdo, type Participante } from "@/lib/acuerdo";
@@ -406,13 +407,11 @@ function Contenido({ id }: { id: string }) {
 
   return (
     <ProveedorTema>
+      <NavBar />
       <main className="mx-auto w-full max-w-3xl px-6 py-16">
-        <div className="mb-12 flex items-start justify-between gap-4">
-          <p className="mono border-rule text-ink-60 border px-3 py-2 text-xs tracking-wide uppercase">
-            HSKChain Testnet · relay + cadena reales
-          </p>
-          <InterruptorTema />
-        </div>
+        <p className="mono border-rule text-ink-60 mb-12 inline-block border px-3 py-2 text-xs tracking-wide uppercase">
+          HSKChain Testnet · relay + cadena reales
+        </p>
 
         <header className="border-ink border-b pb-6">
           <h1 className="font-serif text-2xl leading-tight sm:text-3xl">{acuerdo.proyecto}</h1>
