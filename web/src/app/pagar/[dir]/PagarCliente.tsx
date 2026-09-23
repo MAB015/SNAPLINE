@@ -5,6 +5,7 @@ import { usePrivy, useConnectOrCreateWallet } from "@privy-io/react-auth";
 import { useAccount, usePublicClient, useWriteContract } from "wagmi";
 import { isAddress, type Address, type Hex } from "viem";
 import { HashVivo } from "@/components/HashVivo";
+import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
 import { PRIVY_APP_ID } from "@/lib/privy";
 import { conTimeout, EnvioTimeoutError, esperarCondicion, esperarRecibo, EsperaReciboTimeoutError } from "@/lib/recibo";
 import { MOCK_USDT_ADDRESS, MOCK_USDT_SYMBOL, mockUsdtAbi, montoAUnidades, unidadesAMonto } from "@/lib/token";
@@ -263,159 +264,164 @@ function Contenido({ pool }: { pool: Address }) {
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-16">
-      <p className="mono border-rule text-ink-60 border px-3 py-2 text-xs tracking-wide uppercase">
-        HSKChain Testnet · pago real, link público
-      </p>
-
-      <header className="border-ink mt-8 border-b pb-6">
-        <h1 className="font-serif text-2xl leading-tight sm:text-3xl">Pagar</h1>
-        <p className="mt-4 max-w-prose text-sm">
-          Cualquiera con este link puede pagarle al pool, sin ser parte del acuerdo. Solo hace falta
-          una wallet conectada para firmar la transacción.
-        </p>
-        <div className="mt-4">
-          <p className="mono text-xs uppercase tracking-wide text-ink-60">Dirección del pool</p>
-          <div className="mt-1">
-            <HashVivo valor={pool} />
-          </div>
-        </div>
-      </header>
-
-      <section className="mt-12 border-t border-rule pt-8">
-        <p className="mono text-xs uppercase tracking-wide text-ink-60">Wallet</p>
-        {!ready ? (
-          <p className="mt-3 text-sm text-ink-60">Cargando…</p>
-        ) : authenticated && address ? (
-          <div className="mt-3 flex items-center justify-between">
-            <span className="mono text-sm">{address}</span>
-            <button
-              type="button"
-              className="mono text-xs uppercase tracking-wide underline underline-offset-4"
-              onClick={logout}
-            >
-              Salir
-            </button>
-          </div>
-        ) : (
-          <button
-            type="button"
-            className="mono mt-3 border border-ink px-6 py-3 text-xs uppercase tracking-wide"
-            onClick={connectOrCreateWallet}
-          >
-            Conectar wallet para pagar
-          </button>
-        )}
-      </section>
-
-      {address ? (
-        <section className="mt-8 border-t border-rule pt-8">
-          <p className="mono text-xs uppercase tracking-wide text-ink-60">Faucet de {MOCK_USDT_SYMBOL}</p>
-          <p className="mt-2 text-sm">
-            Saldo:{" "}
-            <span className="mono">
-              {cargandoBalance
-                ? "cargando…"
-                : balance !== null
-                  ? `${unidadesAMonto(balance)} ${MOCK_USDT_SYMBOL}`
-                  : "—"}
-            </span>
+    <ProveedorTema>
+      <main className="mx-auto w-full max-w-3xl px-6 py-16">
+        <div className="flex items-start justify-between gap-4">
+          <p className="mono border-rule text-ink-60 border px-3 py-2 text-xs tracking-wide uppercase">
+            HSKChain Testnet · pago real, link público
           </p>
-          {errorBalance ? (
-            <p className="mono mt-2 border border-caution px-4 py-3 text-xs text-caution">
-              {errorBalance}
-            </p>
-          ) : null}
-          {errorMint ? (
-            <p className="mono mt-2 border border-caution px-4 py-3 text-xs text-caution">{errorMint}</p>
-          ) : null}
-          {mintIndeterminado ? (
-            <p className="mono mt-2 border border-caution px-4 py-3 text-xs text-caution">
-              {mintIndeterminado === "sin-hash" ? (
-                "Confirmado por saldo, no se pudo recuperar el hash exacto — revisá el explorador."
-              ) : (
-                <>
-                  No pudimos confirmar automáticamente, pero la transacción se envió. Hash:{" "}
-                  <HashVivo valor={mintIndeterminado} />
-                </>
-              )}
-            </p>
-          ) : null}
-          <button
-            type="button"
-            className="mono mt-3 border border-ink px-6 py-3 text-xs uppercase tracking-wide disabled:cursor-not-allowed disabled:border-rule disabled:text-ink-60"
-            disabled={minteando}
-            onClick={mintear}
-          >
-            {minteando ? "Minteando…" : `Mintear ${MONTO_FAUCET} ${MOCK_USDT_SYMBOL} de prueba`}
-          </button>
-        </section>
-      ) : null}
+          <InterruptorTema />
+        </div>
 
-      <section className="mt-8 border-t border-ink pt-8">
-        <p className="mono text-xs uppercase tracking-wide text-ink-60">Pagar al pool</p>
-
-        <label className="mono mt-4 block text-xs uppercase tracking-wide text-ink-60" htmlFor="monto">
-          Monto ({MOCK_USDT_SYMBOL})
-        </label>
-        <input
-          id="monto"
-          inputMode="decimal"
-          className="mono mt-2 w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-ink disabled:cursor-not-allowed"
-          value={monto}
-          onChange={(e) => setMonto(e.target.value)}
-          placeholder="100.00"
-          disabled={!address}
-        />
-
-        {errorPago ? (
-          <p className="mono mt-4 border border-caution px-4 py-3 text-xs text-caution">{errorPago}</p>
-        ) : null}
-
-        {pagoConfirmado ? (
-          <div
-            data-surface="chain"
-            className="bg-chain text-on-chain mt-4 px-4 py-3"
-          >
-            <p className="mono text-xs uppercase tracking-wide">Pago confirmado</p>
+        <header className="border-ink mt-8 border-b pb-6">
+          <h1 className="font-serif text-2xl leading-tight sm:text-3xl">Pagar</h1>
+          <p className="mt-4 max-w-prose text-sm">
+            Cualquiera con este link puede pagarle al pool, sin ser parte del acuerdo. Solo hace falta
+            una wallet conectada para firmar la transacción.
+          </p>
+          <div className="mt-4">
+            <p className="mono text-xs uppercase tracking-wide text-ink-60">Dirección del pool</p>
             <div className="mt-1">
-              <HashVivo valor={pagoConfirmado} superficie="chain" />
+              <HashVivo valor={pool} />
             </div>
           </div>
-        ) : null}
+        </header>
 
-        {pagoIndeterminado ? (
-          <div
-            data-surface="chain"
-            className="bg-chain text-on-chain mt-4 px-4 py-3"
-          >
-            {pagoIndeterminado === "sin-hash" ? (
-              <p className="mono text-xs uppercase tracking-wide">
-                Confirmado por saldo, no se pudo recuperar el hash exacto — revisá el explorador.
+        <section className="mt-12 border-t border-rule pt-8">
+          <p className="mono text-xs uppercase tracking-wide text-ink-60">Wallet</p>
+          {!ready ? (
+            <p className="mt-3 text-sm text-ink-60">Cargando…</p>
+          ) : authenticated && address ? (
+            <div className="mt-3 flex items-center justify-between">
+              <span className="mono text-sm">{address}</span>
+              <button
+                type="button"
+                className="mono text-xs uppercase tracking-wide underline underline-offset-4"
+                onClick={logout}
+              >
+                Salir
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="mono mt-3 border border-ink px-6 py-3 text-xs uppercase tracking-wide"
+              onClick={connectOrCreateWallet}
+            >
+              Conectar wallet para pagar
+            </button>
+          )}
+        </section>
+
+        {address ? (
+          <section className="mt-8 border-t border-rule pt-8">
+            <p className="mono text-xs uppercase tracking-wide text-ink-60">Faucet de {MOCK_USDT_SYMBOL}</p>
+            <p className="mt-2 text-sm">
+              Saldo:{" "}
+              <span className="mono">
+                {cargandoBalance
+                  ? "cargando…"
+                  : balance !== null
+                    ? `${unidadesAMonto(balance)} ${MOCK_USDT_SYMBOL}`
+                    : "—"}
+              </span>
+            </p>
+            {errorBalance ? (
+              <p className="mono mt-2 border border-caution px-4 py-3 text-xs text-caution">
+                {errorBalance}
               </p>
-            ) : (
-              <>
-                <p className="mono text-xs uppercase tracking-wide">
-                  No pudimos confirmar automáticamente, pero la transacción se envió. Revisá el
-                  explorador:
-                </p>
-                <div className="mt-1">
-                  <HashVivo valor={pagoIndeterminado} superficie="chain" />
-                </div>
-              </>
-            )}
-          </div>
+            ) : null}
+            {errorMint ? (
+              <p className="mono mt-2 border border-caution px-4 py-3 text-xs text-caution">{errorMint}</p>
+            ) : null}
+            {mintIndeterminado ? (
+              <p className="mono mt-2 border border-caution px-4 py-3 text-xs text-caution">
+                {mintIndeterminado === "sin-hash" ? (
+                  "Confirmado por saldo, no se pudo recuperar el hash exacto — revisá el explorador."
+                ) : (
+                  <>
+                    No pudimos confirmar automáticamente, pero la transacción se envió. Hash:{" "}
+                    <HashVivo valor={mintIndeterminado} />
+                  </>
+                )}
+              </p>
+            ) : null}
+            <button
+              type="button"
+              className="mono mt-3 border border-ink px-6 py-3 text-xs uppercase tracking-wide disabled:cursor-not-allowed disabled:border-rule disabled:text-ink-60"
+              disabled={minteando}
+              onClick={mintear}
+            >
+              {minteando ? "Minteando…" : `Mintear ${MONTO_FAUCET} ${MOCK_USDT_SYMBOL} de prueba`}
+            </button>
+          </section>
         ) : null}
 
-        <button
-          type="button"
-          className="mono border-ink bg-ink text-doc disabled:border-rule disabled:text-ink-60 mt-4 border px-6 py-3 text-xs tracking-wide uppercase disabled:cursor-not-allowed disabled:bg-transparent"
-          disabled={!address || pagando}
-          onClick={pagar}
-        >
-          {!address ? "Conectá una wallet para pagar" : pagando ? "Pagando…" : "Pagar"}
-        </button>
-      </section>
-    </main>
+        <section className="mt-8 border-t border-ink pt-8">
+          <p className="mono text-xs uppercase tracking-wide text-ink-60">Pagar al pool</p>
+
+          <label className="mono mt-4 block text-xs uppercase tracking-wide text-ink-60" htmlFor="monto">
+            Monto ({MOCK_USDT_SYMBOL})
+          </label>
+          <input
+            id="monto"
+            inputMode="decimal"
+            className="mono mt-2 w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-ink disabled:cursor-not-allowed"
+            value={monto}
+            onChange={(e) => setMonto(e.target.value)}
+            placeholder="100.00"
+            disabled={!address}
+          />
+
+          {errorPago ? (
+            <p className="mono mt-4 border border-caution px-4 py-3 text-xs text-caution">{errorPago}</p>
+          ) : null}
+
+          {pagoConfirmado ? (
+            <div
+              data-surface="chain"
+              className="bg-chain text-on-chain mt-4 px-4 py-3"
+            >
+              <p className="mono text-xs uppercase tracking-wide">Pago confirmado</p>
+              <div className="mt-1">
+                <HashVivo valor={pagoConfirmado} superficie="chain" />
+              </div>
+            </div>
+          ) : null}
+
+          {pagoIndeterminado ? (
+            <div
+              data-surface="chain"
+              className="bg-chain text-on-chain mt-4 px-4 py-3"
+            >
+              {pagoIndeterminado === "sin-hash" ? (
+                <p className="mono text-xs uppercase tracking-wide">
+                  Confirmado por saldo, no se pudo recuperar el hash exacto — revisá el explorador.
+                </p>
+              ) : (
+                <>
+                  <p className="mono text-xs uppercase tracking-wide">
+                    No pudimos confirmar automáticamente, pero la transacción se envió. Revisá el
+                    explorador:
+                  </p>
+                  <div className="mt-1">
+                    <HashVivo valor={pagoIndeterminado} superficie="chain" />
+                  </div>
+                </>
+              )}
+            </div>
+          ) : null}
+
+          <button
+            type="button"
+            className="mono border-ink bg-ink text-doc disabled:border-rule disabled:text-ink-60 mt-4 border px-6 py-3 text-xs tracking-wide uppercase disabled:cursor-not-allowed disabled:bg-transparent"
+            disabled={!address || pagando}
+            onClick={pagar}
+          >
+            {!address ? "Conectá una wallet para pagar" : pagando ? "Pagando…" : "Pagar"}
+          </button>
+        </section>
+      </main>
+    </ProveedorTema>
   );
 }

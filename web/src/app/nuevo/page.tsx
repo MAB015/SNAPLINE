@@ -5,6 +5,7 @@ import { usePrivy, useConnectOrCreateWallet } from "@privy-io/react-auth";
 import { useAccount } from "wagmi";
 import { isAddress, toHex } from "viem";
 import { BarraSegmentada } from "@/components/BarraSegmentada";
+import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
 import { TablaReparto } from "@/components/TablaReparto";
 import { calcularHashTerminos, sumaBps, type Participante } from "@/lib/acuerdo";
 import { PRIVY_APP_ID } from "@/lib/privy";
@@ -151,190 +152,200 @@ function Formulario() {
 
   if (link) {
     return (
-      <main className="mx-auto w-full max-w-3xl px-6 py-16">
-        <h1 className="font-serif text-2xl leading-tight sm:text-3xl">Borrador guardado</h1>
-        <p className="mt-4 max-w-prose text-sm">
-          Compartí este link con los demás participantes para que lo revisen y firmen.
-        </p>
-        <p className="mono mt-6 border border-ink px-3 py-2 text-sm break-all">{link}</p>
-        <button
-          type="button"
-          className="mono mt-4 border border-ink px-6 py-3 text-xs uppercase tracking-wide"
-          onClick={() => navigator.clipboard.writeText(link)}
-        >
-          Copiar link
-        </button>
-      </main>
+      <ProveedorTema>
+        <main className="mx-auto w-full max-w-3xl px-6 py-16">
+          <div className="mb-12 flex items-start justify-between gap-4">
+            <h1 className="font-serif text-2xl leading-tight sm:text-3xl">Borrador guardado</h1>
+            <InterruptorTema />
+          </div>
+          <p className="mt-4 max-w-prose text-sm">
+            Compartí este link con los demás participantes para que lo revisen y firmen.
+          </p>
+          <p className="mono mt-6 border border-ink px-3 py-2 text-sm break-all">{link}</p>
+          <button
+            type="button"
+            className="mono mt-4 border border-ink px-6 py-3 text-xs uppercase tracking-wide"
+            onClick={() => navigator.clipboard.writeText(link)}
+          >
+            Copiar link
+          </button>
+        </main>
+      </ProveedorTema>
     );
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-16">
-      <h1 className="font-serif text-2xl leading-tight sm:text-3xl">Nuevo acuerdo</h1>
-      <p className="mt-4 max-w-prose text-sm">
-        Definí el proyecto, los participantes y cómo se reparte. Una vez que todos firmen, el pool de
-        cobro se despliega solo.
-      </p>
+    <ProveedorTema>
+      <main className="mx-auto w-full max-w-3xl px-6 py-16">
+        <div className="mb-12 flex items-start justify-between gap-4">
+          <h1 className="font-serif text-2xl leading-tight sm:text-3xl">Nuevo acuerdo</h1>
+          <InterruptorTema />
+        </div>
+        <p className="mt-4 max-w-prose text-sm">
+          Definí el proyecto, los participantes y cómo se reparte. Una vez que todos firmen, el pool de
+          cobro se despliega solo.
+        </p>
 
-      <section className="mt-12 border-t border-rule pt-8">
-        <p className="mono text-xs uppercase tracking-wide text-ink-60">Identidad</p>
-        {!ready ? (
-          <p className="mt-3 text-sm text-ink-60">Cargando…</p>
-        ) : authenticated && address ? (
-          <div className="mt-3 flex items-center justify-between">
-            <span className="mono text-sm">{address}</span>
-            <button type="button" className="mono text-xs uppercase tracking-wide underline underline-offset-4" onClick={logout}>
-              Salir
+        <section className="mt-12 border-t border-rule pt-8">
+          <p className="mono text-xs uppercase tracking-wide text-ink-60">Identidad</p>
+          {!ready ? (
+            <p className="mt-3 text-sm text-ink-60">Cargando…</p>
+          ) : authenticated && address ? (
+            <div className="mt-3 flex items-center justify-between">
+              <span className="mono text-sm">{address}</span>
+              <button type="button" className="mono text-xs uppercase tracking-wide underline underline-offset-4" onClick={logout}>
+                Salir
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="mono mt-3 border border-ink px-6 py-3 text-xs uppercase tracking-wide"
+              onClick={connectOrCreateWallet}
+            >
+              Entrar con correo o wallet
             </button>
+          )}
+          <p className="mt-2 text-xs text-ink-60">
+            Quien guarda el borrador queda registrado como su creador. Firmar el acuerdo es un paso aparte.
+          </p>
+        </section>
+
+        <section className="mt-12 border-t border-rule pt-8">
+          <label className="mono block text-xs uppercase tracking-wide text-ink-60" htmlFor="proyecto">
+            Proyecto
+          </label>
+          <input
+            id="proyecto"
+            className="mt-2 w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-ink"
+            value={proyecto}
+            onChange={(e) => setProyecto(e.target.value)}
+            placeholder="Campaña Tropicana — video + identidad"
+          />
+        </section>
+
+        <section className="mt-12 border-t border-rule pt-8">
+          <div className="flex items-baseline justify-between">
+            <p className="mono text-xs uppercase tracking-wide text-ink-60">Participantes</p>
+            <span className={`mono text-xs ${total === 10000 ? "text-ink" : "text-stamp"}`}>
+              {(total / 100).toFixed(2)}% de 100.00%
+            </span>
           </div>
-        ) : (
+
+          <div className="mt-4 space-y-4">
+            {filas.map((fila) => (
+              <div key={fila.clave} className="border border-rule p-4">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-[2fr_2fr_3fr_1fr]">
+                  <input
+                    className="border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-ink"
+                    placeholder="Nombre"
+                    value={fila.nombre}
+                    onChange={(e) => actualizarFila(fila.clave, { nombre: e.target.value })}
+                  />
+                  <input
+                    className="border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-ink"
+                    placeholder="Rol"
+                    value={fila.rol}
+                    onChange={(e) => actualizarFila(fila.clave, { rol: e.target.value })}
+                  />
+                  <input
+                    className="mono border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-ink"
+                    placeholder="0x…"
+                    value={fila.direccion}
+                    onChange={(e) => actualizarFila(fila.clave, { direccion: e.target.value })}
+                  />
+                  <input
+                    className="mono border border-rule bg-transparent px-3 py-2 text-right text-sm outline-none focus:border-ink"
+                    placeholder="bps"
+                    inputMode="numeric"
+                    value={fila.bps}
+                    onChange={(e) => actualizarFila(fila.clave, { bps: e.target.value })}
+                  />
+                </div>
+                <div className="mt-2 flex justify-between text-xs text-ink-60">
+                  {address ? (
+                    <button
+                      type="button"
+                      className="underline underline-offset-4"
+                      onClick={() => actualizarFila(fila.clave, { direccion: address })}
+                    >
+                      Usar mi dirección
+                    </button>
+                  ) : (
+                    <span />
+                  )}
+                  {filas.length > 2 ? (
+                    <button
+                      type="button"
+                      className="underline underline-offset-4"
+                      onClick={() => quitarFila(fila.clave)}
+                    >
+                      Quitar
+                    </button>
+                  ) : (
+                    <span />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {direccionesRepetidas ? (
+            <p className="mono mt-3 text-xs uppercase tracking-wide text-stamp">
+              Hay direcciones repetidas
+            </p>
+          ) : null}
+
           <button
             type="button"
-            className="mono mt-3 border border-ink px-6 py-3 text-xs uppercase tracking-wide"
-            onClick={connectOrCreateWallet}
+            className="mono mt-4 border border-rule px-6 py-3 text-xs uppercase tracking-wide"
+            onClick={agregarFila}
           >
-            Entrar con correo o wallet
+            Agregar participante
           </button>
-        )}
-        <p className="mt-2 text-xs text-ink-60">
-          Quien guarda el borrador queda registrado como su creador. Firmar el acuerdo es un paso aparte.
-        </p>
-      </section>
-
-      <section className="mt-12 border-t border-rule pt-8">
-        <label className="mono block text-xs uppercase tracking-wide text-ink-60" htmlFor="proyecto">
-          Proyecto
-        </label>
-        <input
-          id="proyecto"
-          className="mt-2 w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-ink"
-          value={proyecto}
-          onChange={(e) => setProyecto(e.target.value)}
-          placeholder="Campaña Tropicana — video + identidad"
-        />
-      </section>
-
-      <section className="mt-12 border-t border-rule pt-8">
-        <div className="flex items-baseline justify-between">
-          <p className="mono text-xs uppercase tracking-wide text-ink-60">Participantes</p>
-          <span className={`mono text-xs ${total === 10000 ? "text-ink" : "text-stamp"}`}>
-            {(total / 100).toFixed(2)}% de 100.00%
-          </span>
-        </div>
-
-        <div className="mt-4 space-y-4">
-          {filas.map((fila) => (
-            <div key={fila.clave} className="border border-rule p-4">
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-[2fr_2fr_3fr_1fr]">
-                <input
-                  className="border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-ink"
-                  placeholder="Nombre"
-                  value={fila.nombre}
-                  onChange={(e) => actualizarFila(fila.clave, { nombre: e.target.value })}
-                />
-                <input
-                  className="border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-ink"
-                  placeholder="Rol"
-                  value={fila.rol}
-                  onChange={(e) => actualizarFila(fila.clave, { rol: e.target.value })}
-                />
-                <input
-                  className="mono border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-ink"
-                  placeholder="0x…"
-                  value={fila.direccion}
-                  onChange={(e) => actualizarFila(fila.clave, { direccion: e.target.value })}
-                />
-                <input
-                  className="mono border border-rule bg-transparent px-3 py-2 text-right text-sm outline-none focus:border-ink"
-                  placeholder="bps"
-                  inputMode="numeric"
-                  value={fila.bps}
-                  onChange={(e) => actualizarFila(fila.clave, { bps: e.target.value })}
-                />
-              </div>
-              <div className="mt-2 flex justify-between text-xs text-ink-60">
-                {address ? (
-                  <button
-                    type="button"
-                    className="underline underline-offset-4"
-                    onClick={() => actualizarFila(fila.clave, { direccion: address })}
-                  >
-                    Usar mi dirección
-                  </button>
-                ) : (
-                  <span />
-                )}
-                {filas.length > 2 ? (
-                  <button
-                    type="button"
-                    className="underline underline-offset-4"
-                    onClick={() => quitarFila(fila.clave)}
-                  >
-                    Quitar
-                  </button>
-                ) : (
-                  <span />
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {direccionesRepetidas ? (
-          <p className="mono mt-3 text-xs uppercase tracking-wide text-stamp">
-            Hay direcciones repetidas
-          </p>
-        ) : null}
-
-        <button
-          type="button"
-          className="mono mt-4 border border-rule px-6 py-3 text-xs uppercase tracking-wide"
-          onClick={agregarFila}
-        >
-          Agregar participante
-        </button>
-      </section>
-
-      <section className="mt-12 border-t border-rule pt-8">
-        <label className="mono block text-xs uppercase tracking-wide text-ink-60" htmlFor="terminos">
-          Términos
-        </label>
-        <textarea
-          id="terminos"
-          className="mt-2 h-32 w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-ink"
-          value={terminos}
-          onChange={(e) => setTerminos(e.target.value)}
-          placeholder="El pago del cliente se reparte entre los participantes en las proporciones de esta tabla…"
-        />
-        <p className="mt-2 text-xs text-ink-60">
-          Solo se guarda el hash de este texto en el acuerdo. El texto completo queda en el relay para
-          que cualquiera pueda releerlo antes de firmar.
-        </p>
-      </section>
-
-      {listaCompleta.length > 0 ? (
-        <section className="mt-12 border-t border-rule pt-8">
-          <p className="mono mb-6 text-xs uppercase tracking-wide text-ink-60">Vista previa</p>
-          <BarraSegmentada participantes={listaCompleta} />
-          <div className="mt-8">
-            <TablaReparto participantes={listaCompleta} />
-          </div>
         </section>
-      ) : null}
 
-      <section className="mt-12 border-t border-ink pt-8">
-        {error ? (
-          <p className="mono mb-4 border border-caution px-4 py-3 text-xs text-caution">{error}</p>
+        <section className="mt-12 border-t border-rule pt-8">
+          <label className="mono block text-xs uppercase tracking-wide text-ink-60" htmlFor="terminos">
+            Términos
+          </label>
+          <textarea
+            id="terminos"
+            className="mt-2 h-32 w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-ink"
+            value={terminos}
+            onChange={(e) => setTerminos(e.target.value)}
+            placeholder="El pago del cliente se reparte entre los participantes en las proporciones de esta tabla…"
+          />
+          <p className="mt-2 text-xs text-ink-60">
+            Solo se guarda el hash de este texto en el acuerdo. El texto completo queda en el relay para
+            que cualquiera pueda releerlo antes de firmar.
+          </p>
+        </section>
+
+        {listaCompleta.length > 0 ? (
+          <section className="mt-12 border-t border-rule pt-8">
+            <p className="mono mb-6 text-xs uppercase tracking-wide text-ink-60">Vista previa</p>
+            <BarraSegmentada participantes={listaCompleta} />
+            <div className="mt-8">
+              <TablaReparto participantes={listaCompleta} />
+            </div>
+          </section>
         ) : null}
-        <button
-          type="button"
-          className="mono border border-ink bg-ink px-6 py-3 text-xs uppercase tracking-wide text-doc disabled:cursor-not-allowed disabled:border-rule disabled:bg-transparent disabled:text-ink-60"
-          disabled={!listoParaGuardar || guardando}
-          onClick={guardar}
-        >
-          {guardando ? "Guardando…" : "Guardar borrador"}
-        </button>
-      </section>
-    </main>
+
+        <section className="mt-12 border-t border-ink pt-8">
+          {error ? (
+            <p className="mono mb-4 border border-caution px-4 py-3 text-xs text-caution">{error}</p>
+          ) : null}
+          <button
+            type="button"
+            className="mono border border-ink bg-ink px-6 py-3 text-xs uppercase tracking-wide text-doc disabled:cursor-not-allowed disabled:border-rule disabled:bg-transparent disabled:text-ink-60"
+            disabled={!listoParaGuardar || guardando}
+            onClick={guardar}
+          >
+            {guardando ? "Guardando…" : "Guardar borrador"}
+          </button>
+        </section>
+      </main>
+    </ProveedorTema>
   );
 }

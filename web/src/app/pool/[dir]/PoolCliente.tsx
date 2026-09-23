@@ -5,6 +5,7 @@ import { usePrivy, useConnectOrCreateWallet } from "@privy-io/react-auth";
 import { useAccount, usePublicClient, useWriteContract } from "wagmi";
 import { isAddress, type Address, type Hex } from "viem";
 import { HashVivo } from "@/components/HashVivo";
+import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
 import { PRIVY_APP_ID } from "@/lib/privy";
 import { leerCifrasPool, leerTotalRecibido, splitPoolAbi } from "@/lib/pool";
 import { MOCK_USDT_ADDRESS, MOCK_USDT_SYMBOL, unidadesAMonto } from "@/lib/token";
@@ -187,108 +188,113 @@ function Contenido({ pool }: { pool: Address }) {
     valor === null ? "—" : `${unidadesAMonto(valor)} ${MOCK_USDT_SYMBOL}`;
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-16">
-      <p className="mono border-rule text-ink-60 border px-3 py-2 text-xs tracking-wide uppercase">
-        HSKChain Testnet · lectura directa de cadena
-      </p>
-
-      <header className="border-ink mt-8 border-b pb-6">
-        <h1 className="font-serif text-2xl leading-tight sm:text-3xl">Pool</h1>
-        <div className="mt-4">
-          <p className="mono text-xs uppercase tracking-wide text-ink-60">Dirección del pool</p>
-          <div className="mt-1">
-            <HashVivo valor={pool} />
-          </div>
-        </div>
-      </header>
-
-      {estado.tipo === "error" ? (
-        <p className="mono mt-8 border border-caution px-4 py-3 text-xs text-caution">
-          {estado.mensaje}
-        </p>
-      ) : (
-        <section className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="border border-rule p-4">
-            <p className="mono text-xs uppercase tracking-wide text-ink-60">Total recibido</p>
-            <p className="mono mt-2 text-lg">
-              {estado.tipo === "cargando" ? "…" : cifra(estado.totalRecibido)}
-            </p>
-          </div>
-          <div className="border border-rule p-4">
-            <p className="mono text-xs uppercase tracking-wide text-ink-60">Mi parte</p>
-            <p className="mono mt-2 text-lg">
-              {estado.tipo === "cargando" ? "…" : address ? cifra(estado.miParte) : "conectá una wallet"}
-            </p>
-          </div>
-          <div className="border border-rule p-4">
-            <p className="mono text-xs uppercase tracking-wide text-ink-60">Ya retirado</p>
-            <p className="mono mt-2 text-lg">
-              {estado.tipo === "cargando" ? "…" : address ? cifra(estado.yaRetirado) : "conectá una wallet"}
-            </p>
-          </div>
-        </section>
-      )}
-
-      <section className="mt-12 border-t border-rule pt-8">
-        <p className="mono text-xs uppercase tracking-wide text-ink-60">Wallet</p>
-        {!ready ? (
-          <p className="mt-3 text-sm text-ink-60">Cargando…</p>
-        ) : authenticated && address ? (
-          <div className="mt-3 flex items-center justify-between">
-            <span className="mono text-sm">{address}</span>
-            <button
-              type="button"
-              className="mono text-xs uppercase tracking-wide underline underline-offset-4"
-              onClick={logout}
-            >
-              Salir
-            </button>
-          </div>
-        ) : (
-          <button
-            type="button"
-            className="mono mt-3 border border-ink px-6 py-3 text-xs uppercase tracking-wide"
-            onClick={connectOrCreateWallet}
-          >
-            Conectar wallet
-          </button>
-        )}
-      </section>
-
-      <section className="mt-8 border-t border-ink pt-8">
-        {errorRetiro ? (
-          <p className="mono mb-4 border border-caution px-4 py-3 text-xs text-caution">
-            {errorRetiro}
+    <ProveedorTema>
+      <main className="mx-auto w-full max-w-3xl px-6 py-16">
+        <div className="flex items-start justify-between gap-4">
+          <p className="mono border-rule text-ink-60 border px-3 py-2 text-xs tracking-wide uppercase">
+            HSKChain Testnet · lectura directa de cadena
           </p>
-        ) : null}
+          <InterruptorTema />
+        </div>
 
-        {retiroConfirmado ? (
-          <div data-surface="chain" className="bg-chain text-on-chain mb-4 px-4 py-3">
-            <p className="mono text-xs uppercase tracking-wide">Retiro confirmado</p>
+        <header className="border-ink mt-8 border-b pb-6">
+          <h1 className="font-serif text-2xl leading-tight sm:text-3xl">Pool</h1>
+          <div className="mt-4">
+            <p className="mono text-xs uppercase tracking-wide text-ink-60">Dirección del pool</p>
             <div className="mt-1">
-              <HashVivo valor={retiroConfirmado} superficie="chain" />
+              <HashVivo valor={pool} />
             </div>
           </div>
-        ) : null}
+        </header>
 
-        <button
-          type="button"
-          className="mono border-ink bg-ink text-doc disabled:border-rule disabled:text-ink-60 border px-6 py-3 text-xs tracking-wide uppercase disabled:cursor-not-allowed disabled:bg-transparent"
-          disabled={
-            !address ||
-            retirando ||
-            estado.tipo !== "ok" ||
-            (estado.tipo === "ok" && (estado.miParte === null || estado.miParte === BigInt(0)))
-          }
-          onClick={retirar}
-        >
-          {!address
-            ? "Conectá una wallet para retirar"
-            : retirando
-              ? "Retirando…"
-              : "Retirar mi parte"}
-        </button>
-      </section>
-    </main>
+        {estado.tipo === "error" ? (
+          <p className="mono mt-8 border border-caution px-4 py-3 text-xs text-caution">
+            {estado.mensaje}
+          </p>
+        ) : (
+          <section className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="border border-rule p-4">
+              <p className="mono text-xs uppercase tracking-wide text-ink-60">Total recibido</p>
+              <p className="mono mt-2 text-lg">
+                {estado.tipo === "cargando" ? "…" : cifra(estado.totalRecibido)}
+              </p>
+            </div>
+            <div className="border border-rule p-4">
+              <p className="mono text-xs uppercase tracking-wide text-ink-60">Mi parte</p>
+              <p className="mono mt-2 text-lg">
+                {estado.tipo === "cargando" ? "…" : address ? cifra(estado.miParte) : "conectá una wallet"}
+              </p>
+            </div>
+            <div className="border border-rule p-4">
+              <p className="mono text-xs uppercase tracking-wide text-ink-60">Ya retirado</p>
+              <p className="mono mt-2 text-lg">
+                {estado.tipo === "cargando" ? "…" : address ? cifra(estado.yaRetirado) : "conectá una wallet"}
+              </p>
+            </div>
+          </section>
+        )}
+
+        <section className="mt-12 border-t border-rule pt-8">
+          <p className="mono text-xs uppercase tracking-wide text-ink-60">Wallet</p>
+          {!ready ? (
+            <p className="mt-3 text-sm text-ink-60">Cargando…</p>
+          ) : authenticated && address ? (
+            <div className="mt-3 flex items-center justify-between">
+              <span className="mono text-sm">{address}</span>
+              <button
+                type="button"
+                className="mono text-xs uppercase tracking-wide underline underline-offset-4"
+                onClick={logout}
+              >
+                Salir
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="mono mt-3 border border-ink px-6 py-3 text-xs uppercase tracking-wide"
+              onClick={connectOrCreateWallet}
+            >
+              Conectar wallet
+            </button>
+          )}
+        </section>
+
+        <section className="mt-8 border-t border-ink pt-8">
+          {errorRetiro ? (
+            <p className="mono mb-4 border border-caution px-4 py-3 text-xs text-caution">
+              {errorRetiro}
+            </p>
+          ) : null}
+
+          {retiroConfirmado ? (
+            <div data-surface="chain" className="bg-chain text-on-chain mb-4 px-4 py-3">
+              <p className="mono text-xs uppercase tracking-wide">Retiro confirmado</p>
+              <div className="mt-1">
+                <HashVivo valor={retiroConfirmado} superficie="chain" />
+              </div>
+            </div>
+          ) : null}
+
+          <button
+            type="button"
+            className="mono border-ink bg-ink text-doc disabled:border-rule disabled:text-ink-60 border px-6 py-3 text-xs tracking-wide uppercase disabled:cursor-not-allowed disabled:bg-transparent"
+            disabled={
+              !address ||
+              retirando ||
+              estado.tipo !== "ok" ||
+              (estado.tipo === "ok" && (estado.miParte === null || estado.miParte === BigInt(0)))
+            }
+            onClick={retirar}
+          >
+            {!address
+              ? "Conectá una wallet para retirar"
+              : retirando
+                ? "Retirando…"
+                : "Retirar mi parte"}
+          </button>
+        </section>
+      </main>
+    </ProveedorTema>
   );
 }

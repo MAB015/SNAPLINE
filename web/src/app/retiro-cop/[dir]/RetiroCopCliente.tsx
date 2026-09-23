@@ -5,6 +5,7 @@ import { usePrivy, useConnectOrCreateWallet } from "@privy-io/react-auth";
 import { useAccount, usePublicClient } from "wagmi";
 import { isAddress, type Address } from "viem";
 import { HashVivo } from "@/components/HashVivo";
+import { InterruptorTema, ProveedorTema } from "@/components/InterruptorTema";
 import { SelloSimulado } from "@/components/SelloSimulado";
 import { PRIVY_APP_ID } from "@/lib/privy";
 import { leerCifrasPool } from "@/lib/pool";
@@ -151,176 +152,181 @@ function Contenido({ pool }: { pool: Address }) {
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-16">
-      {/* docs/DEMO-SCRIPT.md líneas 92-101: el sello está en pantalla desde
-          el primer frame, no solo junto al comprobante. */}
-      <SelloSimulado detalle="Esto convierte una parte simulada a pesos colombianos con una tasa y una comisión ilustrativas. No mueve dinero real y no habla con ningún banco." />
+    <ProveedorTema>
+      <main className="mx-auto w-full max-w-3xl px-6 py-16">
+        {/* docs/DEMO-SCRIPT.md líneas 92-101: el sello está en pantalla desde
+            el primer frame, no solo junto al comprobante. */}
+        <SelloSimulado detalle="Esto convierte una parte simulada a pesos colombianos con una tasa y una comisión ilustrativas. No mueve dinero real y no habla con ningún banco." />
 
-      <header className="border-ink mt-8 border-b pb-6">
-        <h1 className="font-serif text-2xl leading-tight sm:text-3xl">Salir a pesos</h1>
-        <div className="mt-4">
-          <p className="mono text-xs uppercase tracking-wide text-ink-60">Dirección del pool</p>
-          <div className="mt-1">
-            <HashVivo valor={pool} />
+        <header className="border-ink mt-8 border-b pb-6">
+          <div className="flex items-start justify-between gap-4">
+            <h1 className="font-serif text-2xl leading-tight sm:text-3xl">Salir a pesos</h1>
+            <InterruptorTema />
           </div>
-        </div>
-      </header>
-
-      <section className="mt-8 border-t border-rule pt-8">
-        <p className="mono text-xs uppercase tracking-wide text-ink-60">Wallet</p>
-        {!ready ? (
-          <p className="mt-3 text-sm text-ink-60">Cargando…</p>
-        ) : authenticated && address ? (
-          <div className="mt-3 flex items-center justify-between">
-            <span className="mono text-sm">{address}</span>
-            <button
-              type="button"
-              className="mono text-xs uppercase tracking-wide underline underline-offset-4"
-              onClick={logout}
-            >
-              Salir
-            </button>
+          <div className="mt-4">
+            <p className="mono text-xs uppercase tracking-wide text-ink-60">Dirección del pool</p>
+            <div className="mt-1">
+              <HashVivo valor={pool} />
+            </div>
           </div>
-        ) : (
-          <button
-            type="button"
-            className="mono mt-3 border border-ink px-6 py-3 text-xs uppercase tracking-wide"
-            onClick={connectOrCreateWallet}
-          >
-            Conectar wallet
-          </button>
-        )}
-      </section>
+        </header>
 
-      {address ? (
         <section className="mt-8 border-t border-rule pt-8">
-          <p className="mono text-xs uppercase tracking-wide text-ink-60">Mi parte liberable</p>
-          {estadoParte.tipo === "error" ? (
-            <p className="mono mt-3 border border-caution px-4 py-3 text-xs text-caution">
-              {estadoParte.mensaje}
-            </p>
-          ) : (
-            <p className="mono mt-2 text-lg">
-              {estadoParte.tipo === "cargando"
-                ? "…"
-                : `${unidadesAMonto(estadoParte.releasable)} ${MOCK_USDT_SYMBOL}`}
-            </p>
-          )}
-
-          <button
-            type="button"
-            className="mono border-ink bg-ink text-doc disabled:border-rule disabled:text-ink-60 mt-6 border px-6 py-3 text-xs tracking-wide uppercase disabled:cursor-not-allowed disabled:bg-transparent"
-            disabled={
-              cotizando ||
-              estadoParte.tipo !== "ok" ||
-              (estadoParte.tipo === "ok" && estadoParte.releasable === BigInt(0))
-            }
-            onClick={cotizar}
-          >
-            {cotizando ? "Cotizando…" : "Cotizar"}
-          </button>
-
-          {errorCotizar ? (
-            <p className="mono mt-4 border border-caution px-4 py-3 text-xs text-caution">
-              {errorCotizar}
-            </p>
-          ) : null}
-        </section>
-      ) : null}
-
-      {cotizacion ? (
-        <section className="mt-8 border-t border-ink pt-8">
-          <p className="mono text-xs uppercase tracking-wide text-ink-60">Cotización</p>
-          <dl className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="border border-rule p-4">
-              <dt className="mono text-xs uppercase tracking-wide text-ink-60">Tasa (ilustrativa)</dt>
-              <dd className="mono mt-2 text-lg">
-                {formatoCop.format(cotizacion.tasaCopPorUsd)} / {MOCK_USDT_SYMBOL}
-              </dd>
-            </div>
-            <div className="border border-rule p-4">
-              <dt className="mono text-xs uppercase tracking-wide text-ink-60">
-                Comisión ({(cotizacion.comisionBps / 100).toString()} %)
-              </dt>
-              <dd className="mono mt-2 text-lg">
-                {unidadesAMonto(cotizacion.comisionToken)} {MOCK_USDT_SYMBOL}
-              </dd>
-            </div>
-            <div className="border border-rule p-4 sm:col-span-2">
-              <dt className="mono text-xs uppercase tracking-wide text-ink-60">Neto en pesos</dt>
-              <dd className="mono mt-2 text-2xl">{formatoCop.format(Number(cotizacion.netoCop))}</dd>
-            </div>
-          </dl>
-
-          {!comprobante ? (
-            <div className="mt-8">
-              <p className="mono text-xs uppercase tracking-wide text-ink-60">Cuenta destino (simulada)</p>
-              <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <label className="block">
-                  <span className="mono text-xs text-ink-60">Titular</span>
-                  <input
-                    type="text"
-                    value={titular}
-                    onChange={(e) => setTitular(e.target.value)}
-                    className="border-rule mono mt-1 w-full border px-3 py-2 text-sm"
-                    placeholder="Sofía Ramírez"
-                  />
-                </label>
-                <label className="block">
-                  <span className="mono text-xs text-ink-60">Número de cuenta</span>
-                  <input
-                    type="text"
-                    value={numeroCuenta}
-                    onChange={(e) => setNumeroCuenta(e.target.value)}
-                    className="border-rule mono mt-1 w-full border px-3 py-2 text-sm"
-                    placeholder="Bancolombia •••• 1234"
-                  />
-                </label>
-              </div>
-
+          <p className="mono text-xs uppercase tracking-wide text-ink-60">Wallet</p>
+          {!ready ? (
+            <p className="mt-3 text-sm text-ink-60">Cargando…</p>
+          ) : authenticated && address ? (
+            <div className="mt-3 flex items-center justify-between">
+              <span className="mono text-sm">{address}</span>
               <button
                 type="button"
-                className="mono border-ink bg-ink text-doc disabled:border-rule disabled:text-ink-60 mt-6 border px-6 py-3 text-xs tracking-wide uppercase disabled:cursor-not-allowed disabled:bg-transparent"
-                disabled={ejecutando || !titular.trim() || !numeroCuenta.trim()}
-                onClick={ejecutar}
+                className="mono text-xs uppercase tracking-wide underline underline-offset-4"
+                onClick={logout}
               >
-                {ejecutando ? "Ejecutando…" : "Ejecutar salida a pesos"}
+                Salir
               </button>
-
-              {errorEjecutar ? (
-                <p className="mono mt-4 border border-caution px-4 py-3 text-xs text-caution">
-                  {errorEjecutar}
-                </p>
-              ) : null}
             </div>
-          ) : null}
+          ) : (
+            <button
+              type="button"
+              className="mono mt-3 border border-ink px-6 py-3 text-xs uppercase tracking-wide"
+              onClick={connectOrCreateWallet}
+            >
+              Conectar wallet
+            </button>
+          )}
         </section>
-      ) : null}
 
-      {comprobante ? (
-        <section className="mt-8 border-t border-ink pt-8">
-          <p className="mono text-xs uppercase tracking-wide text-ink-60">Comprobante</p>
-          <div data-surface="chain" className="bg-chain text-on-chain mt-3 px-4 py-3">
-            <p className="mono text-xs uppercase tracking-wide">
-              {comprobante.status === "completado" ? "Salida a pesos completada" : comprobante.status}
-            </p>
-            <p className="mono mt-2 text-2xl">{formatoCop.format(Number(comprobante.netoCop))}</p>
-            {/* Texto plano, no `HashVivo`: la referencia no es una dirección
-                ni una transacción real, así que no lleva enlace al
-                explorador — eso implicaría que hay algo que verificar en
-                cadena cuando no lo hay. */}
-            <p className="mono mt-2 text-xs break-all">Referencia: {comprobante.referencia}</p>
-            <p className="mono mt-1 text-xs">
-              {comprobante.cuenta.titular} · {comprobante.cuenta.numeroCuenta}
-            </p>
-            <p className="mono mt-1 text-xs">{new Date(comprobante.creadoEn).toLocaleString("es-CO")}</p>
-          </div>
+        {address ? (
+          <section className="mt-8 border-t border-rule pt-8">
+            <p className="mono text-xs uppercase tracking-wide text-ink-60">Mi parte liberable</p>
+            {estadoParte.tipo === "error" ? (
+              <p className="mono mt-3 border border-caution px-4 py-3 text-xs text-caution">
+                {estadoParte.mensaje}
+              </p>
+            ) : (
+              <p className="mono mt-2 text-lg">
+                {estadoParte.tipo === "cargando"
+                  ? "…"
+                  : `${unidadesAMonto(estadoParte.releasable)} ${MOCK_USDT_SYMBOL}`}
+              </p>
+            )}
 
-          <div className="mt-4">
-            <SelloSimulado detalle={comprobante.nota} />
-          </div>
-        </section>
-      ) : null}
-    </main>
+            <button
+              type="button"
+              className="mono border-ink bg-ink text-doc disabled:border-rule disabled:text-ink-60 mt-6 border px-6 py-3 text-xs tracking-wide uppercase disabled:cursor-not-allowed disabled:bg-transparent"
+              disabled={
+                cotizando ||
+                estadoParte.tipo !== "ok" ||
+                (estadoParte.tipo === "ok" && estadoParte.releasable === BigInt(0))
+              }
+              onClick={cotizar}
+            >
+              {cotizando ? "Cotizando…" : "Cotizar"}
+            </button>
+
+            {errorCotizar ? (
+              <p className="mono mt-4 border border-caution px-4 py-3 text-xs text-caution">
+                {errorCotizar}
+              </p>
+            ) : null}
+          </section>
+        ) : null}
+
+        {cotizacion ? (
+          <section className="mt-8 border-t border-ink pt-8">
+            <p className="mono text-xs uppercase tracking-wide text-ink-60">Cotización</p>
+            <dl className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="border border-rule p-4">
+                <dt className="mono text-xs uppercase tracking-wide text-ink-60">Tasa (ilustrativa)</dt>
+                <dd className="mono mt-2 text-lg">
+                  {formatoCop.format(cotizacion.tasaCopPorUsd)} / {MOCK_USDT_SYMBOL}
+                </dd>
+              </div>
+              <div className="border border-rule p-4">
+                <dt className="mono text-xs uppercase tracking-wide text-ink-60">
+                  Comisión ({(cotizacion.comisionBps / 100).toString()} %)
+                </dt>
+                <dd className="mono mt-2 text-lg">
+                  {unidadesAMonto(cotizacion.comisionToken)} {MOCK_USDT_SYMBOL}
+                </dd>
+              </div>
+              <div className="border border-rule p-4 sm:col-span-2">
+                <dt className="mono text-xs uppercase tracking-wide text-ink-60">Neto en pesos</dt>
+                <dd className="mono mt-2 text-2xl">{formatoCop.format(Number(cotizacion.netoCop))}</dd>
+              </div>
+            </dl>
+
+            {!comprobante ? (
+              <div className="mt-8">
+                <p className="mono text-xs uppercase tracking-wide text-ink-60">Cuenta destino (simulada)</p>
+                <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <label className="block">
+                    <span className="mono text-xs text-ink-60">Titular</span>
+                    <input
+                      type="text"
+                      value={titular}
+                      onChange={(e) => setTitular(e.target.value)}
+                      className="border-rule mono mt-1 w-full border px-3 py-2 text-sm"
+                      placeholder="Sofía Ramírez"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="mono text-xs text-ink-60">Número de cuenta</span>
+                    <input
+                      type="text"
+                      value={numeroCuenta}
+                      onChange={(e) => setNumeroCuenta(e.target.value)}
+                      className="border-rule mono mt-1 w-full border px-3 py-2 text-sm"
+                      placeholder="Bancolombia •••• 1234"
+                    />
+                  </label>
+                </div>
+
+                <button
+                  type="button"
+                  className="mono border-ink bg-ink text-doc disabled:border-rule disabled:text-ink-60 mt-6 border px-6 py-3 text-xs tracking-wide uppercase disabled:cursor-not-allowed disabled:bg-transparent"
+                  disabled={ejecutando || !titular.trim() || !numeroCuenta.trim()}
+                  onClick={ejecutar}
+                >
+                  {ejecutando ? "Ejecutando…" : "Ejecutar salida a pesos"}
+                </button>
+
+                {errorEjecutar ? (
+                  <p className="mono mt-4 border border-caution px-4 py-3 text-xs text-caution">
+                    {errorEjecutar}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+          </section>
+        ) : null}
+
+        {comprobante ? (
+          <section className="mt-8 border-t border-ink pt-8">
+            <p className="mono text-xs uppercase tracking-wide text-ink-60">Comprobante</p>
+            <div data-surface="chain" className="bg-chain text-on-chain mt-3 px-4 py-3">
+              <p className="mono text-xs uppercase tracking-wide">
+                {comprobante.status === "completado" ? "Salida a pesos completada" : comprobante.status}
+              </p>
+              <p className="mono mt-2 text-2xl">{formatoCop.format(Number(comprobante.netoCop))}</p>
+              {/* Texto plano, no `HashVivo`: la referencia no es una dirección
+                  ni una transacción real, así que no lleva enlace al
+                  explorador — eso implicaría que hay algo que verificar en
+                  cadena cuando no lo hay. */}
+              <p className="mono mt-2 text-xs break-all">Referencia: {comprobante.referencia}</p>
+              <p className="mono mt-1 text-xs">
+                {comprobante.cuenta.titular} · {comprobante.cuenta.numeroCuenta}
+              </p>
+              <p className="mono mt-1 text-xs">{new Date(comprobante.creadoEn).toLocaleString("es-CO")}</p>
+            </div>
+
+            <div className="mt-4">
+              <SelloSimulado detalle={comprobante.nota} />
+            </div>
+          </section>
+        ) : null}
+      </main>
+    </ProveedorTema>
   );
 }
