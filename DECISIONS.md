@@ -6,6 +6,79 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-23 · Freeze de bloque por rate limit: mergear lo listo, preparar despliegue
+
+### D-046 · Congelar tres tareas fallidas de D7/D8, mergear el único rescate real, dejar el resto pendiente sin tocar
+Tres tareas arrancaron en paralelo el 2026-09-22: mitigador D-043 en
+`web/src/app/pool/[dir]/PoolCliente.tsx` (retiro), construir
+`ReciboTransaccion.tsx`/`IndicadorRed.tsx`, y auditoría de tema oscuro en
+las seis pantallas. Las tres fallaron por límite de sesión de la API (rate
+limit), no por ningún problema de alcance o de código — el corte fue
+externo a la tarea. El usuario pidió explícitamente congelar en el estado
+alcanzado, mergear lo que estuviera listo, y preparar el repositorio para
+subir a GitHub y desplegar en Vercel, en vez de reintentar las tres tareas
+en el momento.
+
+**Lo único mergeado: `IndicadorRed.tsx`/`ReciboTransaccion.tsx`.** Antes de
+que la tanda fallara, Design Lead había llegado a construir ambos
+componentes en una rama vieja (`feat/design-recibo-red`) armada sobre un
+`main` desactualizado — el mismo bug recurrente de worktree-desde-main-obsoleto
+que ya está anotado en "Riesgos abiertos" de `STATUS.md`. Mergear esa rama
+completa habría revertido D-043, D-044, D-045 y la Fase A entera del
+pivote de layout. El orquestador extrajo solo los dos archivos nuevos y
+autocontenidos (dependen únicamente de `gsap`, `wagmi`, `viem` y
+`@/components/HashVivo`, todos ya en `main`) a un worktree nuevo
+(`salvage-recibo-red`, rama `feat/design-recibo-red-salvage`) ya basado en
+el `main` real, sin commitear. Product Manager verificó de forma
+independiente antes de commitear: `tsc --noEmit`, `eslint` y `next build`
+en verde sobre ese worktree (nueve rutas generadas, sin advertencias
+nuevas), commit propio (`e3ccb85`) y fast-forward limpio a `main`;
+`eslint`/`next build` repetidos sobre `main` ya combinado, también en
+verde. Ninguno de los dos componentes quedó montado en ninguna pantalla —
+mismo patrón que `SelloTinta` en D5—; cablearlos en
+`PagarCliente.tsx`/`PoolCliente.tsx` queda para una tarea futura.
+
+**Hallazgos al revisar los tres worktrees de la tanda fallida, ninguno
+mergeado ni descartado desde aquí:**
+
+- `agent-aef8073c1a1f6f002` (rama `feat/web-pool-timeout-fallback-pool`):
+  contrario a lo reportado inicialmente, sí tiene código real y bien
+  documentado sin commitear — el mismo patrón de D-043
+  (`conTimeout`/`esperarCondicion`/`esperarRecibo` de
+  `web/src/lib/recibo.ts`, ya en `main`) aplicado a `withdraw()` en
+  `PoolCliente.tsx`, con fallback a sondear `withdrawn` cuando
+  `writeContractAsync` no devuelve hash. 76 inserciones, 9 borrados sobre
+  un único archivo. No se integró en este bloque porque el usuario pidió
+  específicamente no perseguir esta tarea ahora, pero **no es basura**:
+  queda como candidato a revisar y probablemente cerrar en la próxima
+  sesión, con la misma verificación independiente (`build`/`eslint` y
+  lectura de cadena) que el resto de los merges de `PoolCliente.tsx`.
+- `agent-adb8f139d6c9310d4` y `agent-af4bce8ec6f3dac56`: versiones
+  alternativas, sin commitear, de `ReciboTransaccion.tsx` e
+  `IndicadorRed.tsx` respectivamente — más elaboradas que las mergeadas
+  arriba (props separados `descripcion`/`bloque`/`gas`/`estado`/`activo`,
+  puramente presentacionales sin fetch propio, animación de entrada con
+  prop `activo` encadenable, comentarios extensos sobre dónde montarlas en
+  `AcuerdoCliente.tsx`/`PagarCliente.tsx`/`PoolCliente.tsx`). No se
+  compararon a fondo contra la versión mergeada ni se integraron: decidir
+  cuál versión seguir —o si conviene combinar ambas— es una decisión de
+  Design Lead/CTO para la próxima sesión, no de Product Manager. Ninguno
+  de los dos worktrees se tocó ni se limpió.
+
+**Sigue pendiente, explícitamente sin resolver en este freeze:** auditoría
+de tema oscuro en las seis pantallas (nunca arrancó código), cableo de
+`IndicadorRed`/`ReciboTransaccion` en las pantallas que los reemplazan,
+mitigador D-043 en `PoolCliente.tsx` (retiro, sigue con la vulnerabilidad
+de hang sin mitigar) y el anillo 3D (nunca arrancó, sigue en su caja de un
+día completa). Ver `TASKS.md` D7/D8 para el detalle de cada una.
+
+**Descartado:** reintentar las tres tareas fallidas de inmediato una vez
+liberado el rate limit — el usuario pidió explícitamente parar acá y
+priorizar preparar la subida a GitHub y el despliegue en Vercel en vez de
+seguir sumando alcance a D7/D8 en esta sesión.
+
+---
+
 ## 2026-09-22 · Fase A del pivote de layout: ancho completo real en `/`
 
 ### D-045 · `/` pasa de columna angosta a ancho completo real; `docs/BRAND.md` queda desactualizado en ese punto

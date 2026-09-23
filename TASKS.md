@@ -1,6 +1,6 @@
 # Tareas — SNAPLINE
 
-**Última actualización:** 2026-09-22
+**Última actualización:** 2026-09-23
 
 Cada tarea lleva su área. Una tarea terminada es un commit. El plan por día
 que las agrupa está en [`docs/SCOPE-PLAN.md`](docs/SCOPE-PLAN.md).
@@ -195,14 +195,43 @@ diferida a D8 junto con la de D5, mismo motivo: falta
 
 - [x] `web` — interfaz `OffRampProvider` y `MockOffRamp`
 - [x] `web` — `/retiro-cop/[dir]`: cotización, comisión, neto, comprobante
-- [ ] `design` — sello de simulado en todas las superficies del mock
+- [x] `design` — sello de simulado en todas las superficies del mock
+      *(confirmado por Design Lead el 2026-09-22, antes del corte por rate
+      limit de abajo: `SelloSimulado` ya cubre las superficies que lo
+      necesitan, sin cambio de código pendiente)*
 - [ ] `design` — anillo 3D del pool con `@react-three/fiber`: segmentos por
       bps, material toon, clic con panel de participante, snap en
-      `/acuerdo/[id]` y llenado en `/pool/[dir]` *(caja de un día; si no
-      está a las 18:00, pasa al hueco del stretch de D8 y, si tampoco cabe
-      ahí, se corta y queda la barra 2D)*
-- [ ] `design` — recibo de transacción e indicador de red en vivo
-- [ ] `design` — revisar el tema oscuro en las seis pantallas
+      `/acuerdo/[id]` y llenado en `/pool/[dir]` *(caja de un día; nunca
+      arrancó, sigue en su caja completa. Si no está a las 18:00, pasa al
+      hueco del stretch de D8 y, si tampoco cabe ahí, se corta y queda la
+      barra 2D)*
+- [~] `design` — recibo de transacción e indicador de red en vivo
+      *(componentes construidos y en `main`: `web/src/components/IndicadorRed.tsx`
+      y `ReciboTransaccion.tsx`, commit `e3ccb85`, rescatados de una rama
+      vieja armada sobre un `main` obsoleto y reconstruidos sobre el `main`
+      real. Deliberadamente sin cablear en ninguna pantalla, mismo patrón
+      que `SelloTinta` en D5. Cableado en `PagarCliente.tsx`/`PoolCliente.tsx`
+      pendiente para la próxima sesión. Ver D-046 en `DECISIONS.md`)*
+- [ ] `design` — revisar el tema oscuro en las seis pantallas *(sin avanzar:
+      la tarea falló por rate limit de la API antes de tocar código.
+      Pendiente para la próxima sesión, ver D-046)*
+
+**Freeze de bloque, 2026-09-22 (Product Manager).** Tres tareas en paralelo
+de esta lista —mitigador D-043 en `PoolCliente.tsx` (retiro), construir
+`ReciboTransaccion.tsx`/`IndicadorRed.tsx`, auditoría de tema oscuro—
+fallaron por límite de sesión de la API (rate limit), no por decisión de
+alcance. El usuario pidió explícitamente congelar en este estado, mergear
+lo que estuviera listo y preparar el repo para subir a GitHub y desplegar
+en Vercel, en vez de perseguir esas tres tareas ahora mismo. Detalle
+completo —incluido lo rescatable encontrado en los worktrees fallidos y lo
+que sigue pendiente sin tocar— en D-046 de `DECISIONS.md`.
+
+- [ ] `web` — mitigador D-043 (timeout + fallback) en `PoolCliente.tsx`
+      (retiro) *(sigue con la vulnerabilidad de hang no determinista de
+      Privy sin mitigar, ver `STATUS.md`. Hay una versión candidata real,
+      sin commitear, en el worktree `agent-aef8073c1a1f6f002`
+      (`feat/web-pool-timeout-fallback-pool`) — no revisada ni integrada
+      todavía, a retomar en la próxima sesión. Ver D-046)*
 
 ## D8 · Congelar y ensayar — domingo 28
 

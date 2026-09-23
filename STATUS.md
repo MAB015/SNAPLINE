@@ -1,6 +1,6 @@
 # Estado del proyecto — SNAPLINE
 
-**Última actualización:** 2026-09-22 · **Bloque cerrado:** D6 · `/pagar/[dir]` y `/pool/[dir]` en main, código verificado por build/eslint y lectura de cadena real contra un pool de prueba manual; verificación conductual real diferida a propósito a D8 junto con la de D5 (decisión del usuario). En curso: D7 `design` (peso visual de `/` con referencia Sharplink.com, tarjetas y fix de parpadeo mergeados en `9849a5b`). Cerrado en esta pasada: mitigación del hang no determinista de Privy post-firma en `/pagar` y `/acuerdo/[id]` (D-043).
+**Última actualización:** 2026-09-23 · **Bloque cerrado:** D6 · `/pagar/[dir]` y `/pool/[dir]` en main, código verificado por build/eslint y lectura de cadena real contra un pool de prueba manual; verificación conductual real diferida a propósito a D8 junto con la de D5 (decisión del usuario). En curso: D7 `design` (peso visual de `/` con referencia Sharplink.com, tarjetas y fix de parpadeo mergeados en `9849a5b`; Fase A del pivote a ancho completo cerrada en D-045). Cerrado en esta pasada: mitigación del hang no determinista de Privy post-firma en `/pagar` y `/acuerdo/[id]` (D-043). **Congelado el 2026-09-23** por rate limit de la API a mitad de tres tareas paralelas de D7/D8, a pedido explícito del usuario, para preparar subida a GitHub y despliegue en Vercel — ver D-046.
 **Cierre del hackathon:** 1 de octubre de 2026 · **Días restantes de trabajo:** 10
 
 Este archivo se actualiza en el mismo commit que el trabajo que describe.
@@ -541,6 +541,47 @@ con el frente paralelo de Privy en `PoolCliente.tsx`
 (`feat/web-pool-timeout-fallback`, sin commits propios por encima de
 `main` al momento de este merge).
 
+**`IndicadorRed`/`ReciboTransaccion` agregados a `main`, sin cablear
+(2026-09-23, commit `e3ccb85`).** De las tres tareas de D7/D8 que arrancaron
+en paralelo el 2026-09-22 y fallaron por rate limit de la API (mitigador
+D-043 en `PoolCliente.tsx`, estos dos componentes, auditoría de tema
+oscuro), esta es la única con algo terminado antes del fallo: Design Lead
+había llegado a construir `web/src/components/IndicadorRed.tsx` (indicador
+"HSKChain Testnet · bloque #N" con pulso GSAP en cada bloque nuevo, vía
+`useBlockNumber({ watch: true })`) y `ReciboTransaccion.tsx` (recibo
+bloque/gas/hash de una tx confirmada, vía `getTransactionReceipt`) en una
+rama vieja (`feat/design-recibo-red`) armada sobre un `main` desactualizado
+— mismo bug recurrente de worktree-desde-main-obsoleto ya anotado en
+"Riesgos abiertos". Mergear esa rama tal cual habría revertido D-043/D-044/
+D-045 y la Fase A completa del pivote de layout.
+
+El orquestador extrajo solo los dos archivos, autocontenidos (dependen
+únicamente de `gsap`, `wagmi`, `viem` y `@/components/HashVivo`, ya
+presentes en `main`), y los dejó en stage en un worktree nuevo
+(`salvage-recibo-red`, rama `feat/design-recibo-red-salvage`) ya basado en
+el `main` real. Product Manager verificó de forma independiente antes de
+commitear: `tsc --noEmit`, `eslint` y `next build` en verde sobre ese
+worktree (nueve rutas generadas), commit propio (`e3ccb85`) y
+fast-forward limpio a `main`; `eslint`/`next build` repetidos sobre `main`
+ya combinado, también en verde. Ninguno de los dos componentes está
+montado en ninguna pantalla —mismo patrón que `SelloTinta` en D5—:
+`IndicadorRed` reemplazaría el texto estático "HSKChain Testnet · ..." que
+hoy repiten `PagarCliente.tsx`/`PoolCliente.tsx`, y `ReciboTransaccion` el
+bloque "Pago confirmado"/"Retiro confirmado" de esas mismas pantallas.
+Cableado pendiente, tarea futura. Ver D-046 en `DECISIONS.md`.
+
+**Freeze de bloque, 2026-09-23 (Product Manager), a pedido explícito del
+usuario.** Las otras dos tareas de esa misma tanda paralela no llegaron a
+avanzar código real antes de fallar por rate limit: el mitigador D-043 en
+`PoolCliente.tsx` (retiro) sigue con la vulnerabilidad de hang no
+determinista de Privy sin mitigar (ver más abajo, en `web`), y la
+auditoría de tema oscuro en las seis pantallas no arrancó. El usuario
+pidió congelar en este estado en vez de perseguirlas ahora, mergear lo que
+estuviera listo (los dos componentes de arriba) y preparar el repo para
+subir a GitHub y desplegar en Vercel. Detalle de lo revisado en los tres
+worktrees de la tanda fallida (incluido un hallazgo real sin commitear que
+no se tocó) en D-046 de `DECISIONS.md`.
+
 **Bloqueado por:** nada.
 
 ## `web` — ✅ D7 (parte web) código listo, corrida real diferida a D8
@@ -819,6 +860,18 @@ mergear — no se tocó desde aquí.
 **Sigue pendiente, no bloqueante:** `PoolCliente.tsx` (retiro) probablemente
 tiene el mismo patrón de bug, sin confirmar ni tocado. Entra como tarea
 aparte. Ver `TASKS.md` D8.
+
+**Intento de mitigación, 2026-09-22, sin integrar (rate limit).** Un
+worktree (`agent-aef8073c1a1f6f002`, rama
+`feat/web-pool-timeout-fallback-pool`) sí llegó a construir una versión
+real y bien documentada del mismo patrón que D-043 —`conTimeout` sobre
+`writeContractAsync` con fallback a sondear `withdrawn` cuando no hay
+hash, y `esperarRecibo` en vez de `waitForTransactionReceipt` cuando sí lo
+hay— antes de que la tanda de tres tareas en paralelo fallara por rate
+limit de la API. Queda sin commitear, revisada pero no integrada por
+Product Manager a pedido del usuario (congelar sin perseguir esta tarea
+ahora): a retomar en la próxima sesión. Ver D-046 en `DECISIONS.md`.
+
 **Corrida conductual en vivo, EN CURSO ahora (2026-09-22).** Es la misma
 corrida real de D5/D6 mencionada arriba, adelantada antes de D7 (ver
 `TASKS.md` D8) y ya con los dos bugs bloqueantes de esta sección
@@ -868,6 +921,7 @@ edición.
 | La wallet embebida de Privy puede colgar el botón tras firmar (hang no determinista, sin fix de código propio posible) | Mitigado con timeout + fallback por saldo en `/pagar` y `/acuerdo/[id]` (D-043). Pendiente el mismo patrón en `/pool/[dir]` (retiro) |
 | Worktrees de `agent-*` arrancando desde un `main` desactualizado (pasó dos veces el 2026-09-22) | Sin mitigación de proceso todavía — a revisar cómo CTO/orquestador crean los worktrees nuevos |
 | La rama de sesión del orquestador (worktree separado del checkout donde vive `main` real) puede quedar varios commits sin mergear mientras `main` avanza en paralelo; el 2026-09-22 esto hizo que dos ramas asignaran D-043 a decisiones distintas (Privy en `main`, Lenis en la rama de sesión), detectado recién al ir a mergear — ver el merge `0a4eb90` que renumeró Lenis a D-044 | Sin mitigación automática todavía. Antes de asignar el próximo número de decisión, Product Manager revisa si hay una rama de sesión activa sin mergear con un número mayor pendiente — no es infalible, pero reduce el riesgo |
+| Rate limit de la API cortó tres tareas en paralelo a mitad de D7/D8 el 2026-09-22/23 (mitigador D-043 en `PoolCliente.tsx`, `IndicadorRed`/`ReciboTransaccion`, auditoría de tema oscuro), sin relación con el alcance del proyecto | El usuario pidió congelar en el estado alcanzado, mergear lo que estuviera listo (D-046) y no perseguir las tres tareas hasta la próxima sesión. `PoolCliente.tsx` sigue sin mitigar y el tema oscuro sin auditar |
 
 ## Contexto del evento
 
