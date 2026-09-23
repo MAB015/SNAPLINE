@@ -212,9 +212,12 @@ diferida a D8 junto con la de D5, mismo motivo: falta
       real. Deliberadamente sin cablear en ninguna pantalla, mismo patrón
       que `SelloTinta` en D5. Cableado en `PagarCliente.tsx`/`PoolCliente.tsx`
       pendiente para la próxima sesión. Ver D-046 en `DECISIONS.md`)*
-- [ ] `design` — revisar el tema oscuro en las seis pantallas *(sin avanzar:
-      la tarea falló por rate limit de la API antes de tocar código.
-      Pendiente para la próxima sesión, ver D-046)*
+- [x] `design` — revisar el tema oscuro en las seis pantallas *(cerrado
+      2026-09-23. Alcance ampliado a pedido del usuario: además de
+      confirmar `ProveedorTema`/`InterruptorTema` en las seis, se
+      construyó `NavBar.tsx` compartido (nombre "SNAPLINE" + interruptor,
+      mismo lugar en las seis) para que el interruptor dejara de estar
+      suelto en un sitio distinto en cada pantalla. Ver D-047)*
 
 **Freeze de bloque, 2026-09-22 (Product Manager).** Tres tareas en paralelo
 de esta lista —mitigador D-043 en `PoolCliente.tsx` (retiro), construir

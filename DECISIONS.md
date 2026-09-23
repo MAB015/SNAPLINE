@@ -6,6 +6,55 @@ nueva que la revierte.
 
 ---
 
+## 2026-09-23 · `NavBar.tsx` compartido cierra la auditoría de tema oscuro
+
+### D-047 · Componente `NavBar` único en las seis pantallas, en vez de dejar `InterruptorTema` suelto en cada una
+Retomó la auditoría de tema oscuro congelada por D-046. Al confirmar
+`ProveedorTema`/`InterruptorTema` en las seis pantallas, el usuario pidió
+además que el interruptor dejara de aparecer en un lugar distinto en cada
+una (título, chip de red, etc.) — pedido explícito tras verlo en capturas.
+Se creó `web/src/components/NavBar.tsx`: `<nav>` con filete inferior de 1px
+(`border-b border-rule`, sin sombra ni degradado, BRAND.md §12), "SNAPLINE"
+como `Link` a `/` en `font-serif text-lg` a la izquierda,
+`InterruptorTema` a la derecha. Montado como primer hijo dentro de cada
+`ProveedorTema` (no en `web/src/app/layout.tsx`, que es territorio de
+`web` y no de `design`) en las seis pantallas: `page.tsx`,
+`AcuerdoCliente.tsx`, `nuevo/page.tsx`, `PagarCliente.tsx`,
+`PoolCliente.tsx`, `RetiroCopCliente.tsx`. Se quitó el `InterruptorTema`
+suelto que vivía junto a cada título/chip y se ajustó el layout residual
+(`inline-block` en el chip de red de `PagarCliente`/`PoolCliente`/
+`AcuerdoCliente` para que el filete no se estire a todo el ancho).
+**Descartado:** mover el interruptor a `layout.tsx` — alcance de `web`, no
+de `design`, y el patrón de las seis pantallas ya monta su propio
+`ProveedorTema` por separado.
+
+**Worktree desde `main` desactualizado, cuarto episodio, primero resuelto sin
+reconstruir trabajo.** El worktree del especialista (ux-designer) había
+arrancado sobre un `main` viejo (`cf40b8c`, anterior a los commits de fix de
+tema `13e3852`/`4f1a735` ya en `main`). En vez de perder el trabajo o
+reconstruirlo a mano —como en los episodios previos anotados en "Riesgos
+abiertos" de `STATUS.md`—, el especialista confirmó que su propio `HEAD`
+era ancestro directo de `main` y que su working tree estaba limpio salvo
+por los cambios sin commitear, e hizo `git merge --ff-only main` dentro de
+su propio worktree: fast-forward limpio, sin reescritura de historia, sin
+duplicar el fix. Product Manager verificó el resultado antes de aceptarlo:
+`git merge-base --is-ancestor 4f1a735 main` confirmó que el fix de tema ya
+mergeado es ancestro real de `main`, y el diff de la rama contra `main`
+mostró exactamente los 7 archivos esperados (`NavBar.tsx` nuevo + las seis
+pantallas), sin tocar `layout.tsx` ni los archivos de tracking. `eslint` y
+`next build` (9 rutas) verificados de forma independiente tanto en el
+worktree del especialista como en `main` ya combinado.
+
+**Nota operativa, sin impacto confirmado.** El especialista corrió
+`taskkill /F /IM node.exe /T` para reiniciar su dev server, comando que
+mata todo proceso con ese nombre de imagen en el sistema, no solo el
+propio. Product Manager revisó los procesos node activos después del
+hecho: los tres procesos vivos eran `node_repl.exe` (nombre de imagen
+distinto, fuera del alcance de ese comando), sin evidencia de que algo
+ajeno se haya caído. Sin mitigación de proceso agregada — el riesgo de que
+un especialista mate procesos de otra sesión sigue latente si el nombre de
+imagen coincide.
+
 ## 2026-09-23 · Freeze de bloque por rate limit: mergear lo listo, preparar despliegue
 
 ### D-046 · Congelar tres tareas fallidas de D7/D8, mergear el único rescate real, dejar el resto pendiente sin tocar
