@@ -895,6 +895,21 @@ pausado — el orquestador está coordinando con Product Manager para no
 cruzarse con ningún worktree que toque `PoolCliente.tsx` antes de
 retomarlo.
 
+**Merge intermedio, 2026-09-23 (commit `13e3852`, fast-forward sobre
+`main`, sin merge commit).** `ProveedorTema`/`InterruptorTema` montados en
+las cuatro pantallas que no los tenían —`/nuevo`, `/pagar/[dir]`,
+`/pool/[dir]`, `/retiro-cop/[dir]`— con el mismo patrón que ya usan `/` y
+`/acuerdo/[id]`. Solo esos 4 archivos, `layout.tsx` sin tocar. Verificado
+por Product Manager de forma independiente (no solo el reporte del
+especialista): diff limpio de exactamente esos 4 archivos,
+`git merge-base --is-ancestor` y `git merge-tree` sin conflicto,
+`eslint`/`next build` en verde tanto en la rama de origen
+(`worktree-agent-aef7336b604c28a1a`) como en `main` ya combinado (6 rutas
+compilan). **Esto es un cierre parcial, no el cierre del tema completo:**
+el trabajo de navbar sigue en curso por separado y va a mergear encima de
+este commit en un rato — no marcar esta sección como terminada hasta que
+eso también esté integrado.
+
 ## `demo` — 🟡 Guion escrito
 
 **Hecho:** guion plano por plano y datos de la demo fijados en
